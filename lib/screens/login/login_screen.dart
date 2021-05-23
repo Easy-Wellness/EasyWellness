@@ -95,8 +95,11 @@ class _BodyState extends State<Body> {
               ElevatedButton.icon(
                 onPressed: () => {},
                 style: ElevatedButton.styleFrom(primary: Colors.black),
-                icon: SvgPicture.asset('assets/icons/apple-icon.svg',
-                    height: 24, color: Colors.white),
+                icon: SvgPicture.asset(
+                  'assets/icons/apple-icon.svg',
+                  height: 24,
+                  color: Colors.white,
+                ),
                 label: Text('Continue with Apple'),
               )
             ].expand(
