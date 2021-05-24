@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:users/Components/or_divider.dart';
+import 'package:users/utils/loginWithGoogle.dart';
 
 class LoginScreen extends StatelessWidget {
   static String routeName = '/login';
@@ -69,7 +70,7 @@ class _BodyState extends State<Body> {
               ),
               OrDivider(),
               ElevatedButton.icon(
-                onPressed: () => {},
+                onPressed: () => loginWithGoogle(),
                 style: ElevatedButton.styleFrom(
                   primary: Colors.white60,
                 ),

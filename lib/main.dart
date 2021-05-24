@@ -16,9 +16,9 @@ class App extends StatefulWidget {
   _AppState createState() => _AppState();
 }
 
-/// State is persistent, therefore [Future] is only created once.
+/// State is persistent and not rebuilt, therefore [Future] is only created once.
 /// If [StatelessWidget] is used, in the event where [App] is rebuilt, that
-/// would re-initialize FlutterFire, which makes our application re-enter
+/// would re-initialize FlutterFire and makes our app re-enter the
 /// loading state, which is undesired.
 class _AppState extends State<App> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
@@ -30,16 +30,15 @@ class _AppState extends State<App> {
       title: 'EasyWellness',
       theme: theme(),
       home: FutureBuilder(
-        future: _initialization,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) return ErrorScreen();
+          future: _initialization,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return ErrorScreen();
 
-          if (snapshot.connectionState == ConnectionState.done)
-            return LoginScreen();
+            if (snapshot.connectionState == ConnectionState.done)
+              return LoginScreen();
 
-          return LoadingScreen();
-        },
-      ),
+            return LoadingScreen();
+          }),
       routes: routes,
     );
   }
