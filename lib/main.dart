@@ -7,6 +7,7 @@ import 'package:users/screens/login/login_screen.dart';
 import 'package:users/theme.dart';
 
 void main() {
+  // TODO: Research WidgetsFlutterBinding
   WidgetsFlutterBinding.ensureInitialized();
   runApp(App());
 }

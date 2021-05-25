@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:users/Components/or_divider.dart';
+import 'package:users/utils/loginWithFacebook.dart';
 import 'package:users/utils/loginWithGoogle.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -84,7 +85,7 @@ class _BodyState extends State<Body> {
                 ),
               ),
               ElevatedButton.icon(
-                onPressed: () => {},
+                onPressed: () => loginWithFacebook(),
                 style: ElevatedButton.styleFrom(primary: Colors.blue),
                 icon: SvgPicture.asset(
                   'assets/icons/facebook-icon.svg',
