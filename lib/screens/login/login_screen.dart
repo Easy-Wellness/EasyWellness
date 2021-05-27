@@ -27,15 +27,15 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  final _phoneInpController = TextEditingController();
+  final _emailInpController = TextEditingController();
 
   bool _isEmpty = true;
 
   @override
   void initState() {
     super.initState();
-    _phoneInpController.addListener(
-      () => setState(() => _isEmpty = _phoneInpController.text.isEmpty),
+    _emailInpController.addListener(
+      () => setState(() => _isEmpty = _emailInpController.text.isEmpty),
     );
   }
 
@@ -49,18 +49,15 @@ class _BodyState extends State<Body> {
           children: [
             ...[
               TextField(
-                controller: _phoneInpController,
-                keyboardType: TextInputType.number,
+                controller: _emailInpController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  hintText: 'Phone number',
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text('+84'),
-                  ),
+                  hintText: 'Sign in with email',
+                  prefixIcon: Icon(Icons.email),
                   suffixIcon: _isEmpty
                       ? null
                       : IconButton(
-                          onPressed: () => _phoneInpController.clear(),
+                          onPressed: () => _emailInpController.clear(),
                           icon: Icon(Icons.clear),
                         ),
                 ),
@@ -94,16 +91,6 @@ class _BodyState extends State<Body> {
                 ),
                 label: Text('Continue with Facebook'),
               ),
-              ElevatedButton.icon(
-                onPressed: () => {},
-                style: ElevatedButton.styleFrom(primary: Colors.black),
-                icon: SvgPicture.asset(
-                  'assets/icons/apple-icon.svg',
-                  height: 24,
-                  color: Colors.white,
-                ),
-                label: Text('Continue with Apple'),
-              )
             ].expand(
               (widget) => [
                 widget,
@@ -120,7 +107,7 @@ class _BodyState extends State<Body> {
 
   @override
   void dispose() {
-    _phoneInpController.dispose();
+    _emailInpController.dispose();
     super.dispose();
   }
 }
