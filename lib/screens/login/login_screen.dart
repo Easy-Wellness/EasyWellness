@@ -41,66 +41,64 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ...[
-              TextField(
-                controller: _emailInpController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: 'Sign in with email',
-                  prefixIcon: Icon(Icons.email),
-                  suffixIcon: _isEmpty
-                      ? null
-                      : IconButton(
-                          onPressed: () => _emailInpController.clear(),
-                          icon: Icon(Icons.clear),
-                        ),
-                ),
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ...[
+            TextField(
+              controller: _emailInpController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'Sign in with email',
+                prefixIcon: Icon(Icons.email),
+                suffixIcon: _isEmpty
+                    ? null
+                    : IconButton(
+                        onPressed: () => _emailInpController.clear(),
+                        icon: Icon(Icons.clear),
+                      ),
               ),
-              ElevatedButton(
-                onPressed: _isEmpty ? null : () => {},
-                child: Text('Next'),
+            ),
+            ElevatedButton(
+              onPressed: _isEmpty ? null : () => {},
+              child: Text('Next'),
+            ),
+            OrDivider(),
+            ElevatedButton.icon(
+              onPressed: () => loginWithGoogle(),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white60,
               ),
-              OrDivider(),
-              ElevatedButton.icon(
-                onPressed: () => loginWithGoogle(),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white60,
-                ),
-                icon: SvgPicture.asset(
-                  'assets/icons/google-icon.svg',
-                  height: 24,
-                ),
-                label: Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Colors.black),
-                ),
+              icon: SvgPicture.asset(
+                'assets/icons/google-icon.svg',
+                height: 24,
               ),
-              ElevatedButton.icon(
-                onPressed: () => loginWithFacebook(),
-                style: ElevatedButton.styleFrom(primary: Colors.blue),
-                icon: SvgPicture.asset(
-                  'assets/icons/facebook-icon.svg',
-                  height: 24,
-                  color: Colors.white,
-                ),
-                label: Text('Continue with Facebook'),
+              label: Text(
+                'Continue with Google',
+                style: TextStyle(color: Colors.black),
               ),
-            ].expand(
-              (widget) => [
-                widget,
-                SizedBox(
-                  height: 8,
-                )
-              ],
-            )
-          ],
-        ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => loginWithFacebook(),
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
+              icon: SvgPicture.asset(
+                'assets/icons/facebook-icon.svg',
+                height: 24,
+                color: Colors.white,
+              ),
+              label: Text('Continue with Facebook'),
+            ),
+          ].expand(
+            (widget) => [
+              widget,
+              SizedBox(
+                height: 8,
+              )
+            ],
+          )
+        ],
       ),
     );
   }
