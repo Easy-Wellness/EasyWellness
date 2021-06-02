@@ -5,6 +5,6 @@ const SPECIALTIES = [
   'pediatrics', // medical care of infants, children, and adolescents
   'spa',
   'psychology',
-  'plastic Surgery',
+  'plastic surgery',
   'chiropractic',
 ];

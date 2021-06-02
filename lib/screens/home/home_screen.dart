@@ -1,16 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:users/screens/home/search_services_form.dart';
 
 class HomeScreen extends StatelessWidget {
   static String routeName = '/home';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Home'),
+        ),
+        body: Body(),
       ),
-      body: Body(),
     );
   }
 }
@@ -18,11 +21,9 @@ class HomeScreen extends StatelessWidget {
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        child: Text('Sign out'),
-        onPressed: () => FirebaseAuth.instance.signOut(),
-      ),
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: SearchServicesForm(),
     );
   }
 }
