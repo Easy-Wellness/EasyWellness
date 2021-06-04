@@ -38,6 +38,7 @@ dependencies:
   flutter_facebook_auth: ^3.4.0
   recase: ^4.0.0
   dropdown_search: ^0.6.1
+  material_floating_search_bar: ^0.3.4
 
 dev_dependencies:
   flutter_test:

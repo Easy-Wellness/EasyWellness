@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
+import 'package:users/screens/pick_location/pick_location_screen.dart';
 
 class SearchServicesForm extends StatefulWidget {
   @override
@@ -59,16 +60,18 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             height: 4,
           ),
           TextButton(
-            onPressed: () => {},
+            onPressed: () =>
+                Navigator.pushNamed(context, PickLocationScreen.routeName),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 340,
+                  width: 330,
                   child: Text(
                     '1600 Pennsylvania Avenue NW, Washington, DC 20500',
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                   ),
                 ),
                 Icon(Icons.keyboard_arrow_right),
