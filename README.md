@@ -2,6 +2,9 @@
 
 App for normal users
 
+**Navigation**:
+1. main -> login_screen or home_screen (depending on the auth state)
+2. home_screen (search nearby services) -> pick_location_screen
 ## Getting Started
 
 This project is a starting point for a Flutter application.
