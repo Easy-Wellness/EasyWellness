@@ -77,7 +77,8 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
         child: Column(
           children: List.generate(15, (i) => i)
               .map((location) => InkWell(
-                    onTap: () => {},
+                    onTap: () =>
+                        Navigator.pop(context, '$location) white house'),
                     child: ListTile(
                       title: Text('$location) white house'),
                     ),

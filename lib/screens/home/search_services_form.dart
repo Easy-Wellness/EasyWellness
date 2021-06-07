@@ -1,6 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
@@ -12,6 +13,23 @@ class SearchServicesForm extends StatefulWidget {
 
 class _SearchServicesFormState extends State<SearchServicesForm> {
   final _formKey = GlobalKey<FormState>();
+
+  String? _pickedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition()
+        .then((location) => setState(() => _pickedLocation = '$location'))
+        .catchError(print);
+  }
+
+  _navigateToGetUserLocation(BuildContext context) async {
+    final location =
+        await Navigator.pushNamed(context, PickLocationScreen.routeName);
+    if (location != null && location != _pickedLocation)
+      setState(() => _pickedLocation = location as String);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +49,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               itemAsString: (value) => value.titleCase,
               label: 'Specialty',
               popupItemDisabled: (value) => value == fieldState.value,
-              onChanged: fieldState.didChange,
+              onChanged: (value) => fieldState.didChange(value),
               popupItemBuilder: (_, value, isSelected) {
                 return Container(
                   margin: EdgeInsets.symmetric(horizontal: 8),
@@ -60,17 +78,17 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             height: 4,
           ),
           TextButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, PickLocationScreen.routeName),
+            onPressed: () => _navigateToGetUserLocation(context),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 330,
                   child: Text(
-                    '1600 Pennsylvania Avenue NW, Washington, DC 20500',
-                    overflow: TextOverflow.ellipsis,
+                    _pickedLocation ??
+                        'Cannot access your location, tap here to enter',
                     textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
                 ),
@@ -79,7 +97,9 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             ),
           ),
           ElevatedButton.icon(
-            onPressed: () => {if (_formKey.currentState!.validate()) {}},
+            onPressed: _pickedLocation != null
+                ? () => {if (_formKey.currentState!.validate()) {}}
+                : null,
             icon: Icon(Icons.search_sharp),
             label: Text('Search'),
           )
@@ -87,4 +107,25 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
       ),
     );
   }
+}
+
+Future<Position> _determinePosition() async {
+  bool serviceEnabled = false;
+  LocationPermission permission;
+
+  // User allows access, but the location services of the device are disabled
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) return Future.error('Location services are disabled');
+
+  permission = await Geolocator.checkPermission();
+
+  /// [LocationPermission.denied] is the initial state on both Android and iOS
+  if (permission == LocationPermission.denied)
+    permission = await Geolocator.requestPermission();
+
+  if (permission == LocationPermission.deniedForever)
+    return Future.error(
+        'Location permissions are permanently denied, we cannot find your current location');
+
+  return await Geolocator.getCurrentPosition();
 }
