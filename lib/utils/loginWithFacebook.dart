@@ -7,7 +7,7 @@ Future<UserCredential?> loginWithFacebook() async {
   final AccessToken? accessToken = result.accessToken;
   if (accessToken == null) return null;
   final facebookAuthCredential =
-  FacebookAuthProvider.credential(accessToken.token);
+      FacebookAuthProvider.credential(accessToken.token);
 
   /// Firebase will not set the User.emailVerified property to true if your
   /// user logs in with Facebook. Should your user login using a provider

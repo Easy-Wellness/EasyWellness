@@ -1,10 +1,11 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
+import 'package:users/models/DeviceLocation.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
+import 'package:users/utils/identifyDeviceLocation.dart';
 
 class SearchServicesForm extends StatefulWidget {
   @override
@@ -14,21 +15,21 @@ class SearchServicesForm extends StatefulWidget {
 class _SearchServicesFormState extends State<SearchServicesForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String? _pickedLocation;
+  DeviceLocation? _pickedLocation;
 
   @override
   void initState() {
     super.initState();
-    _determinePosition()
-        .then((location) => setState(() => _pickedLocation = '$location'))
+    identifyDeviceLocation()
+        .then((location) => setState(() => _pickedLocation = location))
         .catchError(print);
   }
 
   _navigateToGetUserLocation(BuildContext context) async {
     final location =
         await Navigator.pushNamed(context, PickLocationScreen.routeName);
-    if (location != null && location != _pickedLocation)
-      setState(() => _pickedLocation = location as String);
+    if (location != null)
+      setState(() => _pickedLocation = location as DeviceLocation);
   }
 
   @override
@@ -85,7 +86,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                 Container(
                   width: 330,
                   child: Text(
-                    _pickedLocation ??
+                    _pickedLocation?.address ??
                         'Cannot access your location, tap here to enter',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -107,25 +108,4 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
       ),
     );
   }
-}
-
-Future<Position> _determinePosition() async {
-  bool serviceEnabled = false;
-  LocationPermission permission;
-
-  // User allows access, but the location services of the device are disabled
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) return Future.error('Location services are disabled');
-
-  permission = await Geolocator.checkPermission();
-
-  /// [LocationPermission.denied] is the initial state on both Android and iOS
-  if (permission == LocationPermission.denied)
-    permission = await Geolocator.requestPermission();
-
-  if (permission == LocationPermission.deniedForever)
-    return Future.error(
-        'Location permissions are permanently denied, we cannot find your current location');
-
-  return await Geolocator.getCurrentPosition();
 }
