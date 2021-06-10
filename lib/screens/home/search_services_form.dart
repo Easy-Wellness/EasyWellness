@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
-import 'package:users/models/DeviceLocation.dart';
+import 'package:users/models/device_location.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
-import 'package:users/utils/identifyDeviceLocation.dart';
+import 'package:users/utils/identify_device_location.dart';
 
 class SearchServicesForm extends StatefulWidget {
   @override

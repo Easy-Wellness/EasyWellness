@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:users/Components/or_divider.dart';
-import 'package:users/utils/loginWithFacebook.dart';
-import 'package:users/utils/loginWithGoogle.dart';
+import 'package:users/utils/login_with_facebook.dart';
+import 'package:users/utils/login_with_google.dart';
 
 class LoginScreen extends StatelessWidget {
   static String routeName = '/login';
