@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
-import 'package:users/models/device_location.dart';
+import 'package:users/models/geo_location.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
 import 'package:users/utils/identify_device_location.dart';
 
@@ -15,7 +15,7 @@ class SearchServicesForm extends StatefulWidget {
 class _SearchServicesFormState extends State<SearchServicesForm> {
   final _formKey = GlobalKey<FormState>();
 
-  DeviceLocation? _pickedLocation;
+  GeoLocation? _pickedLocation;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
     final location =
         await Navigator.pushNamed(context, PickLocationScreen.routeName);
     if (location != null)
-      setState(() => _pickedLocation = location as DeviceLocation);
+      setState(() => _pickedLocation = location as GeoLocation);
   }
 
   @override

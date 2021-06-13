@@ -1,8 +1,9 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:users/models/device_location.dart';
+import 'package:users/models/geo_location.dart';
 
-Future<DeviceLocation> identifyDeviceLocation() async {
+/// Identify the current location of the device
+Future<GeoLocation> identifyDeviceLocation() async {
   bool serviceEnabled;
   LocationPermission permission;
 
@@ -38,7 +39,7 @@ Future<DeviceLocation> identifyDeviceLocation() async {
     placemark.country
   ], ', ');
 
-  return DeviceLocation(
+  return GeoLocation(
     latitule: geoPosition.latitude,
     longitude: geoPosition.longitude,
     address: addressBuilder.toString(),
