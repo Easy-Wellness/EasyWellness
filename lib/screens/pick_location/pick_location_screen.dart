@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:users/models/place_autocomplete_prediction.dart';
+import 'package:users/utils/predict_similar_places.dart';
 
 class PickLocationScreen extends StatelessWidget {
   static String routeName = '/pick_location';
@@ -23,6 +25,8 @@ class LocationSearchBar extends StatefulWidget {
 
 class _LocationSearchBarState extends State<LocationSearchBar> {
   final _controller = FloatingSearchBarController();
+  bool _isLoading = false;
+  List<PlaceAutocompletePrediction> _placePredictions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +37,12 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
     /// Unless [isScrollControlled] is set to true, the expandable body of a
     /// FloatingSearchBar must not have an unbounded height, meaning that
     /// [shrinkWrap] should be set to true on all [Scrollable]s
+    /// Read 'Usage with Scrollables' in the doc
 
-    /// [progress] to show the LinearProgressIndicator inside the card
     return FloatingSearchBar(
       controller: _controller,
+
+      progress: _isLoading,
       hint: 'Enter your location...',
 
       /// [bottom] of [scrollPadding] is the distance from the top of
@@ -51,9 +57,14 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
 
       physics: const BouncingScrollPhysics(),
       debounceDelay: const Duration(milliseconds: 800),
-      clearQueryOnClose: false,
-      onQueryChanged: (query) {
-        // Call your model, bloc, controller here.
+      clearQueryOnClose: true,
+      onQueryChanged: (input) async {
+        setState(() => _isLoading = true);
+        final predictions = await predictSimilarPlaces(input);
+        setState(() {
+          _isLoading = false;
+          _placePredictions = predictions;
+        });
       },
       actions: [
         FloatingSearchBarAction(
@@ -74,16 +85,21 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
         color: Colors.white,
         elevation: 4.0,
         borderRadius: BorderRadius.circular(8),
-        child: Column(
-          children: List.generate(15, (i) => i)
-              .map((location) => InkWell(
-                    onTap: () =>
-                        Navigator.pop(context, '$location) white house'),
-                    child: ListTile(
-                      title: Text('$location) white house'),
-                    ),
-                  ))
-              .toList(),
+        child: ListView.separated(
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          itemCount: _placePredictions.length,
+          itemBuilder: (context, index) => InkWell(
+            onTap: () => print(_placePredictions[index].description),
+            child: ListTile(
+              title:
+                  Text(_placePredictions[index].structuredFormatting.mainText),
+              subtitle: Text(
+                  _placePredictions[index].structuredFormatting.secondaryText),
+              leading: Icon(Icons.place),
+            ),
+          ),
+          separatorBuilder: (_, __) => Divider(thickness: 1),
         ),
       ),
     );
