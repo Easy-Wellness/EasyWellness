@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:users/constants/google_maps_platform.dart';
 import 'package:users/models/place_autocomplete_prediction.dart';
 
 /// Place Autocomplete API returns up to 5 results
@@ -10,10 +11,10 @@ Future<List<PlaceAutocompletePrediction>> predictSimilarPlaces(
   // TODO cache predictions for each input to not make a request if the user enters the same input
   if (input.length <= 2) return [];
   final placeAutocompleteAPI = Uri.https(
-    'maps.googleapis.com',
-    '/maps/api/place/autocomplete/json',
+    GoogleMapsPlatform.uriAuthority,
+    GoogleMapsPlatform.placeAutocompleteUriPath,
     {
-      'key': 'your key',
+      'key': GoogleMapsPlatform.apiKey,
       'input': input,
       'components': 'country:vn',
     },
