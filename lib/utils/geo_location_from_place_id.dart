@@ -11,7 +11,7 @@ Future<GeoLocation> geoLocationFromPlaceId(String placeId) async {
     'maps.googleapis.com',
     '/maps/api/geocode/json',
     {
-      'key': google_maps_api_key,
+      'key': googleMapsApiKey,
       'place_id': placeId,
     },
   );
