@@ -44,7 +44,7 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
       controller: _controller,
 
       progress: _isLoading,
-      hint: 'Enter your location...',
+      hint: 'Find your location here...',
 
       /// [bottom] of [scrollPadding] is the distance from the top of
       /// the on-screen keyboard to the bottom of the expandable body

@@ -36,20 +36,20 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: ListView(
         children: <Widget>[
           FormField<String>(
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please select a specialty'
-                : null,
             builder: (fieldState) => DropdownSearch<String>(
+              validator: (value) =>
+                  value == null ? 'Please select a specialty' : null,
               mode: Mode.MENU,
               showSelectedItem: true,
               showClearButton: true,
               items: SPECIALTIES,
               itemAsString: (value) => value.titleCase,
-              label: 'Specialty',
               popupItemDisabled: (value) => value == fieldState.value,
+              label: 'Specialty*',
               onChanged: (value) => fieldState.didChange(value),
               popupItemBuilder: (_, value, isSelected) {
                 return Container(
@@ -76,7 +76,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             ),
           ),
           SizedBox(
-            height: 4,
+            height: 16,
           ),
           TextButton(
             onPressed: () => _navigateToGetUserLocation(context),
@@ -96,6 +96,9 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                 Icon(Icons.keyboard_arrow_right),
               ],
             ),
+          ),
+          SizedBox(
+            height: 16,
           ),
           ElevatedButton.icon(
             onPressed: _pickedLocation != null
