@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:users/constants/misc.dart';
+import 'package:users/constants/secrets.dart';
 import 'package:users/models/place_autocomplete_prediction.dart';
 
 /// Place Autocomplete API returns up to 5 results

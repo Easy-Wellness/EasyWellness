@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:users/constants/misc.dart';
+import 'package:users/constants/secrets.dart';
 import 'package:users/models/geo_location.dart';
 import 'package:users/models/google_maps_geocode_result.dart';
 
