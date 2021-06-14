@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:users/models/place_autocomplete_prediction.dart';
+import 'package:users/utils/geo_location_from_place_id.dart';
 import 'package:users/utils/predict_similar_places.dart';
 
 class PickLocationScreen extends StatelessWidget {
@@ -90,7 +91,11 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
           padding: EdgeInsets.symmetric(vertical: 8),
           itemCount: _placePredictions.length,
           itemBuilder: (context, index) => InkWell(
-            onTap: () => print(_placePredictions[index].description),
+            onTap: () async {
+              final location = await geoLocationFromPlaceId(
+                  _placePredictions[index].placeId);
+              Navigator.pop(context, location);
+            },
             child: ListTile(
               title:
                   Text(_placePredictions[index].structuredFormatting.mainText),
