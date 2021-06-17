@@ -50,6 +50,11 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               itemAsString: (value) => value.titleCase,
               popupItemDisabled: (value) => value == fieldState.value,
               label: 'Specialty*',
+              dropdownSearchDecoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                border: OutlineInputBorder(),
+                helperText: '',
+              ),
               onChanged: (value) => fieldState.didChange(value),
               popupItemBuilder: (_, value, isSelected) {
                 return Container(
@@ -76,7 +81,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             ),
           ),
           SizedBox(
-            height: 16,
+            height: 8,
           ),
           TextButton(
             onPressed: () => _navigateToGetUserLocation(context),
