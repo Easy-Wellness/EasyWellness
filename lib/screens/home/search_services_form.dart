@@ -49,6 +49,11 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               items: SPECIALTIES,
               itemAsString: (value) => value.titleCase,
               popupItemDisabled: (value) => value == fieldState.value,
+              popupSafeArea: const PopupSafeArea(bottom: true),
+              scrollbarProps: ScrollbarProps(
+                interactive: true,
+                isAlwaysShown: true,
+              ),
               label: 'Specialty*',
               dropdownSearchDecoration: InputDecoration(
                 contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
