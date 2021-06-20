@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'google_maps_geocode_result.g.dart';
+part 'google_maps_geocode_result.model.g.dart';
 
 @JsonSerializable()
 class GoogleMapsGeocodeResult {

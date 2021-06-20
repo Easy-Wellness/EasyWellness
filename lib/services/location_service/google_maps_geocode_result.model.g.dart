@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'google_maps_geocode_result.dart';
+part of 'google_maps_geocode_result.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

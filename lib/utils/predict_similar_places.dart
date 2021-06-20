@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:users/constants/env.dart';
-import 'package:users/models/place_autocomplete_prediction.dart';
+import 'package:users/services/location_service/place_autocomplete_prediction.model.dart';
 
 /// Place Autocomplete API returns up to 5 results
 Future<List<PlaceAutocompletePrediction>> predictSimilarPlaces(

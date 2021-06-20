@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'place_autocomplete_prediction.g.dart';
+part 'place_autocomplete_prediction.model.g.dart';
 
 /// Models used to parse the JSON predictions from the Google Maps Platform
 /// Autocomplete API. Documentation here: https://developers.google.com/maps/documentation/places/web-service/autocomplete#place_autocomplete_results

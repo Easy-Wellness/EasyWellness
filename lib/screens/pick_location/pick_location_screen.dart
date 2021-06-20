@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:users/models/place_autocomplete_prediction.dart';
+import 'package:users/services/location_service/place_autocomplete_prediction.model.dart';
 import 'package:users/utils/geo_location_from_place_id.dart';
 import 'package:users/utils/predict_similar_places.dart';
 

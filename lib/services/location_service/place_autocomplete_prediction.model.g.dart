@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'place_autocomplete_prediction.dart';
+part of 'place_autocomplete_prediction.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
