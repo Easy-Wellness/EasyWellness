@@ -5,7 +5,7 @@ import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
 import 'package:users/services/location_service/geo_location.model.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
-import 'package:users/utils/identify_device_location.dart';
+import 'package:users/services/location_service/identify_device_current_location.service.dart';
 
 class SearchServicesForm extends StatefulWidget {
   @override
@@ -20,7 +20,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
   @override
   void initState() {
     super.initState();
-    identifyDeviceLocation()
+    identifyDeviceCurrentLocation()
         .then((location) => setState(() => _pickedLocation = location))
         .catchError(print);
   }

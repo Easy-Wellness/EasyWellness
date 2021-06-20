@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:users/services/location_service/geo_location_from_place_id.service.dart';
 import 'package:users/services/location_service/place_autocomplete_prediction.model.dart';
-import 'package:users/utils/geo_location_from_place_id.dart';
-import 'package:users/utils/predict_similar_places.dart';
+import 'package:users/services/location_service/predict_similar_places.service.dart';
 
 class PickLocationScreen extends StatelessWidget {
   static String routeName = '/pick_location';

@@ -1,9 +1,9 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:users/services/location_service/geo_location.model.dart';
 
-/// Identify the current location of the device
-Future<GeoLocation> identifyDeviceLocation() async {
+import 'geo_location.model.dart';
+
+Future<GeoLocation> identifyDeviceCurrentLocation() async {
   bool serviceEnabled;
   LocationPermission permission;
 
@@ -19,7 +19,8 @@ Future<GeoLocation> identifyDeviceLocation() async {
 
   if (permission == LocationPermission.deniedForever)
     return Future.error(
-        'Location permissions are permanently denied, we cannot find your current location');
+        '''Location permissions are permanently denied, we cannot find your
+        current location''');
 
   final geoPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation);

@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:users/constants/env.dart';
-import 'package:users/services/location_service/geo_location.model.dart';
-import 'package:users/services/location_service/google_maps_geocode_result.model.dart';
 
+import 'package:users/constants/env.dart';
+
+import 'geo_location.model.dart';
+import 'google_maps_geocode_result.model.dart';
+
+/// Find a place with a particular [placeId] on Google Maps and
+/// get its geographic coordinates and street address [GeoLocation]
 Future<GeoLocation> geoLocationFromPlaceId(String placeId) async {
   final geocodingAPI = Uri.https(
     'maps.googleapis.com',
