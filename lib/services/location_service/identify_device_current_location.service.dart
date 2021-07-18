@@ -1,7 +1,7 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'geo_location.model.dart';
+import 'package:users/models/location/geo_location.model.dart';
 
 Future<GeoLocation> identifyDeviceCurrentLocation() async {
   bool serviceEnabled;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
-import 'package:users/services/location_service/geo_location.model.dart';
 import 'package:users/screens/pick_location/pick_location_screen.dart';
+import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/services/location_service/identify_device_current_location.service.dart';
 
 class SearchServicesForm extends StatefulWidget {
@@ -52,7 +52,6 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               popupSafeArea: const PopupSafeArea(bottom: true),
               scrollbarProps: ScrollbarProps(
                 interactive: true,
-                isAlwaysShown: true,
               ),
               label: 'Specialty*',
               dropdownSearchDecoration: InputDecoration(

@@ -28,13 +28,13 @@ class GoogleMapsGeocodeResult {
 class Geometry {
   Geometry({
     required this.location,
-    required this.locationType,
     required this.viewport,
+    this.locationType,
     this.bounds,
   });
 
   @JsonKey(name: 'location_type')
-  final String locationType;
+  final String? locationType;
   final GoogleMapsLocation location;
   final Bounds viewport;
   final Bounds? bounds;

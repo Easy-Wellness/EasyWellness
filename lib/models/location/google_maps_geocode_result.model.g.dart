@@ -27,8 +27,8 @@ Geometry _$GeometryFromJson(Map<String, dynamic> json) {
   return Geometry(
     location:
         GoogleMapsLocation.fromJson(json['location'] as Map<String, dynamic>),
-    locationType: json['location_type'] as String,
     viewport: Bounds.fromJson(json['viewport'] as Map<String, dynamic>),
+    locationType: json['location_type'] as String?,
     bounds: json['bounds'] == null
         ? null
         : Bounds.fromJson(json['bounds'] as Map<String, dynamic>),

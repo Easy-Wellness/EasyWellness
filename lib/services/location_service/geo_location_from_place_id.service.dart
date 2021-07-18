@@ -4,9 +4,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import 'package:users/constants/env.dart';
-
-import 'geo_location.model.dart';
-import 'google_maps_geocode_result.model.dart';
+import 'package:users/models/location/geo_location.model.dart';
+import 'package:users/models/location/google_maps_geocode_result.model.dart';
 
 /// Find a place with a particular [placeId] on Google Maps and
 /// get its geographic coordinates and street address [GeoLocation]
