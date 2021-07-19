@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:users/models/location/gmp_place_autocomplete.model.dart';
 import 'package:users/services/location_service/geo_location_from_place_id.service.dart';
-import 'package:users/models/location/place_autocomplete_prediction.model.dart';
 import 'package:users/services/location_service/predict_similar_places.service.dart';
 
 class PickLocationScreen extends StatelessWidget {
@@ -27,7 +27,7 @@ class LocationSearchBar extends StatefulWidget {
 class _LocationSearchBarState extends State<LocationSearchBar> {
   final _controller = FloatingSearchBarController();
   bool _isLoading = false;
-  List<PlaceAutocompletePrediction> _placePredictions = [];
+  List<GoogleMapsPlaceAutocomplete> _placePredictions = [];
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'google_maps_geocode_result.model.dart';
+part of 'gmp_geocode_result.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -25,10 +25,10 @@ Map<String, dynamic> _$GoogleMapsGeocodeResultToJson(
 
 Geometry _$GeometryFromJson(Map<String, dynamic> json) {
   return Geometry(
-    location:
-        GoogleMapsLocation.fromJson(json['location'] as Map<String, dynamic>),
+    location: GoogleMapsLocation.fromJson(
+        json['location_type'] as Map<String, dynamic>),
     viewport: Bounds.fromJson(json['viewport'] as Map<String, dynamic>),
-    locationType: json['location_type'] as String?,
+    locationType: json['locationType'] as String?,
     bounds: json['bounds'] == null
         ? null
         : Bounds.fromJson(json['bounds'] as Map<String, dynamic>),
@@ -36,9 +36,9 @@ Geometry _$GeometryFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$GeometryToJson(Geometry instance) => <String, dynamic>{
-      'location_type': instance.locationType,
-      'location': instance.location,
+      'location_type': instance.location,
       'viewport': instance.viewport,
+      'locationType': instance.locationType,
       'bounds': instance.bounds,
     };
 

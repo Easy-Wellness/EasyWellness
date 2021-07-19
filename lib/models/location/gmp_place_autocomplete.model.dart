@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'place_autocomplete_prediction.model.g.dart';
+part 'gmp_place_autocomplete.model.g.dart';
 
 /// Models used to parse the JSON predictions from the Google Maps Platform
 /// Autocomplete API. Documentation here: https://developers.google.com/maps/documentation/places/web-service/autocomplete#place_autocomplete_results
@@ -9,7 +9,7 @@ part 'place_autocomplete_prediction.model.g.dart';
 /// JSON over the internet. However, toJson() methods are added to
 /// turn off the linter warnings.
 @JsonSerializable()
-class PlaceAutocompletePrediction {
+class GoogleMapsPlaceAutocomplete {
   @JsonKey(name: 'place_id')
   final String placeId;
 
@@ -18,16 +18,16 @@ class PlaceAutocompletePrediction {
   @JsonKey(name: 'structured_formatting')
   final StructuredFormatting structuredFormatting;
 
-  PlaceAutocompletePrediction({
+  GoogleMapsPlaceAutocomplete({
     required this.placeId,
     required this.description,
     required this.structuredFormatting,
   });
 
-  factory PlaceAutocompletePrediction.fromJson(Map<String, dynamic> json) =>
-      _$PlaceAutocompletePredictionFromJson(json);
+  factory GoogleMapsPlaceAutocomplete.fromJson(Map<String, dynamic> json) =>
+      _$GoogleMapsPlaceAutocompleteFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PlaceAutocompletePredictionToJson(this);
+  Map<String, dynamic> toJson() => _$GoogleMapsPlaceAutocompleteToJson(this);
 }
 
 @JsonSerializable()

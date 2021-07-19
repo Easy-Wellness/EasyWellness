@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'google_maps_geocode_result.model.g.dart';
+part 'gmp_geocode_result.model.g.dart';
 
 @JsonSerializable()
 class GoogleMapsGeocodeResult {
@@ -34,9 +34,9 @@ class Geometry {
   });
 
   @JsonKey(name: 'location_type')
-  final String? locationType;
   final GoogleMapsLocation location;
   final Bounds viewport;
+  final String? locationType;
   final Bounds? bounds;
 
   factory Geometry.fromJson(Map<String, dynamic> json) =>

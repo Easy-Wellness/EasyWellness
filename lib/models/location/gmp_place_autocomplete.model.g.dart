@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'place_autocomplete_prediction.model.dart';
+part of 'gmp_place_autocomplete.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PlaceAutocompletePrediction _$PlaceAutocompletePredictionFromJson(
+GoogleMapsPlaceAutocomplete _$GoogleMapsPlaceAutocompleteFromJson(
     Map<String, dynamic> json) {
-  return PlaceAutocompletePrediction(
+  return GoogleMapsPlaceAutocomplete(
     placeId: json['place_id'] as String,
     description: json['description'] as String,
     structuredFormatting: StructuredFormatting.fromJson(
@@ -16,8 +16,8 @@ PlaceAutocompletePrediction _$PlaceAutocompletePredictionFromJson(
   );
 }
 
-Map<String, dynamic> _$PlaceAutocompletePredictionToJson(
-        PlaceAutocompletePrediction instance) =>
+Map<String, dynamic> _$GoogleMapsPlaceAutocompleteToJson(
+        GoogleMapsPlaceAutocomplete instance) =>
     <String, dynamic>{
       'place_id': instance.placeId,
       'description': instance.description,
