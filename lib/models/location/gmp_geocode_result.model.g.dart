@@ -10,7 +10,8 @@ GoogleMapsGeocodeResult _$GoogleMapsGeocodeResultFromJson(
     Map<String, dynamic> json) {
   return GoogleMapsGeocodeResult(
     formattedAddress: json['formatted_address'] as String,
-    geometry: Geometry.fromJson(json['geometry'] as Map<String, dynamic>),
+    geometry:
+        GoogleMapsGeometry.fromJson(json['geometry'] as Map<String, dynamic>),
     placeId: json['place_id'] as String,
   );
 }
@@ -23,23 +24,24 @@ Map<String, dynamic> _$GoogleMapsGeocodeResultToJson(
       'geometry': instance.geometry,
     };
 
-Geometry _$GeometryFromJson(Map<String, dynamic> json) {
-  return Geometry(
-    location: GoogleMapsLocation.fromJson(
-        json['location_type'] as Map<String, dynamic>),
+GoogleMapsGeometry _$GoogleMapsGeometryFromJson(Map<String, dynamic> json) {
+  return GoogleMapsGeometry(
+    location:
+        GoogleMapsLocation.fromJson(json['location'] as Map<String, dynamic>),
     viewport: Bounds.fromJson(json['viewport'] as Map<String, dynamic>),
-    locationType: json['locationType'] as String?,
+    locationType: json['location_type'] as String?,
     bounds: json['bounds'] == null
         ? null
         : Bounds.fromJson(json['bounds'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$GeometryToJson(Geometry instance) => <String, dynamic>{
-      'location_type': instance.location,
+Map<String, dynamic> _$GoogleMapsGeometryToJson(GoogleMapsGeometry instance) =>
+    <String, dynamic>{
+      'location': instance.location,
       'viewport': instance.viewport,
-      'locationType': instance.locationType,
       'bounds': instance.bounds,
+      'location_type': instance.locationType,
     };
 
 Bounds _$BoundsFromJson(Map<String, dynamic> json) {

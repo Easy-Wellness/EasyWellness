@@ -16,7 +16,7 @@ class GoogleMapsGeocodeResult {
   @JsonKey(name: 'place_id')
   final String placeId;
 
-  final Geometry geometry;
+  final GoogleMapsGeometry geometry;
 
   factory GoogleMapsGeocodeResult.fromJson(Map<String, dynamic> json) =>
       _$GoogleMapsGeocodeResultFromJson(json);
@@ -25,24 +25,25 @@ class GoogleMapsGeocodeResult {
 }
 
 @JsonSerializable()
-class Geometry {
-  Geometry({
+class GoogleMapsGeometry {
+  GoogleMapsGeometry({
     required this.location,
     required this.viewport,
     this.locationType,
     this.bounds,
   });
 
-  @JsonKey(name: 'location_type')
   final GoogleMapsLocation location;
   final Bounds viewport;
-  final String? locationType;
   final Bounds? bounds;
+  
+  @JsonKey(name: 'location_type')
+  final String? locationType;
 
-  factory Geometry.fromJson(Map<String, dynamic> json) =>
-      _$GeometryFromJson(json);
+  factory GoogleMapsGeometry.fromJson(Map<String, dynamic> json) =>
+      _$GoogleMapsGeometryFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GeometryToJson(this);
+  Map<String, dynamic> toJson() => _$GoogleMapsGeometryToJson(this);
 }
 
 @JsonSerializable()
