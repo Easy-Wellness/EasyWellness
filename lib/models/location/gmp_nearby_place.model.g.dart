@@ -15,7 +15,7 @@ GoogleMapsNearbyPlace _$GoogleMapsNearbyPlaceFromJson(
     name: json['name'] as String,
     placeId: json['place_id'] as String,
     plusCode: PlusCode.fromJson(json['plus_code'] as Map<String, dynamic>),
-    rating: json['rating'] as int,
+    rating: (json['rating'] as num).toDouble(),
     userRatingsTotal: json['user_ratings_total'] as int,
     vicinity: json['vicinity'] as String,
   );

@@ -19,7 +19,7 @@ class GoogleMapsNearbyPlace {
   });
 
   final String name;
-  final int rating;
+  final double rating;
   final String vicinity;
   final GoogleMapsGeometry geometry;
 
