@@ -1,4 +1,4 @@
-const SPECIALTIES = [
+const specialties = [
   'dermatology', // skin, hair, nails, and some cosmetic problems.
   'ophthalmology', // diagnosis and treatment of disorders of the eye
   'dental',

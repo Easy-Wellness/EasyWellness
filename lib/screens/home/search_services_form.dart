@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
-import 'package:users/screens/pick_location/pick_location_screen.dart';
 import 'package:users/models/location/geo_location.model.dart';
+import 'package:users/screens/pick_location/pick_location_screen.dart';
+import 'package:users/screens/search_services/search_services_screen.dart';
 import 'package:users/services/location_service/identify_device_current_location.service.dart';
 
 class SearchServicesForm extends StatefulWidget {
@@ -46,7 +47,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               mode: Mode.MENU,
               showSelectedItem: true,
               showClearButton: true,
-              items: SPECIALTIES,
+              items: specialties,
               itemAsString: (value) => value.titleCase,
               popupItemDisabled: (value) => value == fieldState.value,
               popupSafeArea: const PopupSafeArea(bottom: true),
@@ -111,7 +112,12 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
           ),
           ElevatedButton.icon(
             onPressed: _pickedLocation != null
-                ? () => {if (_formKey.currentState!.validate()) {}}
+                ? () {
+                    if (_formKey.currentState!.validate())
+                      Navigator.pushNamed(
+                          context, SearchServicesScreen.routeName,
+                          arguments: _pickedLocation!);
+                  }
                 : null,
             icon: Icon(Icons.search_sharp),
             label: Text('Search'),
