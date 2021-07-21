@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/location/gmp_nearby_place.model.dart';
@@ -50,9 +51,23 @@ class Body extends StatelessWidget {
                     return InkWell(
                       onTap: () {},
                       child: ListTile(
-                        title: Text('$index ${service.name}'),
+                        leading: Column(
+                          children: [
+                            RatingBarIndicator(
+                              rating: service.rating,
+                              itemCount: 5,
+                              itemSize: 10,
+                              itemBuilder: (_, index) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                            ),
+                            Text('${service.rating}'),
+                          ],
+                        ),
+                        title: Text('${service.name}'),
                         subtitle: Text(addressBuilder.toString()),
-                        trailing: Text('${distance.round()} km'),
+                        trailing: Text('${distance.toStringAsFixed(2)} km'),
                       ),
                     );
                   },
