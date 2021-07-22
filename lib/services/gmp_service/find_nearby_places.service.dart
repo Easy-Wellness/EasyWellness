@@ -11,7 +11,7 @@ import 'package:users/models/location/gmp_nearby_place.model.dart';
 Future<List<GoogleMapsNearbyPlace>> findNearbyPlaces({
   double latitude = 10.747754,
   double longitude = 106.636902,
-  int radius = 15000,
+  int radius = 20000,
   String type = 'convenience_store',
   String keyword = 'family',
   String? pageToken,
@@ -41,7 +41,7 @@ Future<List<GoogleMapsNearbyPlace>> findNearbyPlaces({
     if (nextPageToken != null) {
       /// There is a delay between when a [next_page_token] is issued, and
       /// when it will become valid
-      await Future.delayed(Duration(milliseconds: 1700));
+      await Future.delayed(Duration(seconds: 2));
       return await findNearbyPlaces(
           pageToken: nextPageToken, places: [...places, ...currentPage]);
     } else
