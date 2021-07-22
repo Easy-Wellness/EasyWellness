@@ -46,8 +46,7 @@ class Body extends StatelessWidget {
                         1000;
                     final addressBuilder = StringBuffer()
                       ..write('${service.vicinity}, ')
-                      ..write(service.plusCode.compoundCode.substring(8))
-                      ..toString();
+                      ..write(service.plusCode.compoundCode.substring(8));
                     return InkWell(
                       onTap: () {},
                       child: ListTile(
@@ -62,12 +61,28 @@ class Body extends StatelessWidget {
                                 color: Colors.amber,
                               ),
                             ),
+                            SizedBox(height: 8),
                             Text('${service.rating}'),
                           ],
                         ),
                         title: Text('${service.name}'),
                         subtitle: Text(addressBuilder.toString()),
-                        trailing: Text('${distance.toStringAsFixed(2)} km'),
+                        trailing: RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.bodyText2,
+                            children: [
+                              TextSpan(
+                                  text: '${distance.toStringAsFixed(2)} km'),
+                              WidgetSpan(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 2, bottom: 2),
+                                  child: Icon(Icons.near_me, size: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },
