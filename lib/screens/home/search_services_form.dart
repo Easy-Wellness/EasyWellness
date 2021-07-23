@@ -17,6 +17,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
   final _formKey = GlobalKey<FormState>();
 
   GeoLocation? _pickedLocation;
+  String chosenSpecialty = '';
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             builder: (fieldState) => DropdownSearch<String>(
               validator: (value) =>
                   value == null ? 'Please select a specialty' : null,
+              onSaved: (value) => {chosenSpecialty = value!},
               mode: Mode.MENU,
               showSelectedItem: true,
               showClearButton: true,
@@ -113,10 +115,15 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
           ElevatedButton.icon(
             onPressed: _pickedLocation != null
                 ? () {
-                    if (_formKey.currentState!.validate())
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
                       Navigator.pushNamed(
                           context, SearchServicesScreen.routeName,
-                          arguments: _pickedLocation!);
+                          arguments: {
+                            'center': _pickedLocation!,
+                            'specialty': chosenSpecialty,
+                          });
+                    }
                   }
                 : null,
             icon: Icon(Icons.search_sharp),

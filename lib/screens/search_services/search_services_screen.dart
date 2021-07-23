@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
-import 'package:users/models/location/gmp_nearby_place.model.dart';
-import 'package:users/services/gmp_service/find_nearby_places.service.dart';
+import 'package:users/models/search_services/db_nearby_service.model.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static String routeName = '/search_services';
@@ -22,31 +23,38 @@ class SearchServicesScreen extends StatelessWidget {
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final centerLocation =
-        ModalRoute.of(context)!.settings.arguments as GeoLocation;
+    final args = _ScreenArguments.fromArgs(
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
+    final center = args.center;
+    final specialty = args.specialty;
     return Material(
-      child: FutureBuilder(
-          future: findNearbyPlaces(),
+      child: StreamBuilder<DocSnapshotList>(
+          stream: _servicesAroundLocationStream(center, specialty),
           builder: (context, snapshot) {
-            if (snapshot.hasData)
+            if (snapshot.connectionState == ConnectionState.none ||
+                snapshot.connectionState == ConnectionState.waiting)
+              return Center(child: CircularProgressIndicator());
+
+            if (snapshot.hasError) print(snapshot.error);
+
+            if (snapshot.hasData) {
+              final nearbyServices = snapshot.data ?? [];
               return Scrollbar(
+                isAlwaysShown: true,
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 8),
-                  itemCount: (snapshot.data as List).length,
+                  itemCount: nearbyServices.length,
                   separatorBuilder: (_, __) => Divider(thickness: 1),
                   itemBuilder: (context, index) {
-                    final service =
-                        (snapshot.data as List<GoogleMapsNearbyPlace>)[index];
+                    final data = nearbyServices[index].data()!;
+                    final service = DbNearbyService.fromJson(data);
                     final distance = Geolocator.distanceBetween(
-                          centerLocation.latitule,
-                          centerLocation.longitude,
-                          service.geometry.location.lat,
-                          service.geometry.location.lng,
+                          center.latitule,
+                          center.longitude,
+                          service.geoPosition.geopoint.latitude,
+                          service.geoPosition.geopoint.longitude,
                         ) /
                         1000;
-                    final addressBuilder = StringBuffer()
-                      ..write('${service.vicinity}, ')
-                      ..write(service.plusCode.compoundCode.substring(8));
                     return InkWell(
                       onTap: () {},
                       child: ListTile(
@@ -66,7 +74,7 @@ class Body extends StatelessWidget {
                           ],
                         ),
                         title: Text('${service.name}'),
-                        subtitle: Text(addressBuilder.toString()),
+                        subtitle: Text(service.address),
                         trailing: RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.bodyText2,
@@ -88,8 +96,51 @@ class Body extends StatelessWidget {
                   },
                 ),
               );
-            return Center(child: CircularProgressIndicator());
+            }
+            return Center(child: Text('No nearby service is found'));
           }),
     );
   }
+}
+
+/// The only arguments that this screen will receive
+class _ScreenArguments {
+  final GeoLocation center;
+  final String specialty;
+
+  _ScreenArguments({required this.center, required this.specialty});
+
+  factory _ScreenArguments.fromArgs(Map<String, Object> args) =>
+      _ScreenArguments(
+        center: args['center'] as GeoLocation,
+        specialty: args['specialty'] as String,
+      );
+}
+
+typedef DocSnapshotList = List<DocumentSnapshot<Map<String, dynamic>>>;
+
+/// Get real-time stream of docs that exist within X km around the [location]
+Stream<DocSnapshotList> _servicesAroundLocationStream(
+    GeoLocation location, String specialty) {
+  final geo = Geoflutterfire();
+  final center =
+      geo.point(latitude: location.latitule, longitude: location.longitude);
+  final db = FirebaseFirestore.instance;
+  final queryRef =
+      db.collectionGroup('services').where('specialty', isEqualTo: specialty);
+
+  /// Optional parameter [strictMode = true] filters the docs
+  /// strictly within the bound of given radius.
+  ///
+  /// Each docSnapshot.data() also contains distance calculated on the query.
+  ///
+  /// Note: filtering for [strictMode] happens on client side,
+  /// hence filtering at larger radius is at the expense of
+  /// making unnecessary document reads.
+  return geo.collection(collectionRef: queryRef).within(
+        center: center,
+        radius: 9,
+        field: 'geoPosition',
+        strictMode: true,
+      );
 }
