@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/error/error_screen.dart';
+import 'package:users/screens/home/booking_screen.dart';
 import 'package:users/screens/home/home_screen.dart';
 import 'package:users/screens/loading/loading_screen.dart';
 import 'package:users/screens/login/login_screen.dart';
@@ -13,4 +14,5 @@ final Map<String, WidgetBuilder> routes = {
   HomeScreen.routeName: (_) => HomeScreen(),
   PickLocationScreen.routeName: (_) => PickLocationScreen(),
   SearchServicesScreen.routeName: (_) => SearchServicesScreen(),
+  BookingScreen.routeName: (_) => BookingScreen(),
 };

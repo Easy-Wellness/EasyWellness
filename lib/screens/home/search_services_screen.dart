@@ -5,6 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
+import 'package:users/screens/home/booking_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static String routeName = '/search_services';
@@ -21,10 +22,10 @@ class SearchServicesScreen extends StatelessWidget {
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final args = _ScreenArguments.fromArgs(
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
-    final center = args.center;
-    final specialty = args.specialty;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final center = args['center'] as GeoLocation;
+    final specialty = args['specialty'] as String;
     return Material(
       child: StreamBuilder<DocSnapshotList>(
           stream: _servicesAroundLocationStream(center, specialty),
@@ -53,7 +54,11 @@ class Body extends StatelessWidget {
                         ) /
                         1000;
                     return InkWell(
-                      onTap: () {},
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        BookingScreen.routeName,
+                        arguments: {'service': service},
+                      ),
                       child: ListTile(
                         leading: Column(
                           children: [
@@ -102,20 +107,6 @@ class Body extends StatelessWidget {
           }),
     );
   }
-}
-
-/// The only arguments that this screen will receive
-class _ScreenArguments {
-  final GeoLocation center;
-  final String specialty;
-
-  _ScreenArguments({required this.center, required this.specialty});
-
-  factory _ScreenArguments.fromArgs(Map<String, Object> args) =>
-      _ScreenArguments(
-        center: args['center'] as GeoLocation,
-        specialty: args['specialty'] as String,
-      );
 }
 
 typedef DocSnapshotList = List<DocumentSnapshot<Map<String, dynamic>>>;
