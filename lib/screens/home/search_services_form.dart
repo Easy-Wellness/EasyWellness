@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:recase/recase.dart';
 import 'package:users/constants/specialties.dart';
 import 'package:users/models/location/geo_location.model.dart';
-import 'package:users/screens/pick_location/pick_location_screen.dart';
-import 'package:users/screens/search_services/search_services_screen.dart';
+import 'package:users/screens/home/pick_location_screen.dart';
+import 'package:users/screens/home/search_services_screen.dart';
 import 'package:users/services/location_service/identify_device_current_location.service.dart';
 
 class SearchServicesForm extends StatefulWidget {
@@ -39,7 +39,8 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: ListView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FormField<String>(
             builder: (fieldState) => DropdownSearch<String>(

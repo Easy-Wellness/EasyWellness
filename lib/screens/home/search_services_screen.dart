@@ -4,7 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
-import 'package:users/models/search_services/db_nearby_service.model.dart';
+import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static String routeName = '/search_services';
@@ -40,7 +40,6 @@ class Body extends StatelessWidget {
             if (snapshot.hasData) {
               final nearbyServices = snapshot.data ?? [];
               return Scrollbar(
-                isAlwaysShown: true,
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 8),
                   itemCount: nearbyServices.length,
