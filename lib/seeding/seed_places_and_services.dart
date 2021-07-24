@@ -28,7 +28,9 @@ seedPlacesAndServices() async {
     });
     await Future.wait(
         specialties.map((specialty) => placeRef.collection('services').add({
-              'name': '$specialty ($clinicName)',
+              'serviceName': specialty,
+              'placeName': clinicName,
+              'placeId': place.placeId,
               'geoPosition': location.data,
               'address':
                   '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',

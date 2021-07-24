@@ -11,10 +11,12 @@ DbNearbyService _$DbNearbyServiceFromJson(Map<String, dynamic> json) {
     rating: (json['rating'] as num).toDouble(),
     ratingsTotal: json['ratingsTotal'] as int,
     specialty: json['specialty'] as String,
-    name: json['name'] as String,
+    serviceName: json['serviceName'] as String? ?? '',
+    placeName: json['placeName'] as String? ?? '',
+    placeId: json['placeId'] as String? ?? '',
+    address: json['address'] as String,
     geoPosition:
         GeoPosition.fromJson(json['geoPosition'] as Map<String, dynamic>),
-    address: json['address'] as String,
   );
 }
 
@@ -23,9 +25,11 @@ Map<String, dynamic> _$DbNearbyServiceToJson(DbNearbyService instance) =>
       'rating': instance.rating,
       'ratingsTotal': instance.ratingsTotal,
       'specialty': instance.specialty,
-      'name': instance.name,
       'address': instance.address,
       'geoPosition': instance.geoPosition,
+      'serviceName': instance.serviceName,
+      'placeName': instance.placeName,
+      'placeId': instance.placeId,
     };
 
 GeoPosition _$GeoPositionFromJson(Map<String, dynamic> json) {

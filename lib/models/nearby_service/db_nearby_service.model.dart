@@ -9,17 +9,27 @@ class DbNearbyService {
     required this.rating,
     required this.ratingsTotal,
     required this.specialty,
-    required this.name,
-    required this.geoPosition,
+    required this.serviceName,
+    required this.placeName,
+    required this.placeId,
     required this.address,
+    required this.geoPosition,
   });
 
   final double rating;
   final int ratingsTotal;
   final String specialty;
-  final String name;
   final String address;
   final GeoPosition geoPosition;
+
+  @JsonKey(defaultValue: '')
+  final String serviceName;
+
+  @JsonKey(defaultValue: '')
+  final String placeName;
+
+  @JsonKey(defaultValue: '')
+  final String placeId;
 
   factory DbNearbyService.fromJson(Map<String, dynamic> json) =>
       _$DbNearbyServiceFromJson(json);

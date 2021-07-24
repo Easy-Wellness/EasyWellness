@@ -12,9 +12,7 @@ class SearchServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Nearby Services'),
-      ),
+      appBar: AppBar(title: Text('Nearby Services')),
       body: SafeArea(child: Body()),
     );
   }
@@ -72,8 +70,12 @@ class Body extends StatelessWidget {
                             Text('${service.rating}'),
                           ],
                         ),
-                        title: Text('${service.name}'),
-                        subtitle: Text(service.address),
+                        title: Text(service.serviceName),
+                        subtitle: Text(
+                          '${service.address} (${service.placeName})',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                        ),
                         trailing: RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.bodyText2,
