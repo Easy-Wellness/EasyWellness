@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/error/error_screen.dart';
-import 'package:users/screens/home/booking_screen.dart';
+import 'package:users/screens/home/schedule_booking_screen.dart';
 import 'package:users/screens/home/home_screen.dart';
 import 'package:users/screens/loading/loading_screen.dart';
 import 'package:users/screens/login/login_screen.dart';
