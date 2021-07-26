@@ -14,5 +14,5 @@ final Map<String, WidgetBuilder> routes = {
   HomeScreen.routeName: (_) => HomeScreen(),
   PickLocationScreen.routeName: (_) => PickLocationScreen(),
   SearchServicesScreen.routeName: (_) => SearchServicesScreen(),
-  BookingScreen.routeName: (_) => BookingScreen(),
+  ScheduleBookingScreen.routeName: (_) => ScheduleBookingScreen(),
 };

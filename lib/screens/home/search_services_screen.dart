@@ -56,7 +56,7 @@ class Body extends StatelessWidget {
                     return InkWell(
                       onTap: () => Navigator.pushNamed(
                         context,
-                        BookingScreen.routeName,
+                        ScheduleBookingScreen.routeName,
                         arguments: {'service': service},
                       ),
                       child: ListTile(

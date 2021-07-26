@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 
-class BookingScreen extends StatelessWidget {
-  static const String routeName = '/create_booking';
+class ScheduleBookingScreen extends StatelessWidget {
+  static const String routeName = '/schedule_booking';
 
   @override
   Widget build(BuildContext context) {
