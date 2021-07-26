@@ -5,7 +5,7 @@ import 'package:users/services/auth_service/login_with_facebook.service.dart';
 import 'package:users/services/auth_service/login_with_google.service.dart';
 
 class LoginScreen extends StatelessWidget {
-  static String routeName = '/login';
+  static const String routeName = '/login';
 
   @override
   Widget build(BuildContext context) {

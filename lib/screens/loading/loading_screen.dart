@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {
-  static String routeName = '/loading';
+  static const String routeName = '/loading';
 
   @override
   Widget build(BuildContext context) {

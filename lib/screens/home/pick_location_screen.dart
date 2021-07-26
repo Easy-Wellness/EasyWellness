@@ -5,7 +5,7 @@ import 'package:users/services/gmp_service/geo_location_from_place_id.service.da
 import 'package:users/services/gmp_service/predict_similar_places.service.dart';
 
 class PickLocationScreen extends StatelessWidget {
-  static String routeName = '/pick_location';
+  static const String routeName = '/pick_location';
 
   @override
   Widget build(BuildContext context) {

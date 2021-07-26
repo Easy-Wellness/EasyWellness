@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:users/screens/home/search_services_form.dart';
 
 class HomeScreen extends StatelessWidget {
-  static String routeName = '/home';
+  static const String routeName = '/home';
 
   @override
   Widget build(BuildContext context) {

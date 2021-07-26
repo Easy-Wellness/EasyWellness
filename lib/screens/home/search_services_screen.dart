@@ -8,7 +8,7 @@ import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/home/schedule_booking_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
-  static String routeName = '/search_services';
+  static const String routeName = '/search_services';
 
   @override
   Widget build(BuildContext context) {

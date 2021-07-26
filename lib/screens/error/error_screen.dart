@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ErrorScreen extends StatelessWidget {
-  static String routeName = '/error';
+  static const String routeName = '/error';
 
   @override
   Widget build(BuildContext context) {
