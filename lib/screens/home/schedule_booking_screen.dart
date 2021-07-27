@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
+import 'package:users/screens/home/create_booking_screen.dart';
 
 class ScheduleBookingScreen extends StatelessWidget {
   static const String routeName = '/schedule_booking';
@@ -41,11 +42,13 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
   DateTime selectedDate = DateTime.now();
 
   Future<void> _selectDate(BuildContext context) async {
+    /// The returned DateTime contains only the date part, the time part is
+    /// ignored and always set to midnight T00:00:00.000
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: selectedDate,
-      lastDate: selectedDate.add(const Duration(days: 120)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 150)),
     );
     if (picked != null && picked != selectedDate)
       setState(() => selectedDate = picked);
@@ -68,7 +71,7 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
             ),
           ),
           const SizedBox(height: 16),
-          TimeSlotSelector(),
+          TimeSlotSelector(selectedDate: selectedDate),
         ],
       ),
     );
@@ -76,6 +79,11 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
 }
 
 class TimeSlotSelector extends StatefulWidget {
+  const TimeSlotSelector({Key? key, required this.selectedDate})
+      : super(key: key);
+
+  final DateTime selectedDate;
+
   @override
   TimeSlotSelectorState createState() => TimeSlotSelectorState();
 }
@@ -109,7 +117,13 @@ class TimeSlotSelectorState extends State<TimeSlotSelector> {
             children: [
               for (String key in timeSlots.keys)
                 OutlinedButton(
-                  onPressed: timeSlots[key] == 0 ? null : () {},
+                  onPressed: timeSlots[key] == 0
+                      ? null
+                      : () => Navigator.pushNamed(
+                              context, CreateBookingScreen.routeName,
+                              arguments: {
+                                'date': widget.selectedDate,
+                              }),
                   child: Text('$key AM'),
                 )
             ],
@@ -135,7 +149,13 @@ class TimeSlotSelectorState extends State<TimeSlotSelector> {
             children: [
               for (String key in timeSlots.keys)
                 OutlinedButton(
-                  onPressed: timeSlots[key] == 0 ? null : () {},
+                  onPressed: timeSlots[key] == 0
+                      ? null
+                      : () => Navigator.pushNamed(
+                              context, CreateBookingScreen.routeName,
+                              arguments: {
+                                'date': widget.selectedDate,
+                              }),
                   child: Text('$key PM'),
                 )
             ],
