@@ -108,19 +108,21 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
     BuildContext context, DateTime selectedDate) {
   /// There are at most 4 different objects in this list, each one is
   /// mapped to a different part of the day
-  final openingHoursInSecs = OpeningHours.fromJson(apptTimes)
+  final openingHoursInSecs = OpeningHours.fromJson(apptTimesInSecs)
           .hours
           .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
       as List<OpenCloseTimesInSecs>;
-  return openingHoursInSecs.map<ExpansionPanelRadio>((timesInSecs) {
+  return openingHoursInSecs.map<ExpansionPanelRadio>((rangeInSecs) {
+    final timesInSecs =
+        getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
     String header = '';
-    if (0 <= timesInSecs.open && timesInSecs.close <= 20700)
+    if (0 <= rangeInSecs.open && rangeInSecs.close <= 20700)
       header = 'Early Morning (from Midnight to 5:45 AM)';
-    if (21600 <= timesInSecs.open && timesInSecs.close <= 42300)
+    if (21600 <= rangeInSecs.open && rangeInSecs.close <= 42300)
       header = 'Morning (from 6AM to 11:45 AM)';
-    if (43200 <= timesInSecs.open && timesInSecs.close <= 63900)
+    if (43200 <= rangeInSecs.open && rangeInSecs.close <= 63900)
       header = 'Afternoon (from 12PM to 5:45 PM)';
-    if (64800 <= timesInSecs.open && timesInSecs.close <= 85500)
+    if (64800 <= rangeInSecs.open && rangeInSecs.close <= 85500)
       header = 'Evening (from 6PM to 11:45 PM)';
     return ExpansionPanelRadio(
       value: header,
@@ -139,41 +141,55 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
         crossAxisCount: 3,
         crossAxisSpacing: 15,
         mainAxisSpacing: 15,
-        children: getTimesInSecsFromRange(timesInSecs.open, timesInSecs.close)
-            .map((timeInSecs) => OutlinedButton(
-                  onPressed: () => Navigator.pushNamed(
-                      context, CreateBookingScreen.routeName,
-                      arguments: {
-                        'selecteDateTime':
-                            selectedDate.add(Duration(seconds: timeInSecs)),
-                      }),
-                  child: Text(secondsToTime(timeInSecs)),
-                ))
-            .toList(),
+        children: [
+          for (int timeInSecs in timesInSecs)
+            if (DateTime.now().add(const Duration(minutes: 40)).compareTo(
+                    selectedDate.add(Duration(seconds: timeInSecs))) <=
+                0)
+              OutlinedButton(
+                onPressed: () => Navigator.pushNamed(
+                    context, CreateBookingScreen.routeName,
+                    arguments: {
+                      'selecteDateTime':
+                          selectedDate.add(Duration(seconds: timeInSecs)),
+                    }),
+                child: Text(secondsToTime(timeInSecs)),
+              )
+        ],
       ),
     );
   }).toList(growable: false);
 }
 
-const apptTimes = {
+const apptTimesInSecs = {
   'hours': {
     'monday': [
-      {'open': 0, 'close': 19800},
-      {'open': 27000, 'close': 39600},
-      {'open': 43200, 'close': 61200},
-      {'open': 66600, 'close': 72000}
+      {'open': 0, 'close': 20700},
+      {'open': 21600, 'close': 42300},
+      {'open': 43200, 'close': 63900},
+      {'open': 64800, 'close': 85500}
     ],
     'tuesday': [
       {'open': 27000, 'close': 39600}
     ],
     'wednesday': [
+      {'open': 0, 'close': 20700},
+      {'open': 21600, 'close': 42300},
+      {'open': 43200, 'close': 63900},
+      {'open': 64800, 'close': 85500}
+    ],
+    'thursday': [
       {'open': 27000, 'close': 39600}
     ],
-    'thursday': [],
     'friday': [
       {'open': 50400, 'close': 63000}
     ],
-    'saturday': [],
+    'saturday': [
+      {'open': 0, 'close': 19800},
+      {'open': 27000, 'close': 39600},
+      {'open': 43200, 'close': 61200},
+      {'open': 66600, 'close': 72000}
+    ],
     'sunday': []
   },
   'hoursType': 'WEEKLY'
