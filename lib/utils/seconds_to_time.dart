@@ -1,7 +1,7 @@
 /// Display the number of seconds from midnight 12:00 AM to time
 /// in 12-hour format. The [seconds] passed in must be smaller than
 /// or equal to <= 24*3600
-String secondsToTime(seconds) {
+String secondsToTime(int seconds) {
   final duration = Duration(seconds: seconds);
   String twoDigits(int n) => n.toString().padLeft(2, '0');
 
