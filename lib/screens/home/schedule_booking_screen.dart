@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:users/models/booking/opening_hours.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/home/create_booking_screen.dart';
+import 'package:users/utils/get_times_in_secs_from_range.dart';
+import 'package:users/utils/seconds_to_time.dart';
 
 class ScheduleBookingScreen extends StatelessWidget {
   static const String routeName = '/schedule_booking';
@@ -39,7 +42,7 @@ class ScheduleTabView extends StatefulWidget {
 }
 
 class _ScheduleTabViewState extends State<ScheduleTabView> {
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateUtils.dateOnly(DateTime.now());
 
   Future<void> _selectDate(BuildContext context) async {
     /// The returned DateTime contains only the date part, the time part is
@@ -96,87 +99,82 @@ class TimeSlotSelectorState extends State<TimeSlotSelector> {
     return ExpansionPanelList.radio(
       animationDuration: const Duration(milliseconds: 800),
       expandedHeaderPadding: const EdgeInsets.all(8),
-      children: [
-        ExpansionPanelRadio(
-          value: 'morning',
-          canTapOnHeader: true,
-          headerBuilder: (context, isOpen) => ListTile(
-            title: Text(
-              'Morning (from 6AM to 11:45 AM)',
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-          body: GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            childAspectRatio: 3,
-            padding: const EdgeInsets.all(8),
-            crossAxisCount: 3,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-            children: [
-              for (String key in timeSlots.keys)
-                OutlinedButton(
-                  onPressed: timeSlots[key] == 0
-                      ? null
-                      : () => Navigator.pushNamed(
-                              context, CreateBookingScreen.routeName,
-                              arguments: {
-                                'date': widget.selectedDate,
-                              }),
-                  child: Text('$key AM'),
-                )
-            ],
-          ),
-        ),
-        ExpansionPanelRadio(
-          value: 'evening',
-          canTapOnHeader: true,
-          headerBuilder: (context, isOpen) => ListTile(
-            title: Text(
-              'Evening (from 6PM to 11:45 PM)',
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-          body: GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 3,
-            padding: const EdgeInsets.all(8),
-            crossAxisCount: 3,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-            children: [
-              for (String key in timeSlots.keys)
-                OutlinedButton(
-                  onPressed: timeSlots[key] == 0
-                      ? null
-                      : () => Navigator.pushNamed(
-                              context, CreateBookingScreen.routeName,
-                              arguments: {
-                                'date': widget.selectedDate,
-                              }),
-                  child: Text('$key PM'),
-                )
-            ],
-          ),
-        ),
-      ],
+      children: generateTimeSlotPanels(context, widget.selectedDate),
     );
   }
 }
 
-const Map<String, int> timeSlots = {
-  '06:00': 3,
-  '06:30': 0,
-  '07:00': 3,
-  '07:30': 0,
-  '08:00': 3,
-  '08:30': 0,
-  '09:00': 3,
-  '09:30': 3,
-  '10:00': 0,
-  '10:30': 3,
-  '11:00': 0,
-  '11:30': 3,
+List<ExpansionPanelRadio> generateTimeSlotPanels(
+    BuildContext context, DateTime selectedDate) {
+  /// There are at most 4 different objects in this list, each one is
+  /// mapped to a different part of the day
+  final openingHoursInSecs = OpeningHours.fromJson(apptTimes)
+          .hours
+          .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
+      as List<OpenCloseTimesInSecs>;
+  return openingHoursInSecs.map<ExpansionPanelRadio>((timesInSecs) {
+    String header = '';
+    if (0 <= timesInSecs.open && timesInSecs.close <= 20700)
+      header = 'Early Morning (from Midnight to 5:45 AM)';
+    if (21600 <= timesInSecs.open && timesInSecs.close <= 42300)
+      header = 'Morning (from 6AM to 11:45 AM)';
+    if (43200 <= timesInSecs.open && timesInSecs.close <= 63900)
+      header = 'Afternoon (from 12PM to 5:45 PM)';
+    if (64800 <= timesInSecs.open && timesInSecs.close <= 85500)
+      header = 'Evening (from 6PM to 11:45 PM)';
+    return ExpansionPanelRadio(
+      value: header,
+      canTapOnHeader: true,
+      headerBuilder: (context, isOpen) => ListTile(
+        title: Text(
+          header,
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: GridView.count(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        childAspectRatio: 3,
+        padding: const EdgeInsets.all(8),
+        crossAxisCount: 3,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+        children: getTimesInSecsFromRange(timesInSecs.open, timesInSecs.close)
+            .map((timeInSecs) => OutlinedButton(
+                  onPressed: () => Navigator.pushNamed(
+                      context, CreateBookingScreen.routeName,
+                      arguments: {
+                        'selecteDateTime':
+                            selectedDate.add(Duration(seconds: timeInSecs)),
+                      }),
+                  child: Text(secondsToTime(timeInSecs)),
+                ))
+            .toList(),
+      ),
+    );
+  }).toList(growable: false);
+}
+
+const apptTimes = {
+  'hours': {
+    'monday': [
+      {'open': 0, 'close': 19800},
+      {'open': 27000, 'close': 39600},
+      {'open': 43200, 'close': 61200},
+      {'open': 66600, 'close': 72000}
+    ],
+    'tuesday': [
+      {'open': 27000, 'close': 39600}
+    ],
+    'wednesday': [
+      {'open': 27000, 'close': 39600}
+    ],
+    'thursday': [],
+    'friday': [
+      {'open': 50400, 'close': 63000}
+    ],
+    'saturday': [],
+    'sunday': []
+  },
+  'hoursType': 'WEEKLY'
 };
