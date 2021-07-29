@@ -114,11 +114,11 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
       as List<OpenCloseTimesInSecs>;
   final List<ExpansionPanelRadio> panelRadios = [];
   openingHoursInSecs.forEach((rangeInSecs) {
-    if (selectedDate
-        .add(Duration(seconds: rangeInSecs.close))
-        .isBefore(DateTime.now().add(const Duration(minutes: 40)))) return;
     final timesInSecs =
         getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
+    if (selectedDate
+        .add(Duration(seconds: timesInSecs[timesInSecs.length - 1]))
+        .isBefore(DateTime.now().add(const Duration(minutes: 40)))) return;
     String header = '';
     if (0 <= rangeInSecs.open && rangeInSecs.close <= 20700)
       header = 'Early Morning (from Midnight to 5:45 AM)';
