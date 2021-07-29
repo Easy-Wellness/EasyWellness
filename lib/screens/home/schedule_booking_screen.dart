@@ -112,7 +112,11 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
           .hours
           .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
       as List<OpenCloseTimesInSecs>;
-  return openingHoursInSecs.map<ExpansionPanelRadio>((rangeInSecs) {
+  final List<ExpansionPanelRadio> panelRadios = [];
+  openingHoursInSecs.forEach((rangeInSecs) {
+    if (selectedDate
+        .add(Duration(seconds: rangeInSecs.close))
+        .isBefore(DateTime.now().add(const Duration(minutes: 40)))) return;
     final timesInSecs =
         getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
     String header = '';
@@ -124,7 +128,7 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
       header = 'Afternoon (from 12PM to 5:45 PM)';
     if (64800 <= rangeInSecs.open && rangeInSecs.close <= 85500)
       header = 'Evening (from 6PM to 11:45 PM)';
-    return ExpansionPanelRadio(
+    panelRadios.add(ExpansionPanelRadio(
       value: header,
       canTapOnHeader: true,
       headerBuilder: (context, isOpen) => ListTile(
@@ -157,8 +161,9 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
               )
         ],
       ),
-    );
-  }).toList(growable: false);
+    ));
+  });
+  return panelRadios;
 }
 
 const apptTimesInSecs = {
@@ -173,13 +178,13 @@ const apptTimesInSecs = {
       {'open': 27000, 'close': 39600}
     ],
     'wednesday': [
+      {'open': 27000, 'close': 39600},
+    ],
+    'thursday': [
       {'open': 0, 'close': 20700},
       {'open': 21600, 'close': 42300},
       {'open': 43200, 'close': 63900},
-      {'open': 64800, 'close': 85500}
-    ],
-    'thursday': [
-      {'open': 27000, 'close': 39600}
+      {'open': 64800, 'close': 85500},
     ],
     'friday': [
       {'open': 50400, 'close': 63000}
