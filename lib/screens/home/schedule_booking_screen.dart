@@ -59,7 +59,7 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [
@@ -74,51 +74,62 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
             ),
           ),
           const SizedBox(height: 16),
-          TimeSlotSelector(selectedDate: selectedDate),
+
+          /// Must drop a unique key here or
+          /// an unknown weird error will be thown (I don't know why)
+          DayPartPanelList(key: UniqueKey(), selectedDate: selectedDate),
         ],
       ),
     );
   }
 }
 
-class TimeSlotSelector extends StatefulWidget {
-  const TimeSlotSelector({Key? key, required this.selectedDate})
+class DayPartPanelList extends StatelessWidget {
+  const DayPartPanelList({Key? key, required this.selectedDate})
       : super(key: key);
 
   final DateTime selectedDate;
 
   @override
-  TimeSlotSelectorState createState() => TimeSlotSelectorState();
-}
-
-class TimeSlotSelectorState extends State<TimeSlotSelector> {
-  /// Maintain a list of which panels are opened
-  int? currentOpenPanel;
-  @override
   Widget build(BuildContext context) {
-    return ExpansionPanelList.radio(
-      animationDuration: const Duration(milliseconds: 800),
-      expandedHeaderPadding: const EdgeInsets.all(8),
-      children: generateTimeSlotPanels(context, widget.selectedDate),
-    );
+    /// There are at most 4 different objects in the list below, each one is
+    /// mapped to a different part of the day
+    final openingHoursForSelectedDate = OpeningHours.fromJson(apptTimesInSecs)
+            .hours
+            .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
+        as List<OpenCloseTimesInSecs>;
+    final dayPartPanels = generateDayPartPanels(
+        context, selectedDate, openingHoursForSelectedDate);
+    return dayPartPanels.length == 0
+        ? Expanded(
+            child: Text(
+              'Sorry, there are no available hours for the selected date',
+              textAlign: TextAlign.center,
+            ),
+          )
+        : ExpansionPanelList.radio(
+            animationDuration: const Duration(milliseconds: 800),
+            children: dayPartPanels,
+          );
   }
 }
 
-List<ExpansionPanelRadio> generateTimeSlotPanels(
-    BuildContext context, DateTime selectedDate) {
-  /// There are at most 4 different objects in this list, each one is
-  /// mapped to a different part of the day
-  final openingHoursInSecs = OpeningHours.fromJson(apptTimesInSecs)
-          .hours
-          .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
-      as List<OpenCloseTimesInSecs>;
+List<ExpansionPanelRadio> generateDayPartPanels(
+  BuildContext context,
+  DateTime selectedDate,
+  List<OpenCloseTimesInSecs> openingHoursInSecs,
+) {
+  final service = (ModalRoute.of(context)!.settings.arguments
+      as Map<String, Object>)['service'] as DbNearbyService;
   final List<ExpansionPanelRadio> panelRadios = [];
+
   openingHoursInSecs.forEach((rangeInSecs) {
+    final currentDateTime = DateTime.now();
     final timesInSecs =
         getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
     if (selectedDate
         .add(Duration(seconds: timesInSecs[timesInSecs.length - 1]))
-        .isBefore(DateTime.now().add(const Duration(minutes: 40)))) return;
+        .isBefore(currentDateTime.add(const Duration(minutes: 40)))) return;
     String header = '';
     if (0 <= rangeInSecs.open && rangeInSecs.close <= 20700)
       header = 'Early Morning (from Midnight to 5:45 AM)';
@@ -147,15 +158,17 @@ List<ExpansionPanelRadio> generateTimeSlotPanels(
         mainAxisSpacing: 15,
         children: [
           for (int timeInSecs in timesInSecs)
-            if (DateTime.now().add(const Duration(minutes: 40)).compareTo(
+            if (currentDateTime.add(const Duration(minutes: 40)).compareTo(
                     selectedDate.add(Duration(seconds: timeInSecs))) <=
                 0)
               OutlinedButton(
                 onPressed: () => Navigator.pushNamed(
                     context, CreateBookingScreen.routeName,
                     arguments: {
+                      'bookedService': service,
                       'selecteDateTime':
                           selectedDate.add(Duration(seconds: timeInSecs)),
+                      'timeInSecs': timeInSecs,
                     }),
                 child: Text(secondsToTime(timeInSecs)),
               )
