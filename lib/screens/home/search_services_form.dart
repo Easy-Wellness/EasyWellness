@@ -96,8 +96,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 330,
+                Expanded(
                   child: Text(
                     _pickedLocation?.address ??
                         'Cannot access your location, tap here to enter',
