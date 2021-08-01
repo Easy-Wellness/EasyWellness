@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:users/components/bottom_navbar.dart';
 import 'package:users/screens/home/search_services_form.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,6 +14,7 @@ class HomeScreen extends StatelessWidget {
           title: Text('Home'),
         ),
         body: Body(),
+        bottomNavigationBar: BottomNavbar(),
       ),
     );
   }
@@ -22,7 +24,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: SearchServicesForm(),
     );
   }
