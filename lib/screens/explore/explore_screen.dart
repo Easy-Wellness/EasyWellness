@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:users/components/bottom_navbar.dart';
+import 'package:users/components/custom_bottom_nav_bar.dart';
 
 import 'search_services_form.dart';
 
@@ -12,10 +12,10 @@ class ExploreScreen extends StatelessWidget {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
+          title: Text('Explore'),
         ),
         body: Body(),
-        bottomNavigationBar: BottomNavbar(),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }
