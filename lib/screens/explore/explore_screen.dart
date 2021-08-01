@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:users/components/bottom_navbar.dart';
-import 'package:users/screens/home/search_services_form.dart';
 
-class HomeScreen extends StatelessWidget {
-  static const String routeName = '/home';
+import 'search_services_form.dart';
+
+class ExploreScreen extends StatelessWidget {
+  static const String routeName = '/explore';
 
   @override
   Widget build(BuildContext context) {

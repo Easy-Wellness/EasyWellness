@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:users/routes.dart';
-import 'package:users/screens/error/error_screen.dart';
-import 'package:users/screens/home/home_screen.dart';
-import 'package:users/screens/loading/loading_screen.dart';
-import 'package:users/screens/login/login_screen.dart';
 import 'package:users/theme.dart';
+
+import 'screens/error/error_screen.dart';
+import 'screens/explore/explore_screen.dart';
+import 'screens/loading/loading_screen.dart';
+import 'screens/login/login_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +47,7 @@ class _AppState extends State<App> {
                       .pushReplacementNamed(LoginScreen.routeName);
                 else
                   _navigatorKey.currentState!
-                      .pushReplacementNamed(HomeScreen.routeName);
+                      .pushReplacementNamed(ExploreScreen.routeName);
               });
             }
 

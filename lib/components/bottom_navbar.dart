@@ -1,6 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:users/screens/home/home_screen.dart';
+import 'package:users/screens/explore/explore_screen.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({Key? key}) : super(key: key);
@@ -21,27 +21,27 @@ class _BottomNavbarState extends State<BottomNavbar> {
       items: [
         _buildNavBarItem(
           context,
-          title: 'Search',
+          title: 'Explore',
           iconData: Icons.search_outlined,
-          routeName: HomeScreen.routeName,
+          routeName: ExploreScreen.routeName,
         ),
         _buildNavBarItem(
           context,
           title: 'Bookings',
           iconData: Icons.event_note_outlined,
-          routeName: HomeScreen.routeName,
+          routeName: ExploreScreen.routeName,
         ),
         _buildNavBarItem(
           context,
           title: 'Chats',
           iconData: Icons.chat_outlined,
-          routeName: HomeScreen.routeName,
+          routeName: ExploreScreen.routeName,
         ),
         _buildNavBarItem(
           context,
-          title: 'You',
+          title: 'Profile',
           iconData: Icons.account_circle_outlined,
-          routeName: HomeScreen.routeName,
+          routeName: ExploreScreen.routeName,
         )
       ],
     );
