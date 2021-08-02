@@ -23,15 +23,15 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
   @override
   void initState() {
     super.initState();
-    identifyDeviceCurrentLocation()
-        .then((location) => setState(() => _pickedLocation = location))
-        .catchError(print);
+    identifyDeviceCurrentLocation().then((location) {
+      if (mounted) setState(() => _pickedLocation = location);
+    });
   }
 
   _navigateToGetUserLocation(BuildContext context) async {
     final location =
         await Navigator.pushNamed(context, PickLocationScreen.routeName);
-    if (location != null)
+    if (location != null && mounted)
       setState(() => _pickedLocation = location as GeoLocation);
   }
 
