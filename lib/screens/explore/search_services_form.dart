@@ -59,7 +59,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                 interactive: true,
               ),
               label: 'Specialty*',
-              dropdownSearchDecoration: InputDecoration(
+              dropdownSearchDecoration: const InputDecoration(
                 contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
                 border: OutlineInputBorder(),
                 helperText: '',
@@ -67,9 +67,9 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               onChanged: (value) => fieldState.didChange(value),
               popupItemBuilder: (_, value, isSelected) {
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     leading: SizedBox(
                       height: 32,
                       width: 32,
@@ -89,7 +89,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           TextButton(
@@ -110,7 +110,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           ElevatedButton.icon(
@@ -127,8 +127,8 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                     }
                   }
                 : null,
-            icon: Icon(Icons.search_sharp),
-            label: Text('Search'),
+            icon: const Icon(Icons.search_sharp),
+            label: const Text('Search'),
           )
         ],
       ),

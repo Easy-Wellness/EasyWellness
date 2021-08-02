@@ -42,7 +42,7 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -52,12 +52,12 @@ class _BodyState extends State<Body> {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: 'Sign in with email',
-                prefixIcon: Icon(Icons.email),
+                prefixIcon: const Icon(Icons.email),
                 suffixIcon: _isEmpty
                     ? null
                     : IconButton(
                         onPressed: () => _emailInpController.clear(),
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                       ),
               ),
             ),
@@ -68,9 +68,7 @@ class _BodyState extends State<Body> {
             OrDivider(),
             ElevatedButton.icon(
               onPressed: () => loginWithGoogle(),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white60,
-              ),
+              style: ElevatedButton.styleFrom(primary: Colors.white60),
               icon: SvgPicture.asset(
                 'assets/icons/google-icon.svg',
                 height: 24,
@@ -93,7 +91,7 @@ class _BodyState extends State<Body> {
           ].expand(
             (widget) => [
               widget,
-              SizedBox(
+              const SizedBox(
                 height: 8,
               )
             ],
