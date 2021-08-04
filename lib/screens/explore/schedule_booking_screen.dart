@@ -50,6 +50,7 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
     /// ignored and always set to midnight T00:00:00.000
     final DateTime? picked = await showDatePicker(
       context: context,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 150)),
