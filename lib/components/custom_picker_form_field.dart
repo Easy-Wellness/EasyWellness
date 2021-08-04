@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Mimic the UI/UX design and behavior of the
+/// A Material picker that mimics the UI/UX design and behavior of the
 /// iOS-style picker control [CupertinoPicker]. Used to
 /// select an item in a short list
-class CustomMaterialPickerFormField extends FormField<String> {
-  CustomMaterialPickerFormField({
+class CustomPickerFormField extends FormField<String> {
+  CustomPickerFormField({
     Key? key,
     FormFieldSetter<String>? onSaved,
     FormFieldValidator<String>? validator,
@@ -12,7 +12,8 @@ class CustomMaterialPickerFormField extends FormField<String> {
     AutovalidateMode? autovalidateMode,
     TextStyle? style,
     bool? enabled,
-    InputDecoration? decoration,
+    this.resetIcon = const Icon(Icons.close),
+    InputDecoration decoration = const InputDecoration(),
     required List<String> values,
     // Only properties with [this] belong to this class
     required this.itemAsString,
@@ -21,23 +22,35 @@ class CustomMaterialPickerFormField extends FormField<String> {
           initialValue: initialValue,
           onSaved: onSaved,
           validator: validator,
-          enabled: enabled ?? decoration?.enabled ?? true,
+          enabled: enabled ?? true,
           autovalidateMode: autovalidateMode ?? AutovalidateMode.always,
           builder: (FormFieldState<String> field) {
-            final _CustomMaterialPickerFormFieldState state =
-                field as _CustomMaterialPickerFormFieldState;
+            final _CustomPickerFormFieldState state =
+                field as _CustomPickerFormFieldState;
+            final InputDecoration effectiveDecoration = decoration
+                .applyDefaults(Theme.of(field.context).inputDecorationTheme);
             return TextField(
               controller: state._controller,
-              enabled: enabled ?? decoration?.enabled ?? true,
+              focusNode: state._focusNode,
+              enabled: enabled ?? true,
 
               /// Disable content selection of [TextField]
               enableInteractiveSelection: false,
               showCursor: false,
               readOnly: true,
-              decoration: (decoration ?? const InputDecoration())
-                  .copyWith(errorText: field.errorText),
+              decoration: effectiveDecoration.copyWith(
+                errorText: field.errorText,
+                suffixIcon: state.shouldShowClearIcon(effectiveDecoration)
+                    ? IconButton(
+                        icon: resetIcon,
+                        onPressed: state.clear,
+                      )
+                    : null,
+              ),
               style: style,
               onTap: () async {
+                /// Unfocus to hide the focus highlight
+                state._focusNode!.unfocus();
                 final selected = await showModalBottomSheet<String>(
                   context: field.context,
                   builder: (_) => SafeArea(
@@ -71,27 +84,34 @@ class CustomMaterialPickerFormField extends FormField<String> {
           },
         );
 
+  final Icon resetIcon;
   final String Function(String) itemAsString;
 
   @override
-  _CustomMaterialPickerFormFieldState createState() =>
-      _CustomMaterialPickerFormFieldState();
+  _CustomPickerFormFieldState createState() =>
+      _CustomPickerFormFieldState();
 }
 
 /// Manage the controller of [TextField]
-class _CustomMaterialPickerFormFieldState extends FormFieldState<String> {
+class _CustomPickerFormFieldState extends FormFieldState<String> {
   TextEditingController? _controller;
+  FocusNode? _focusNode;
 
   /// Retype type of widget from [FormField<String?>]
-  /// to [CustomMaterialPickerFormField]
+  /// to [CustomPickerFormField]
   @override
-  CustomMaterialPickerFormField get widget =>
-      super.widget as CustomMaterialPickerFormField;
+  CustomPickerFormField get widget =>
+      super.widget as CustomPickerFormField;
+
+  bool get hasFocus => _focusNode!.hasFocus;
+  bool get hasText => _controller!.text.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(
         text: widget.itemAsString(widget.initialValue ?? ''));
+    _focusNode = FocusNode();
   }
 
   @override
@@ -102,14 +122,25 @@ class _CustomMaterialPickerFormFieldState extends FormFieldState<String> {
   }
 
   @override
-  void reset() {
-    super.reset();
-    _controller!.text = widget.itemAsString(widget.initialValue ?? '');
-  }
-
-  @override
   void dispose() {
     super.dispose();
-    _controller!.dispose();
+    _controller?.dispose();
+    _focusNode?.dispose();
   }
+
+  /// Invoked by the clear suffix icon to clear everything in the [FormField]
+  void clear() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _controller!.clear();
+
+      /// Close [ModalBottomSheet] because the clear suffix icon will open it
+      Navigator.pop(context);
+      didChange(null);
+    });
+  }
+
+  bool shouldShowClearIcon([InputDecoration? decoration]) =>
+      (hasText || hasFocus) &&
+      _controller!.text.length > 0 &&
+      decoration?.suffixIcon == null;
 }
