@@ -13,7 +13,6 @@ class CustomMaterialPickerFormField extends FormField<String> {
     TextStyle? style,
     bool? enabled,
     InputDecoration? decoration,
-    required BuildContext context,
     required List<String> values,
     // Only properties with [this] belong to this class
     required this.itemAsString,
@@ -36,11 +35,11 @@ class CustomMaterialPickerFormField extends FormField<String> {
               showCursor: false,
               readOnly: true,
               decoration: (decoration ?? const InputDecoration())
-                  .copyWith(errorText: state.errorText),
+                  .copyWith(errorText: field.errorText),
               style: style,
               onTap: () async {
                 final selected = await showModalBottomSheet<String>(
-                  context: context,
+                  context: field.context,
                   builder: (_) => SafeArea(
                     child: Container(
                       padding: const EdgeInsets.only(top: 16),
@@ -49,14 +48,15 @@ class CustomMaterialPickerFormField extends FormField<String> {
                         mainAxisSize: MainAxisSize.min,
                         children: values
                             .map((value) => TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop<String>(context, value),
+                                  onPressed: () => Navigator.pop<String>(
+                                      field.context, value),
                                   child: Text(itemAsString(value)),
-                                  style: value == state.value
+                                  style: value == field.value
                                       ? TextButton.styleFrom(
-                                          backgroundColor: Theme.of(context)
-                                              .accentColor
-                                              .withOpacity(0.2),
+                                          backgroundColor:
+                                              Theme.of(field.context)
+                                                  .accentColor
+                                                  .withOpacity(0.2),
                                         )
                                       : null,
                                 ))
@@ -65,7 +65,7 @@ class CustomMaterialPickerFormField extends FormField<String> {
                     ),
                   ),
                 );
-                if (selected != null) state.didChange(selected);
+                if (selected != null) field.didChange(selected);
               },
             );
           },
