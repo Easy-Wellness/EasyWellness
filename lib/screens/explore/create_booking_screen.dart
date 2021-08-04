@@ -182,34 +182,31 @@ class BookingForm extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextFormField(
-              textInputAction: TextInputAction.newline,
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Reason for visit',
-                alignLabelWithHint: true,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: 'Please describe your symptoms',
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextFormField(
+                textInputAction: TextInputAction.newline,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Reason for visit',
+                  alignLabelWithHint: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: 'Please describe your symptoms',
+                ),
+                minLines: 3,
+                maxLines: 6,
+                maxLength: 300,
               ),
-              minLines: 3,
-              maxLines: 6,
-              maxLength: 300,
             ),
           ),
-          Expanded(
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Reserve'),
-                ),
-              ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Text('Reserve'),
             ),
           ),
         ],
