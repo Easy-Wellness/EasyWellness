@@ -9,9 +9,9 @@ class CustomPickerFormField extends FormField<String> {
     FormFieldSetter<String>? onSaved,
     FormFieldValidator<String>? validator,
     String? initialValue,
-    AutovalidateMode? autovalidateMode,
+    AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
     TextStyle? style,
-    bool? enabled,
+    bool enabled = true,
     this.resetIcon = const Icon(Icons.close),
     InputDecoration decoration = const InputDecoration(),
     required List<String> values,
@@ -22,8 +22,8 @@ class CustomPickerFormField extends FormField<String> {
           initialValue: initialValue,
           onSaved: onSaved,
           validator: validator,
-          enabled: enabled ?? true,
-          autovalidateMode: autovalidateMode ?? AutovalidateMode.always,
+          enabled: enabled,
+          autovalidateMode: autovalidateMode,
           builder: (FormFieldState<String> field) {
             final _CustomPickerFormFieldState state =
                 field as _CustomPickerFormFieldState;
@@ -32,7 +32,7 @@ class CustomPickerFormField extends FormField<String> {
             return TextField(
               controller: state._controller,
               focusNode: state._focusNode,
-              enabled: enabled ?? true,
+              enabled: enabled,
 
               /// Disable content selection of [TextField]
               enableInteractiveSelection: false,
@@ -88,8 +88,7 @@ class CustomPickerFormField extends FormField<String> {
   final String Function(String) itemAsString;
 
   @override
-  _CustomPickerFormFieldState createState() =>
-      _CustomPickerFormFieldState();
+  _CustomPickerFormFieldState createState() => _CustomPickerFormFieldState();
 }
 
 /// Manage the controller of [TextField]
@@ -100,8 +99,7 @@ class _CustomPickerFormFieldState extends FormFieldState<String> {
   /// Retype type of widget from [FormField<String?>]
   /// to [CustomPickerFormField]
   @override
-  CustomPickerFormField get widget =>
-      super.widget as CustomPickerFormField;
+  CustomPickerFormField get widget => super.widget as CustomPickerFormField;
 
   bool get hasFocus => _focusNode!.hasFocus;
   bool get hasText => _controller!.text.isNotEmpty;
