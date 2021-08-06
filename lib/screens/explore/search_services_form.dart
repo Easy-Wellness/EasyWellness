@@ -53,7 +53,6 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
               showClearButton: true,
               items: specialties,
               itemAsString: (value) => value.titleCase,
-              popupItemDisabled: (value) => value == fieldState.value,
               popupSafeArea: const PopupSafeArea(bottom: true),
               scrollbarProps: ScrollbarProps(
                 interactive: true,
