@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/booking_list/booking_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
+import 'package:users/screens/profile/manage_account_screen.dart';
 
 import 'screens/error/error_screen.dart';
 import 'screens/explore/create_booking_screen.dart';
@@ -32,4 +33,5 @@ final Map<String, WidgetBuilder> routes = {
 
   /// Sub-screens of the root Profile Screen
   ProfileScreen.routeName: (_) => ProfileScreen(),
+  ManageAccountScreen.routeName: (_) => ManageAccountScreen(),
 };

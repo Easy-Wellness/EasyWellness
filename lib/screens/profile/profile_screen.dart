@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:users/components/custom_bottom_nav_bar.dart';
+import 'package:users/screens/profile/manage_account_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String routeName = '/profile';
@@ -33,7 +34,8 @@ class Body extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () =>
+                  Navigator.pushNamed(context, ManageAccountScreen.routeName),
               icon: Icon(Icons.account_circle_outlined),
               label: Text('Manage your account'),
             ),
@@ -42,11 +44,7 @@ class Body extends StatelessWidget {
               icon: Icon(Icons.favorite_border),
               label: Text('Favorites'),
             ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.reviews_outlined),
-              label: Text('Reviews'),
-            ),
+            Divider(indent: 10, endIndent: 10, thickness: 1),
             TextButton.icon(
               onPressed: () => FirebaseAuth.instance.signOut(),
               icon: Icon(Icons.logout_outlined),
