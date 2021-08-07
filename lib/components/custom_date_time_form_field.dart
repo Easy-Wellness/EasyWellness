@@ -21,7 +21,7 @@ class CustomDateTimeFormField extends FormField<DateTime> {
     FormFieldSetter<DateTime>? onSaved,
     FormFieldValidator<DateTime>? validator,
     DateTime? initialValue,
-    AutovalidateMode? autovalidateMode,
+    AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
     bool enabled = true,
 
     // Features
