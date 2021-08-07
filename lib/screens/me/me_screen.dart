@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:users/components/custom_bottom_nav_bar.dart';
 
-import 'manage_account_screen.dart';
+import 'edit_profile_screen.dart';
 
 class MeScreen extends StatelessWidget {
   static const String routeName = '/me';
@@ -11,7 +11,7 @@ class MeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your profile'),
+        title: Text('Manage account'),
       ),
       body: Body(),
       bottomNavigationBar: CustomBottomNavBar(),
@@ -36,9 +36,9 @@ class Body extends StatelessWidget {
           children: [
             TextButton.icon(
               onPressed: () =>
-                  Navigator.pushNamed(context, ManageAccountScreen.routeName),
-              icon: Icon(Icons.account_circle_outlined),
-              label: Text('Manage Your Account'),
+                  Navigator.pushNamed(context, EditProfileScreen.routeName),
+              icon: Icon(Icons.edit_outlined),
+              label: Text('Edit Your Profile'),
             ),
             TextButton.icon(
               onPressed: () {},

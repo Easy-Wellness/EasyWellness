@@ -11,7 +11,7 @@ import 'screens/explore/schedule_booking_screen.dart';
 import 'screens/explore/search_services_screen.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
-import 'screens/me/manage_account_screen.dart';
+import 'screens/me/edit_profile_screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
@@ -33,5 +33,5 @@ final Map<String, WidgetBuilder> routes = {
 
   /// Sub-screens of the root Me Screen
   MeScreen.routeName: (_) => MeScreen(),
-  ManageAccountScreen.routeName: (_) => ManageAccountScreen(),
+  EditProfileScreen.routeName: (_) => EditProfileScreen(),
 };

@@ -17,14 +17,14 @@ final profileRef = db
       toFirestore: (profile, _) => profile.toJson(),
     );
 
-class ManageAccountScreen extends StatefulWidget {
-  static const String routeName = '/manage_account';
+class EditProfileScreen extends StatefulWidget {
+  static const String routeName = '/edit_profile';
 
   @override
-  _ManageAccountScreenState createState() => _ManageAccountScreenState();
+  _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
-class _ManageAccountScreenState extends State<ManageAccountScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? fullname;
@@ -129,7 +129,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                     labelText: 'Birth date',
                                     helperText: '',
                                   ),
-                                  format: DateFormat.yMMMMEEEEd(),
+                                  format: DateFormat.yMMMd(),
                                   onShowPicker: (context, currentValue) {
                                     return showDatePicker(
                                       context: context,
@@ -142,8 +142,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                           DatePickerMode.year,
                                       firstDate: DateTime.now().subtract(
                                           const Duration(days: 36500)),
-                                      initialDate: DateTime.now()
-                                          .subtract(const Duration(days: 3650)),
+                                      initialDate: data?.birthDate.toDate() ??
+                                          DateTime.now().subtract(
+                                              const Duration(days: 3650)),
                                       lastDate: DateTime.now()
                                           .subtract(const Duration(days: 3650)),
                                     );
