@@ -5,10 +5,17 @@ import 'package:intl/intl.dart';
 import 'package:recase/recase.dart';
 import 'package:users/components/custom_date_time_form_field.dart';
 import 'package:users/components/custom_picker_form_field.dart';
+import 'package:users/models/user_profile/db_user_profile.model.dart';
 
 final db = FirebaseFirestore.instance;
 final auth = FirebaseAuth.instance;
-final profileRef = db.collection('user_profiles').doc(auth.currentUser!.uid);
+final profileRef = db
+    .collection('user_profiles')
+    .doc(auth.currentUser!.uid)
+    .withConverter<DbUserProfile>(
+      fromFirestore: (snapshot, _) => DbUserProfile.fromJson(snapshot.data()!),
+      toFirestore: (profile, _) => profile.toJson(),
+    );
 
 class ManageAccountScreen extends StatefulWidget {
   static const String routeName = '/manage_account';
@@ -37,13 +44,18 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  await profileRef.set({
-                    'fullname': fullname,
-                    'gender': gender,
-                    'birth_date': Timestamp.fromDate(birthDate!),
-                    'phone_number': phoneNumb,
-                  }, SetOptions(merge: true)).catchError(
-                      (err) => print("Failed to upsert user profile: $err"));
+                  await profileRef
+                      .set(
+                        DbUserProfile(
+                          fullname: fullname!,
+                          gender: gender!,
+                          birthDate: Timestamp.fromDate(birthDate!),
+                          phoneNumber: phoneNumb!,
+                        ),
+                        SetOptions(merge: true),
+                      )
+                      .catchError((err) =>
+                          print("Failed to upsert user profile: $err"));
                   Navigator.pop(context);
                 }
               },
@@ -61,107 +73,114 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
         body: SafeArea(
           child: Container(
             child: FutureBuilder(
-              builder: (_, snapshot) {
+              future: profileRef.get(),
+              builder:
+                  (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
                 if (snapshot.hasError) return Text('Unable to show your info');
-                return Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ...[
-                              TextFormField(
-                                initialValue: fullname,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty)
-                                    return 'First name is required';
-                                  if (value.length < 4 || value.length > 64)
-                                    return 'Full name must contain between 4 and 64 characters';
-                                },
-                                onSaved: (value) => fullname = value!.trim(),
-                                keyboardType: TextInputType.name,
-                                decoration: InputDecoration(
-                                  labelText: 'Full name',
-                                  helperText: '',
+                if (snapshot.connectionState == ConnectionState.done) {
+                  final data = snapshot.data!.data();
+                  return Form(
+                    key: _formKey,
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ...[
+                                TextFormField(
+                                  initialValue: data?.fullname,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty)
+                                      return 'First name is required';
+                                    if (value.length < 4 || value.length > 64)
+                                      return 'Full name must contain between 4 and 64 characters';
+                                  },
+                                  onSaved: (value) => fullname = value!.trim(),
+                                  keyboardType: TextInputType.name,
+                                  decoration: InputDecoration(
+                                    labelText: 'Full name',
+                                    helperText: '',
+                                  ),
                                 ),
-                              ),
-                              CustomPickerFormField(
-                                initialValue: gender,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Gender is required';
-                                },
-                                onSaved: (value) => gender = value,
-                                values: const ['male', 'female', 'other'],
-                                itemAsString: (value) => value.titleCase,
-                                decoration: const InputDecoration(
-                                  labelText: 'Gender',
-                                  helperText: '',
+                                CustomPickerFormField(
+                                  initialValue: data?.gender,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty)
+                                      return 'Gender is required';
+                                  },
+                                  onSaved: (value) => gender = value,
+                                  values: const ['male', 'female', 'other'],
+                                  itemAsString: (value) => value.titleCase,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Gender',
+                                    helperText: '',
+                                  ),
                                 ),
-                              ),
-                              CustomDateTimeFormField(
-                                initialValue: birthDate,
-                                validator: (value) {
-                                  if (value == null)
-                                    return 'Birth date is required';
-                                },
-                                onSaved: (value) => birthDate = value,
-                                decoration: const InputDecoration(
-                                  labelText: 'Birth date',
-                                  helperText: '',
+                                CustomDateTimeFormField(
+                                  initialValue: data?.birthDate.toDate(),
+                                  validator: (value) {
+                                    if (value == null)
+                                      return 'Birth date is required';
+                                  },
+                                  onSaved: (value) => birthDate = value,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Birth date',
+                                    helperText: '',
+                                  ),
+                                  format: DateFormat.yMMMMEEEEd(),
+                                  onShowPicker: (context, currentValue) {
+                                    return showDatePicker(
+                                      context: context,
+                                      helpText:
+                                          'SWIPE UP OR DOWN, LEFT OR RIGHT',
+                                      cancelText: 'CLOSE',
+                                      initialEntryMode:
+                                          DatePickerEntryMode.calendarOnly,
+                                      initialDatePickerMode:
+                                          DatePickerMode.year,
+                                      firstDate: DateTime.now().subtract(
+                                          const Duration(days: 36500)),
+                                      initialDate: DateTime.now()
+                                          .subtract(const Duration(days: 3650)),
+                                      lastDate: DateTime.now()
+                                          .subtract(const Duration(days: 3650)),
+                                    );
+                                  },
                                 ),
-                                format: DateFormat.yMMMMEEEEd(),
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                    context: context,
-                                    helpText: 'SWIPE UP OR DOWN, LEFT OR RIGHT',
-                                    cancelText: 'CLOSE',
-                                    initialEntryMode:
-                                        DatePickerEntryMode.calendarOnly,
-                                    initialDatePickerMode: DatePickerMode.year,
-                                    firstDate: DateTime.now()
-                                        .subtract(const Duration(days: 36500)),
-                                    initialDate: DateTime.now()
-                                        .subtract(const Duration(days: 3650)),
-                                    lastDate: DateTime.now()
-                                        .subtract(const Duration(days: 3650)),
-                                  );
-                                },
-                              ),
-                              TextFormField(
-                                initialValue: phoneNumb,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Phone number is required';
-                                  if (value.length < 9)
-                                    return 'Phone number is not valid';
-                                },
-                                onSaved: (value) => phoneNumb = value,
-                                keyboardType: TextInputType.phone,
-                                maxLength: 10,
-                                decoration: InputDecoration(
-                                  labelText: 'Phone number',
-                                  helperText: '',
+                                TextFormField(
+                                  initialValue: data?.phoneNumber,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty)
+                                      return 'Phone number is required';
+                                    if (value.length < 9)
+                                      return 'Phone number is not valid';
+                                  },
+                                  onSaved: (value) => phoneNumb = value,
+                                  keyboardType: TextInputType.phone,
+                                  maxLength: 10,
+                                  decoration: InputDecoration(
+                                    labelText: 'Phone number',
+                                    helperText: '',
+                                  ),
                                 ),
-                              ),
-                            ].expand(
-                              (widget) => [
-                                widget,
-                                const SizedBox(
-                                  height: 4,
-                                )
-                              ],
-                            )
-                          ],
+                              ].expand(
+                                (widget) => [
+                                  widget,
+                                  const SizedBox(
+                                    height: 4,
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
           ),
