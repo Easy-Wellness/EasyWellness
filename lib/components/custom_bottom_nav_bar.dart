@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:users/screens/booking_list/booking_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/explore/explore_screen.dart';
-import 'package:users/screens/profile/profile_screen.dart';
+import 'package:users/screens/me/me_screen.dart';
 
 final List<Widget> _rootScreens = [
   ExploreScreen(),
   BookingListScreen(),
   ChatListScreen(),
-  ProfileScreen(),
+  MeScreen(),
 ];
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -58,9 +58,9 @@ class CustomBottomNavBar extends StatelessWidget {
             activeIcon: Icon(Icons.chat_rounded),
           ),
           BottomNavigationBarItem(
-            label: 'Profile',
-            icon: Icon(Icons.account_circle_outlined),
-            activeIcon: Icon(Icons.account_circle_rounded),
+            label: 'Me',
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
           )
         ],
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/booking_list/booking_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
-import 'package:users/screens/profile/manage_account_screen.dart';
+import 'package:users/screens/me/me_screen.dart';
 
 import 'screens/error/error_screen.dart';
 import 'screens/explore/create_booking_screen.dart';
@@ -11,7 +11,7 @@ import 'screens/explore/schedule_booking_screen.dart';
 import 'screens/explore/search_services_screen.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
-import 'screens/profile/profile_screen.dart';
+import 'screens/me/manage_account_screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
@@ -31,7 +31,7 @@ final Map<String, WidgetBuilder> routes = {
   /// Sub-screens of the root Chat List Screen
   ChatListScreen.routeName: (_) => ChatListScreen(),
 
-  /// Sub-screens of the root Profile Screen
-  ProfileScreen.routeName: (_) => ProfileScreen(),
+  /// Sub-screens of the root Me Screen
+  MeScreen.routeName: (_) => MeScreen(),
   ManageAccountScreen.routeName: (_) => ManageAccountScreen(),
 };
