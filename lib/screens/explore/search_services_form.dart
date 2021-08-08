@@ -47,16 +47,14 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             builder: (fieldState) => DropdownSearch<String>(
               validator: (value) =>
                   value == null ? 'Please select a specialty' : null,
-              onSaved: (value) => {chosenSpecialty = value!},
+              onSaved: (value) => chosenSpecialty = value!,
               mode: Mode.MENU,
               showSelectedItem: true,
               showClearButton: true,
               items: specialties,
               itemAsString: (value) => value.titleCase,
               popupSafeArea: const PopupSafeArea(bottom: true),
-              scrollbarProps: ScrollbarProps(
-                interactive: true,
-              ),
+              scrollbarProps: ScrollbarProps(thickness: 0),
               label: 'Specialty*',
               dropdownSearchDecoration: const InputDecoration(
                 contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
@@ -105,7 +103,7 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                     maxLines: 2,
                   ),
                 ),
-                Icon(Icons.keyboard_arrow_right),
+                const Icon(Icons.keyboard_arrow_right),
               ],
             ),
           ),
