@@ -140,11 +140,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           DatePickerEntryMode.calendarOnly,
                                       initialDatePickerMode:
                                           DatePickerMode.year,
-                                      firstDate: DateTime.now().subtract(
-                                          const Duration(days: 36500)),
-                                      initialDate: data?.birthDate.toDate() ??
+                                      initialDate: currentValue ??
+                                          data?.birthDate.toDate() ??
                                           DateTime.now().subtract(
                                               const Duration(days: 3650)),
+                                      firstDate: DateTime.now().subtract(
+                                          const Duration(days: 36500)),
                                       lastDate: DateTime.now()
                                           .subtract(const Duration(days: 3650)),
                                     );
