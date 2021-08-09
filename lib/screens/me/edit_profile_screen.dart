@@ -182,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   );
                 }
-                return Center(child: CircularProgressIndicator());
+                return Center(child: CircularProgressIndicator.adaptive());
               },
             ),
           ),
