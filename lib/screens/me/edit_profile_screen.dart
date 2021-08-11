@@ -112,7 +112,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   },
                                   onSaved: (value) => gender = value,
                                   values: const ['male', 'female', 'other'],
-                                  itemAsString: (value) => value.titleCase,
+                                  valueAsString: (value) => value.titleCase,
                                   decoration: const InputDecoration(
                                     labelText: 'Gender',
                                     helperText: '',

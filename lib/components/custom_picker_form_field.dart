@@ -1,22 +1,30 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// A Material picker that mimics the UI/UX design and behavior of the
-/// iOS-style picker control [CupertinoPicker]. Used to
-/// select an item in a short list
+/// A Material [TextFormField] that receives a chosen value from an iOS-style
+/// [CupertinoPicker].
 class CustomPickerFormField extends FormField<String> {
   CustomPickerFormField({
+    // Features
+    this.resetIcon = const Icon(Icons.close),
+    // Only properties with [this] belong to this class
+    required this.values,
+    required this.valueAsString,
+
+    // From [super]
     Key? key,
     FormFieldSetter<String>? onSaved,
     FormFieldValidator<String>? validator,
     String? initialValue,
     AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
-    TextStyle? style,
     bool enabled = true,
-    this.resetIcon = const Icon(Icons.close),
+
+    // From [TextField]
+    // Key? key,
+    // String? initialValue,
+    // bool enabled = true,
     InputDecoration decoration = const InputDecoration(),
-    required List<String> values,
-    // Only properties with [this] belong to this class
-    required this.itemAsString,
+    TextStyle? style,
   }) : super(
           key: key,
           initialValue: initialValue,
@@ -43,7 +51,7 @@ class CustomPickerFormField extends FormField<String> {
                 suffixIcon: state.shouldShowClearIcon(effectiveDecoration)
                     ? IconButton(
                         icon: resetIcon,
-                        onPressed: state.clear,
+                        onPressed: () => state.clear(),
                       )
                     : null,
               ),
@@ -51,50 +59,72 @@ class CustomPickerFormField extends FormField<String> {
               onTap: () async {
                 /// Unfocus to hide the focus highlight
                 state._focusNode!.unfocus();
-                final selected = await showModalBottomSheet<String>(
+                showModalBottomSheet<String>(
                   context: field.context,
-                  builder: (_) => SafeArea(
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 16),
+                  builder: (_) {
+                    /// The cb below only runs when the modal pops up and
+                    /// [ListWheelScrollView] backing [CupertinoPicker] has
+                    /// finished rendering (build method is complete)
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      state._scrollWheelController?.jumpToItem(
+                        field.value == null ? 0 : values.indexOf(field.value!),
+                      );
+                      if (field.value == null) field.didChange(values[0]);
+                    });
+                    return SizedBox(
+                      height: 250,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: values
-                            .map((value) => TextButton(
-                                  onPressed: () => Navigator.pop<String>(
-                                      field.context, value),
-                                  child: Text(itemAsString(value)),
-                                  style: value == field.value
-                                      ? TextButton.styleFrom(
-                                          backgroundColor:
-                                              Theme.of(field.context)
-                                                  .accentColor
-                                                  .withOpacity(0.2),
-                                        )
-                                      : null,
-                                ))
-                            .toList(),
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextButton(
+                              onPressed: () => Navigator.pop(field.context),
+                              child: Text('Done'),
+                            ),
+                          ),
+                          const Divider(thickness: 1),
+                          Expanded(
+                            child: CupertinoPicker.builder(
+                              /// if [itemExtent] is too low, the content for each
+                              /// item will be squished together
+                              itemExtent: 32,
+                              scrollController: state._scrollWheelController,
+                              onSelectedItemChanged: (index) =>
+                                  field.didChange(values[index]),
+                              childCount: values.length,
+                              itemBuilder: (_, index) => Center(
+                                child: Text(
+                                  valueAsString(values[index]),
+                                  style: TextStyle(
+                                    color: Theme.of(field.context).accentColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
-                if (selected != null) field.didChange(selected);
               },
             );
           },
         );
 
   final Icon resetIcon;
-  final String Function(String) itemAsString;
+  final List<String> values;
+  final String Function(String) valueAsString;
 
   @override
   _CustomPickerFormFieldState createState() => _CustomPickerFormFieldState();
 }
 
-/// Manage the controller of [TextField]
 class _CustomPickerFormFieldState extends FormFieldState<String> {
   TextEditingController? _controller;
   FocusNode? _focusNode;
+  FixedExtentScrollController? _scrollWheelController;
 
   /// Retype type of widget from [FormField<String?>]
   /// to [CustomPickerFormField]
@@ -108,14 +138,17 @@ class _CustomPickerFormFieldState extends FormFieldState<String> {
   void initState() {
     super.initState();
     _controller = TextEditingController(
-        text: widget.itemAsString(widget.initialValue ?? ''));
+        text: widget.valueAsString(widget.initialValue ?? ''));
     _focusNode = FocusNode();
+    _scrollWheelController = FixedExtentScrollController(
+      initialItem: this.value == null ? 0 : widget.values.indexOf(this.value!),
+    );
   }
 
   @override
   void didChange(String? value) {
     super.didChange(value);
-    final friendlyString = widget.itemAsString(value ?? '');
+    final friendlyString = widget.valueAsString(value ?? '');
     if (_controller!.text != friendlyString) _controller!.text = friendlyString;
   }
 
@@ -124,15 +157,13 @@ class _CustomPickerFormFieldState extends FormFieldState<String> {
     super.dispose();
     _controller?.dispose();
     _focusNode?.dispose();
+    _scrollWheelController?.dispose();
   }
 
   /// Invoked by the clear suffix icon to clear everything in the [FormField]
   void clear() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _controller!.clear();
-
-      /// Close [ModalBottomSheet] because the clear suffix icon will open it
-      Navigator.pop(context);
       didChange(null);
     });
   }
