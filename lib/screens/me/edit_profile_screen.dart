@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:recase/recase.dart';
-import 'package:users/components/custom_date_time_form_field.dart';
+import 'package:users/components/custom_date_picker_form_field.dart';
 import 'package:users/components/custom_picker_form_field.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
 
@@ -118,8 +119,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     helperText: '',
                                   ),
                                 ),
-                                CustomDateTimeFormField(
-                                  initialValue: data?.birthDate.toDate(),
+                                CustomDatePickerFormField(
+                                  format: DateFormat.yMMMd(),
                                   validator: (value) {
                                     if (value == null)
                                       return 'Birth date is required';
@@ -129,27 +130,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     labelText: 'Birth date',
                                     helperText: '',
                                   ),
-                                  format: DateFormat.yMMMd(),
-                                  onShowPicker: (context, currentValue) {
-                                    return showDatePicker(
-                                      context: context,
-                                      helpText:
-                                          'SWIPE UP OR DOWN, LEFT OR RIGHT',
-                                      cancelText: 'CLOSE',
-                                      initialEntryMode:
-                                          DatePickerEntryMode.calendarOnly,
-                                      initialDatePickerMode:
-                                          DatePickerMode.year,
-                                      initialDate: currentValue ??
-                                          data?.birthDate.toDate() ??
-                                          DateTime.now().subtract(
-                                              const Duration(days: 3650)),
-                                      firstDate: DateTime.now().subtract(
-                                          const Duration(days: 36500)),
-                                      lastDate: DateTime.now()
-                                          .subtract(const Duration(days: 3650)),
-                                    );
-                                  },
+                                  initialDateTime: data?.birthDate.toDate(),
+                                  minimumYear: DateTime.now()
+                                      .subtract(const Duration(days: 36500))
+                                      .year,
+                                  maximumYear: DateTime.now()
+                                      .subtract(const Duration(days: 3650))
+                                      .year,
                                 ),
                                 TextFormField(
                                   initialValue: data?.phoneNumber,
