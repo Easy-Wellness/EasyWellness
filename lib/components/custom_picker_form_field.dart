@@ -51,13 +51,21 @@ class CustomPickerFormField extends FormField<String> {
                 suffixIcon: state.shouldShowClearIcon(effectiveDecoration)
                     ? IconButton(
                         icon: resetIcon,
-                        onPressed: () => state.clear(),
+                        onPressed: () {
+                          // Disable onTap() handler
+                          state.setTapable(false);
+                          state.clear();
+                        },
                       )
                     : null,
               ),
               style: style,
               onTap: () async {
-                /// Unfocus to hide the focus highlight
+                if (!state.tapable) {
+                  state.setTapable(true);
+                  return;
+                }
+                // Unfocus to hide the focus highlight
                 state._focusNode!.unfocus();
                 showModalBottomSheet<String>(
                   context: field.context,
@@ -125,6 +133,7 @@ class _CustomPickerFormFieldState extends FormFieldState<String> {
   TextEditingController? _controller;
   FocusNode? _focusNode;
   FixedExtentScrollController? _scrollWheelController;
+  bool tapable = true;
 
   /// Retype type of widget from [FormField<String?>]
   /// to [CustomPickerFormField]
@@ -159,6 +168,8 @@ class _CustomPickerFormFieldState extends FormFieldState<String> {
     _focusNode?.dispose();
     _scrollWheelController?.dispose();
   }
+
+  void setTapable(bool b) => setState(() => tapable = b);
 
   /// Invoked by the clear suffix icon to clear everything in the [FormField]
   void clear() {
