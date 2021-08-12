@@ -60,7 +60,7 @@ class CustomPickerFormField extends FormField<String> {
                     : null,
               ),
               style: style,
-              onTap: () async {
+              onTap: () {
                 if (!state.tapable) {
                   state.setTapable(true);
                   return;
@@ -80,7 +80,7 @@ class CustomPickerFormField extends FormField<String> {
                       if (field.value == null) field.didChange(values[0]);
                     });
                     return SizedBox(
-                      height: 250,
+                      height: values.length >= 6 ? 300 : 250,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
