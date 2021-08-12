@@ -75,8 +75,9 @@ class CustomDatePickerFormField extends FormField<DateTime> {
                 showModalBottomSheet<DateTime>(
                   context: field.context,
                   builder: (_) {
-                    final defaultDateTime =
-                        initialDateTime ?? DateTime.utc(maximumYear);
+                    final defaultDateTime = field.value ??
+                        initialDateTime ??
+                        DateTime.utc(maximumYear);
                     WidgetsBinding.instance!.addPostFrameCallback((_) {
                       if (field.value == null) field.didChange(defaultDateTime);
                     });
