@@ -5,14 +5,51 @@ import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
+// TempDateTimePickerFormField(
+//   initialValue: data?.birthDate.toDate(),
+//   validator: (value) {
+//     if (value == null)
+//       return 'Birth date is required';
+//   },
+//   onSaved: (value) => birthDate = value,
+//   decoration: const InputDecoration(
+//     labelText: 'Birth date',
+//     helperText: '',
+//   ),
+//   format: DateFormat.yMMMd(),
+//   onShowPicker: (context, currentValue) {
+//     return showDatePicker(
+//       context: context,
+//       helpText:
+//           'SWIPE UP OR DOWN, LEFT OR RIGHT',
+//       cancelText: 'CLOSE',
+//       initialEntryMode:
+//           DatePickerEntryMode.calendarOnly,
+//       initialDatePickerMode:
+//           DatePickerMode.year,
+//       initialDate: currentValue ??
+//           data?.birthDate.toDate() ??
+//           DateTime.now().subtract(
+//               const Duration(days: 3650)),
+//       firstDate: DateTime.now().subtract(
+//           const Duration(days: 36500)),
+//       lastDate: DateTime.now()
+//           .subtract(const Duration(days: 3650)),
+//     );
+//   },
+// ),
+
 /// A [FormField<DateTime>] that integrates a text input with time-chooser UIs.
 ///
 /// It borrows many of it's parameters from [TextFormField].
 ///
 /// When a [controller] is specified, [initialValue] must be null (the
 /// default).
-class CustomDateTimeFormField extends FormField<DateTime> {
-  CustomDateTimeFormField({
+class TempDateTimePickerFormField extends FormField<DateTime> {
+  TempDateTimePickerFormField({
+    // Features
+    this.resetIcon = const Icon(Icons.close),
+    this.onChanged,
     required this.format,
     required this.onShowPicker,
 
@@ -23,10 +60,6 @@ class CustomDateTimeFormField extends FormField<DateTime> {
     DateTime? initialValue,
     AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
     bool enabled = true,
-
-    // Features
-    this.resetIcon = const Icon(Icons.close),
-    this.onChanged,
 
     // From [TextFormField]
     // Key key,
@@ -73,8 +106,8 @@ class CustomDateTimeFormField extends FormField<DateTime> {
             validator: validator,
             onSaved: onSaved,
             builder: (field) {
-              final _CustomDateTimeFormFieldState state =
-                  field as _CustomDateTimeFormFieldState;
+              final TempDateTimePickerFormFieldState state =
+                  field as TempDateTimePickerFormFieldState;
               final InputDecoration effectiveDecoration = decoration
                   .applyDefaults(Theme.of(field.context).inputDecorationTheme);
               return TextField(
@@ -144,8 +177,7 @@ class CustomDateTimeFormField extends FormField<DateTime> {
   final void Function(DateTime? value)? onChanged;
 
   @override
-  _CustomDateTimeFormFieldState createState() =>
-      _CustomDateTimeFormFieldState();
+  TempDateTimePickerFormFieldState createState() => TempDateTimePickerFormFieldState();
 
   /// Returns an empty string if [DateFormat.format()] throws or [date] is null.
   static String tryFormat(DateTime? date, DateFormat format) {
@@ -179,14 +211,14 @@ class CustomDateTimeFormField extends FormField<DateTime> {
       time == null ? null : DateTime(1, 1, 1, time.hour, time.minute);
 }
 
-class _CustomDateTimeFormFieldState extends FormFieldState<DateTime> {
+class TempDateTimePickerFormFieldState extends FormFieldState<DateTime> {
   TextEditingController? _controller;
   FocusNode? _focusNode;
   bool isShowingDialog = false;
   bool hadFocus = false;
 
   @override
-  CustomDateTimeFormField get widget => super.widget as CustomDateTimeFormField;
+  TempDateTimePickerFormField get widget => super.widget as TempDateTimePickerFormField;
 
   TextEditingController? get _effectiveController =>
       widget.controller ?? _controller;
@@ -211,7 +243,7 @@ class _CustomDateTimeFormFieldState extends FormFieldState<DateTime> {
   }
 
   @override
-  void didUpdateWidget(CustomDateTimeFormField oldWidget) {
+  void didUpdateWidget(TempDateTimePickerFormField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleControllerChanged);
@@ -282,9 +314,9 @@ class _CustomDateTimeFormFieldState extends FormFieldState<DateTime> {
   }
 
   String format(DateTime? date) =>
-      CustomDateTimeFormField.tryFormat(date, widget.format);
+      TempDateTimePickerFormField.tryFormat(date, widget.format);
   DateTime? parse(String text) =>
-      CustomDateTimeFormField.tryParse(text, widget.format);
+      TempDateTimePickerFormField.tryParse(text, widget.format);
 
   Future<void> requestUpdate() async {
     if (!isShowingDialog) {
