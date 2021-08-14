@@ -133,7 +133,7 @@ Stream<DocSnapshotList> _servicesAroundLocationStream(
   return geo.collection(collectionRef: queryRef).within(
         center: center,
         radius: 9,
-        field: 'geoPosition',
+        field: 'geo_position',
         strictMode: true,
       );
 }

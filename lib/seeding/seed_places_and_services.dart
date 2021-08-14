@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:http/http.dart' as http;
 import 'package:users/constants/specialties.dart';
 import 'package:users/services/gmp_service/find_nearby_places.service.dart';
 
@@ -19,25 +19,29 @@ seedPlacesAndServices() async {
       longitude: place.geometry.location.lng,
     );
     final placeRef = db.collection('places').doc(place.placeId);
+    final servicesRef = placeRef.collection('services');
     await placeRef.set({
       'name': clinicName,
-      'geoPosition': location.data,
+      'geo_position': location.data,
       'address':
           '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',
       'status': place.businessStatus,
     });
     await Future.wait(
-        specialties.map((specialty) => placeRef.collection('services').add({
-              'serviceName': specialty,
-              'placeName': clinicName,
-              'placeId': place.placeId,
-              'geoPosition': location.data,
-              'address':
-                  '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',
-              'specialty': specialty,
-              'rating': place.rating,
-              'ratingsTotal': place.userRatingsTotal,
-            })));
+      specialties.map(
+        (specialty) => servicesRef.add({
+          'rating': place.rating,
+          'ratings_total': place.userRatingsTotal,
+          'specialty': specialty,
+          'service_name': specialty,
+          'place_name': clinicName,
+          'place_id': place.placeId,
+          'address':
+              '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',
+          'geo_position': location.data,
+        }),
+      ),
+    );
   }));
   print('All done!');
 }

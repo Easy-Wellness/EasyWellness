@@ -16,20 +16,25 @@ class DbNearbyService {
     required this.geoPosition,
   });
 
-  final double rating;
-  final int ratingsTotal;
   final String specialty;
   final String address;
-  final GeoPosition geoPosition;
+  final double rating;
 
-  @JsonKey(defaultValue: '')
+  @JsonKey(name: 'ratings_total')
+  final int ratingsTotal;
+
+  @JsonKey(name: 'service_name', defaultValue: '')
   final String serviceName;
 
-  @JsonKey(defaultValue: '')
-  final String placeName;
+  @JsonKey(name: 'geo_position')
+  final GeoPosition geoPosition;
 
-  @JsonKey(defaultValue: '')
+  /// A textual identifier that uniquely identifies a place on Google Maps
+  @JsonKey(name: 'place_id', defaultValue: '')
   final String placeId;
+
+  @JsonKey(name: 'place_name', defaultValue: '')
+  final String placeName;
 
   factory DbNearbyService.fromJson(Map<String, dynamic> json) =>
       _$DbNearbyServiceFromJson(json);
@@ -37,6 +42,7 @@ class DbNearbyService {
   Map<String, dynamic> toJson() => _$DbNearbyServiceToJson(this);
 }
 
+/// From the package:geoflutterfire
 @JsonSerializable()
 class GeoPosition {
   GeoPosition({
