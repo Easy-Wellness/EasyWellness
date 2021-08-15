@@ -32,7 +32,7 @@ class _AppState extends State<App> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
-      title: 'EasyWellness',
+      title: 'Easy Wellness',
       theme: theme(),
       home: FutureBuilder(
           future: _initFirebaseSdk,

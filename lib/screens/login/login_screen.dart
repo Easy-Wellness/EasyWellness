@@ -79,7 +79,7 @@ class _BodyState extends State<Body> {
               ),
             ),
             ElevatedButton.icon(
-              onPressed: () => loginWithFacebook(),
+              onPressed: () => loginWithFacebook(context),
               style: ElevatedButton.styleFrom(primary: Colors.blue),
               icon: SvgPicture.asset(
                 'assets/icons/facebook-icon.svg',
