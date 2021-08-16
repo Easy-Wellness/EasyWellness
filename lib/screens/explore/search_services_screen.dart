@@ -33,7 +33,7 @@ class Body extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.none ||
                 snapshot.connectionState == ConnectionState.waiting)
-              return Center(child: CircularProgressIndicator.adaptive());
+              return const Center(child: CircularProgressIndicator.adaptive());
 
             if (snapshot.hasError) print(snapshot.error);
 

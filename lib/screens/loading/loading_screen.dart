@@ -14,6 +14,6 @@ class LoadingScreen extends StatelessWidget {
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator.adaptive());
+    return const Center(child: CircularProgressIndicator.adaptive());
   }
 }
