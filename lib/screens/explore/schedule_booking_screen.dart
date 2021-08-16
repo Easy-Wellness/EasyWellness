@@ -15,6 +15,7 @@ class ScheduleBookingScreen extends StatelessWidget {
     final service = (ModalRoute.of(context)!.settings.arguments
         as Map<String, Object>)['service'] as DbNearbyService;
     return DefaultTabController(
+      initialIndex: 1,
       length: 2,
       child: Scaffold(
         appBar: AppBar(
@@ -27,7 +28,7 @@ class ScheduleBookingScreen extends StatelessWidget {
             labelColor: Theme.of(context).accentColor,
             tabs: [
               Tab(text: 'schedule'.toUpperCase()),
-              Tab(text: 'overview'.toUpperCase()),
+              Tab(text: 'information'.toUpperCase()),
             ],
           ),
         ),
@@ -45,18 +46,24 @@ class ScheduleTabView extends StatefulWidget {
 class _ScheduleTabViewState extends State<ScheduleTabView> {
   DateTime selectedDate = DateUtils.dateOnly(DateTime.now());
 
+  void setSelectedDate(DateTime? date) {
+    if (date != null && date != selectedDate)
+      setState(() => selectedDate = date);
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     /// The returned DateTime contains only the date part, the time part is
     /// ignored and always set to midnight T00:00:00.000
     final DateTime? picked = await showDatePicker(
       context: context,
+      helpText: 'SWIPE LEFT OR RIGHT TO CHANGE MONTH',
+      cancelText: 'CLOSE',
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 150)),
     );
-    if (picked != null && picked != selectedDate)
-      setState(() => selectedDate = picked);
+    setSelectedDate(picked);
   }
 
   @override
@@ -79,7 +86,11 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
 
           /// Must drop a unique key here or
           /// an unknown weird error will be thown (I don't know why)
-          DayPartPanelList(key: UniqueKey(), selectedDate: selectedDate),
+          DayPartPanelList(
+            key: UniqueKey(),
+            selectedDate: selectedDate,
+            onAnotherDateSelect: setSelectedDate,
+          ),
         ],
       ),
     );
@@ -87,10 +98,14 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
 }
 
 class DayPartPanelList extends StatelessWidget {
-  const DayPartPanelList({Key? key, required this.selectedDate})
-      : super(key: key);
+  const DayPartPanelList({
+    Key? key,
+    required this.selectedDate,
+    required this.onAnotherDateSelect,
+  }) : super(key: key);
 
   final DateTime selectedDate;
+  final void Function(DateTime? date) onAnotherDateSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +115,30 @@ class DayPartPanelList extends StatelessWidget {
             .hours
             .toJson()[DateFormat('EEEE').format(selectedDate).toLowerCase()]
         as List<OpenCloseTimesInSecs>;
-    final dayPartPanels = generateDayPartPanels(
-        context, selectedDate, openingHoursForSelectedDate);
+    final dayPartPanels =
+        buildDayPartPanels(context, selectedDate, openingHoursForSelectedDate);
     return dayPartPanels.length == 0
         ? Expanded(
-            child: Text(
-              'Sorry, there are no available hours for the selected date',
-              textAlign: TextAlign.center,
+            child: Column(
+              children: [
+                Text(
+                  'Oops, there are no hours available for this day',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Please select another day',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => onAnotherDateSelect(
+                      selectedDate.add(const Duration(days: 1))),
+                  child: Text('Select another day'),
+                ),
+              ],
             ),
           )
         : ExpansionPanelList.radio(
@@ -116,7 +148,7 @@ class DayPartPanelList extends StatelessWidget {
   }
 }
 
-List<ExpansionPanelRadio> generateDayPartPanels(
+List<ExpansionPanelRadio> buildDayPartPanels(
   BuildContext context,
   DateTime selectedDate,
   List<OpenCloseTimesInSecs> openingHoursInSecs,
@@ -189,18 +221,9 @@ const apptTimesInSecs = {
       {'open': 43200, 'close': 63900},
       {'open': 64800, 'close': 85500}
     ],
-    'tuesday': [
-      {'open': 27000, 'close': 39600}
-    ],
-    'wednesday': [
-      {'open': 27000, 'close': 39600},
-    ],
-    'thursday': [
-      {'open': 0, 'close': 20700},
-      {'open': 21600, 'close': 42300},
-      {'open': 43200, 'close': 63900},
-      {'open': 64800, 'close': 85500},
-    ],
+    'tuesday': [],
+    'wednesday': [],
+    'thursday': [],
     'friday': [
       {'open': 50400, 'close': 63000}
     ],
@@ -208,7 +231,7 @@ const apptTimesInSecs = {
       {'open': 0, 'close': 19800},
       {'open': 27000, 'close': 39600},
       {'open': 43200, 'close': 61200},
-      {'open': 66600, 'close': 72000}
+      {'open': 64800, 'close': 85500}
     ],
     'sunday': []
   },
