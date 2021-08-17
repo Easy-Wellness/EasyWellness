@@ -19,23 +19,19 @@ class App extends StatefulWidget {
   _AppState createState() => _AppState();
 }
 
-/// State is persistent and not rebuilt, therefore [Future] is only created once.
-/// If [StatelessWidget] is used, in the event where [App] is rebuilt, that
-/// would re-initialize FlutterFire and makes our app re-enter the
-/// loading state, which is undesired.
 class _AppState extends State<App> {
-  final Future<FirebaseApp> _initFirebaseSdk = Firebase.initializeApp();
-  final _navigatorKey = new GlobalKey<NavigatorState>();
+  final Future<FirebaseApp> initFirebaseSdk = Firebase.initializeApp();
+  final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      navigatorKey: _navigatorKey,
+      navigatorKey: navigatorKey,
       title: 'Easy Wellness',
       theme: theme(),
       home: FutureBuilder(
-          future: _initFirebaseSdk,
+          future: initFirebaseSdk,
           builder: (_, snapshot) {
             if (snapshot.hasError) return ErrorScreen();
 
@@ -43,10 +39,10 @@ class _AppState extends State<App> {
               // Assign listener after the SDK is initialized successfully
               FirebaseAuth.instance.authStateChanges().listen((User? user) {
                 if (user == null)
-                  _navigatorKey.currentState!
+                  navigatorKey.currentState!
                       .pushReplacementNamed(LoginScreen.routeName);
                 else
-                  _navigatorKey.currentState!
+                  navigatorKey.currentState!
                       .pushReplacementNamed(ExploreScreen.routeName);
               });
             }
