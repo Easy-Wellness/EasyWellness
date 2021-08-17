@@ -2,14 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:users/components/basic_user_info_form.dart';
+import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
 
-final _db = FirebaseFirestore.instance;
-final _auth = FirebaseAuth.instance;
-final _profileRef = _db
+final _profileRef = FirebaseFirestore.instance
     .collection('user_profiles')
-    .doc(_auth.currentUser!.uid)
+    .doc(FirebaseAuth.instance.currentUser!.uid)
     .withConverter<DbUserProfile>(
       fromFirestore: (snapshot, _) => DbUserProfile.fromJson(snapshot.data()!),
       toFirestore: (profile, _) => profile.toJson(),
@@ -23,11 +21,12 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
   String? fullname;
   String? gender;
   DateTime? birthDate;
   String? phoneNumb;
+  final formKey = GlobalKey<FormState>();
+  final docSnapshot = _profileRef.get();
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +38,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           actions: [
             TextButton(
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   await _profileRef
                       .set(
                         DbUserProfile(
@@ -68,12 +67,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ],
         ),
         body: SafeArea(
-          child: BasicUserInfoForm(
-            formKey: _formKey,
-            onNameSaved: (value) => fullname = value!.trim(),
-            onGenderSaved: (value) => gender = value,
-            onBirthDateSaved: (value) => birthDate = value,
-            onPhoneNumbSaved: (value) => phoneNumb = value,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: FutureBuilder(
+              future: docSnapshot,
+              builder:
+                  (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
+                if (snapshot.hasError) return Text('Unable to show your info');
+                if (snapshot.connectionState == ConnectionState.done) {
+                  final data = snapshot.data!.data();
+                  return Form(
+                    key: formKey,
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: BasicUserInfoFormFields(
+                          initialName: data?.fullname,
+                          initialGender: data?.gender,
+                          initialBirthDate: data?.birthDate.toDate(),
+                          initialPhoneNumb: data?.phoneNumber,
+                          onNameSaved: (value) => fullname = value!.trim(),
+                          onGenderSaved: (value) => gender = value,
+                          onBirthDateSaved: (value) => birthDate = value,
+                          onPhoneNumbSaved: (value) => phoneNumb = value,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              },
+            ),
           ),
         ),
       ),
