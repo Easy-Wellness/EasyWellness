@@ -155,12 +155,12 @@ class _CustomDatePickerFormFieldState extends FormFieldState<DateTime> {
   FocusNode? _focusNode;
   bool tapable = true;
 
+  bool get hasFocus => _focusNode!.hasFocus;
+  bool get hasText => _controller!.text.isNotEmpty;
+
   @override
   CustomDatePickerFormField get widget =>
       super.widget as CustomDatePickerFormField;
-
-  bool get hasFocus => _focusNode!.hasFocus;
-  bool get hasText => _controller!.text.isNotEmpty;
 
   @override
   void initState() {
