@@ -1,9 +1,9 @@
-// Based on the commits on May 11, 2021 in here:
+// Based on the commits on Apr 1, 2021 in here:
 // https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/material/text_form_field.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// A [TextFormField] with a clear icon
+/// A [TextFormField] with a clear button
 class ClearableTextFormField extends FormField<String> {
   /// Creates a [FormField] that contains a [TextField].
   ///
