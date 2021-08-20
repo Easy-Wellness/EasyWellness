@@ -113,14 +113,7 @@ class BasicUserInfoFormFields extends StatelessWidget {
               helperText: '',
             ),
           ),
-        ].expand(
-          (widget) => [
-            widget,
-            SizedBox(
-              height: spacing,
-            )
-          ],
-        )
+        ].expand((widget) => [widget, SizedBox(height: spacing)])
       ],
     );
   }
