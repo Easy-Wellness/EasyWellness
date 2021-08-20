@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
+import 'package:users/utils/form_validation_manager.dart';
 
 final _profileRef = FirebaseFirestore.instance
     .collection('user_profiles')
@@ -81,6 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Scrollbar(
                       child: SingleChildScrollView(
                         child: BasicUserInfoFormFields(
+                          formValidationManager: FormValidationManager(),
                           initialName: data?.fullname,
                           initialGender: data?.gender,
                           initialBirthDate: data?.birthDate.toDate(),

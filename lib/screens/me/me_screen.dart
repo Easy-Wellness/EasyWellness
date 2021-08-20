@@ -38,7 +38,7 @@ class Body extends StatelessWidget {
               onPressed: () =>
                   Navigator.pushNamed(context, EditProfileScreen.routeName),
               icon: Icon(Icons.edit_outlined),
-              label: Text('Edit Your Profile'),
+              label: Text('Edit Your Default Profile'),
             ),
             TextButton.icon(
               onPressed: () {},

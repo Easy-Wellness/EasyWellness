@@ -6,6 +6,7 @@ import 'package:users/components/clearable_text_form_field.dart';
 import 'package:users/components/custom_date_picker_form_field.dart';
 import 'package:users/components/custom_picker_form_field.dart';
 import 'package:users/formatters/phone_input_formatter.dart';
+import 'package:users/utils/form_validation_manager.dart';
 
 final _fullnameRegex = RegExp(
   r"^[a-z àáâãèéêếìíòóôõùúăđĩũơưăạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ,.'-]+$",
@@ -16,6 +17,7 @@ final _fullnameRegex = RegExp(
 class BasicUserInfoFormFields extends StatelessWidget {
   BasicUserInfoFormFields({
     Key? key,
+    required this.formValidationManager,
     this.border,
     this.spacing = 8,
     this.initialName,
@@ -28,6 +30,7 @@ class BasicUserInfoFormFields extends StatelessWidget {
     required this.onPhoneNumbSaved,
   }) : super(key: key);
 
+  final FormValidationManager formValidationManager;
   final double spacing;
   final InputBorder? border;
   final String? initialName;
@@ -47,15 +50,16 @@ class BasicUserInfoFormFields extends StatelessWidget {
         ...[
           ClearableTextFormField(
             initialValue: initialName,
-            validator: (value) {
+            validator: formValidationManager.wrapValidator('name', (value) {
               if (value == null || value.trim().isEmpty)
                 return 'Name is required';
               if (value.trim().length < 4 || value.trim().length > 64)
                 return 'Name must contain between 4 and 64 characters';
               if (!_fullnameRegex.hasMatch(value))
                 return 'Please remove invalid characters from your name';
-            },
+            }),
             onSaved: onNameSaved,
+            focusNode: formValidationManager.getFocusNodeForField('name'),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
@@ -97,13 +101,15 @@ class BasicUserInfoFormFields extends StatelessWidget {
           ),
           ClearableTextFormField(
             initialValue: initialPhoneNumb,
-            validator: (value) {
+            validator:
+                formValidationManager.wrapValidator('phoneNumb', (value) {
               if (value == null || value.isEmpty)
                 return 'Phone number is required';
               if (value.length != 18)
                 return 'Please enter a valid phone number';
-            },
+            }),
             onSaved: onPhoneNumbSaved,
+            focusNode: formValidationManager.getFocusNodeForField('phoneNumb'),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.number,
             inputFormatters: [PhoneInputFormatter()],
