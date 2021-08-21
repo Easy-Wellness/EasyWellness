@@ -13,6 +13,13 @@ import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/me/edit_profile_screen.dart';
 
+enum RootScreen {
+  exploreScreen,
+  bookingListScreen,
+  chatListScreen,
+  meScreen,
+}
+
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
   LoadingScreen.routeName: (_) => LoadingScreen(),

@@ -7,6 +7,7 @@ import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/booking/db_appointment.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
+import 'package:users/routes.dart';
 import 'package:users/screens/explore/booking_summary.dart';
 import 'package:users/utils/form_validation_manager.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
@@ -161,7 +162,8 @@ class _BodyState extends State<Body> {
                                 visitReason: visitReason,
                                 userProfile: userProfile,
                               );
-                              navigateToRootScreen(context, 1);
+                              navigateToRootScreen(
+                                  context, RootScreen.bookingListScreen.index);
                             } else
                               formValidationManager
                                   .erroredFields.first.focusNode
