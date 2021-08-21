@@ -6,7 +6,7 @@ part of 'db_user_profile.model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DbUserProfile _$DbUserProfileFromJson(Map<String, dynamic> json) {
+DbUserProfile _$DbUserProfileFromJson(Map json) {
   return DbUserProfile(
     birthDate:
         DbUserProfile._fromJsonTimestamp(json['birth_date'] as Timestamp),

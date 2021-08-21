@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'db_user_profile.model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class DbUserProfile {
   DbUserProfile({
     required this.birthDate,
