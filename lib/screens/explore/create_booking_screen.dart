@@ -7,9 +7,9 @@ import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/booking/db_appointment.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
-import 'package:users/screens/booking_list/booking_list_screen.dart';
 import 'package:users/screens/explore/booking_summary.dart';
 import 'package:users/utils/form_validation_manager.dart';
+import 'package:users/utils/navigate_to_root_screen.dart';
 
 class CreateBookingScreen extends StatelessWidget {
   static const String routeName = '/create_booking';
@@ -161,8 +161,7 @@ class _BodyState extends State<Body> {
                                 visitReason: visitReason,
                                 userProfile: userProfile,
                               );
-                              Navigator.pushNamed(
-                                  context, BookingListScreen.routeName);
+                              navigateToRootScreen(context, 1);
                             } else
                               formValidationManager
                                   .erroredFields.first.focusNode

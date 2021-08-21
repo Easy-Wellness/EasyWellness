@@ -8,6 +8,7 @@ class BookingListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Container(),
         title: Text('Your bookings'),
       ),
       body: Body(),

@@ -12,6 +12,7 @@ class ExploreScreen extends StatelessWidget {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          leading: Container(),
           title: Text('Explore'),
         ),
         body: Body(),

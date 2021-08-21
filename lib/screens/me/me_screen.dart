@@ -11,6 +11,7 @@ class MeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Container(),
         title: Text('Manage account'),
       ),
       body: Body(),
@@ -38,7 +39,7 @@ class Body extends StatelessWidget {
               onPressed: () =>
                   Navigator.pushNamed(context, EditProfileScreen.routeName),
               icon: Icon(Icons.edit_outlined),
-              label: Text('Edit Your Default Profile'),
+              label: Text('Edit Your Profile'),
             ),
             TextButton.icon(
               onPressed: () {},
