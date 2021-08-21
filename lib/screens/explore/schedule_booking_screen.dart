@@ -15,7 +15,7 @@ class ScheduleBookingScreen extends StatelessWidget {
     final service = (ModalRoute.of(context)!.settings.arguments
         as Map<String, Object>)['service'] as DbNearbyService;
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 2,
       child: Scaffold(
         appBar: AppBar(
@@ -153,8 +153,10 @@ List<ExpansionPanelRadio> buildDayPartPanels(
   DateTime selectedDate,
   List<OpenCloseTimesInSecs> openingHoursInSecs,
 ) {
-  final service = (ModalRoute.of(context)!.settings.arguments
-      as Map<String, Object>)['service'] as DbNearbyService;
+  final args =
+      ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+  final serviceId = args['serviceId'] as String;
+  final service = args['service'] as DbNearbyService;
   final List<ExpansionPanelRadio> panelRadios = [];
 
   openingHoursInSecs.forEach((rangeInSecs) {
@@ -199,6 +201,7 @@ List<ExpansionPanelRadio> buildDayPartPanels(
                 onPressed: () => Navigator.pushNamed(
                     context, CreateBookingScreen.routeName,
                     arguments: {
+                      'serviceId': serviceId,
                       'bookedService': service,
                       'selecteDateTime':
                           selectedDate.add(Duration(seconds: timeInSecs)),

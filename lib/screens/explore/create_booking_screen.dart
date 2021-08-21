@@ -1,216 +1,224 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:users/components/basic_user_info_form_fields.dart';
+import 'package:users/models/booking/db_appointment.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
-import 'package:users/utils/seconds_to_time.dart';
+import 'package:users/models/user_profile/db_user_profile.model.dart';
+import 'package:users/screens/booking_list/booking_list_screen.dart';
+import 'package:users/screens/explore/booking_summary.dart';
+import 'package:users/utils/form_validation_manager.dart';
 
 class CreateBookingScreen extends StatelessWidget {
   static const String routeName = '/create_booking';
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final bottomOffset = mq.viewInsets.bottom + mq.padding.bottom;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(
             'Your booking summary',
             style: const TextStyle(fontSize: 16),
           ),
         ),
-        body: AnimatedContainer(
-          curve: Curves.ease,
-          duration: const Duration(milliseconds: 350),
-          padding: EdgeInsets.only(bottom: bottomOffset),
-          child: SafeArea(
-            bottom: false,
-            child: Body(),
-          ),
-        ),
+        body: SafeArea(child: Body()),
       ),
     );
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  final formKey = GlobalKey<FormState>();
+  final formValidationManager = FormValidationManager();
+  final profileSnapshot = FirebaseFirestore.instance
+      .collection('user_profiles')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .withConverter<DbUserProfile>(
+        fromFirestore: (snapshot, _) =>
+            DbUserProfile.fromJson(snapshot.data()!),
+        toFirestore: (profile, _) => profile.toJson(),
+      )
+      .get();
+  String fullname = '';
+  String gender = '';
+  DateTime birthDate = DateTime.now();
+  String phoneNumb = '';
+  String? visitReason;
+  bool isPrimaryProfile = false;
+
   @override
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final bookedService = args['bookedService'] as DbNearbyService;
-    final selectedDateTime = args['selecteDateTime'] as DateTime;
+    final serviceId = args['serviceId'] as String;
+    final selectedDate = args['selecteDateTime'] as DateTime;
     final timeInSecs = args['timeInSecs'] as int;
-    return Container(
-      child: Column(
-        children: [
-          BookingSummary(
-            selectedDateTime: selectedDateTime,
-            bookedService: bookedService,
-            timeInSecs: timeInSecs,
-          ),
-          Container(
-            margin: const EdgeInsets.all(16),
-            child: Divider(thickness: 2),
-          ),
-          BookingForm(),
-        ],
-      ),
+
+    return FutureBuilder(
+      future: profileSnapshot,
+      builder: (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
+        if (snapshot.hasError) return Text('Unable to show your info');
+        if (snapshot.connectionState == ConnectionState.done) {
+          final data = snapshot.data!.data();
+          return Form(
+            key: formKey,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BookingSummary(
+                        selectedDateTime: selectedDate,
+                        bookedService: bookedService,
+                        timeInSecs: timeInSecs,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 16, bottom: 8),
+                        child: Divider(thickness: 2),
+                      ),
+                      Text('Contact Info',
+                          style: Theme.of(context).textTheme.headline6),
+                      const SizedBox(height: 24),
+                      BasicUserInfoFormFields(
+                        formValidationManager: formValidationManager,
+                        spacing: 16,
+                        border: const OutlineInputBorder(),
+                        initialName: data?.fullname,
+                        initialGender: data?.gender,
+                        initialBirthDate: data?.birthDate.toDate(),
+                        initialPhoneNumb: data?.phoneNumber,
+                        onNameSaved: (value) => fullname = value!.trim(),
+                        onGenderSaved: (value) => gender = value!,
+                        onBirthDateSaved: (value) => birthDate = value!,
+                        onPhoneNumbSaved: (value) => phoneNumb = value!,
+                      ),
+                      const SizedBox(height: 4),
+                      AbsorbPointer(
+                        child: TextField(
+                          keyboardType: TextInputType.emailAddress,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              labelText: 'Email',
+                              hintText:
+                                  FirebaseAuth.instance.currentUser!.email,
+                              helperText:
+                                  'This is the current email associated with your account'),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      TextFormField(
+                        textInputAction: TextInputAction.newline,
+                        keyboardType: TextInputType.multiline,
+                        onSaved: (value) => visitReason = value?.trim(),
+                        decoration: const InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Reason for visit',
+                          alignLabelWithHint: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: 'Describe your symptoms (optional)',
+                          helperText: '',
+                        ),
+                        minLines: 5,
+                        maxLines: 5,
+                        maxLength: 300,
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              final userProfile = DbUserProfile(
+                                fullname: fullname,
+                                gender: gender,
+                                birthDate: Timestamp.fromDate(birthDate),
+                                phoneNumber: phoneNumb,
+                              );
+                              await _createAppointment(
+                                accountId:
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                serviceId: serviceId,
+                                service: bookedService,
+                                date: selectedDate,
+                                timeInSecs: timeInSecs,
+                                visitReason: visitReason,
+                                userProfile: userProfile,
+                              );
+                              Navigator.pushNamed(
+                                  context, BookingListScreen.routeName);
+                            } else
+                              formValidationManager
+                                  .erroredFields.first.focusNode
+                                  .requestFocus();
+                          },
+                          child: Text('Reserve'),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator.adaptive());
+      },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    formValidationManager.dispose();
   }
 }
 
-class BookingSummary extends StatelessWidget {
-  const BookingSummary({
-    Key? key,
-    required this.selectedDateTime,
-    required this.bookedService,
-    required this.timeInSecs,
-  }) : super(key: key);
-
-  final DbNearbyService bookedService;
-  final DateTime selectedDateTime;
-  final int timeInSecs;
-
-  @override
-  Widget build(BuildContext context) {
-    final friendlyDayTimeBuilder = StringBuffer();
-    friendlyDayTimeBuilder.writeAll([
-      DateFormat.yMMMMEEEEd().format(selectedDateTime).substring(0, 3),
-      secondsToTime(timeInSecs),
-    ], ' ');
-    return Container(
-      margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
-      child: Row(
-        children: [
-          Column(
-            children: [
-              Text(
-                '${selectedDateTime.day}',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                DateFormat.yMMMMd().format(selectedDateTime).substring(0, 3),
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.subtitle2,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.summarize_outlined),
-                        ),
-                      ),
-                      TextSpan(text: bookedService.serviceName),
-                    ],
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 4),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText2,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.place),
-                        ),
-                      ),
-                      TextSpan(text: bookedService.placeName),
-                    ],
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 4),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText2,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.map_outlined),
-                        ),
-                      ),
-                      TextSpan(text: bookedService.address),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText2,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.schedule),
-                        ),
-                      ),
-                      TextSpan(text: friendlyDayTimeBuilder.toString()),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BookingForm extends StatelessWidget {
-  const BookingForm({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextFormField(
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Reason for visit',
-                  alignLabelWithHint: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: 'Please describe your symptoms',
-                ),
-                minLines: 3,
-                maxLines: 6,
-                maxLength: 300,
-              ),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Text('Reserve'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+FutureOr<DocumentReference<DbAppointment>> _createAppointment({
+  required String accountId,
+  required String serviceId,
+  required DbNearbyService service,
+  required DateTime date,
+  required int timeInSecs,
+  required DbUserProfile userProfile,
+  required String? visitReason,
+}) {
+  final apptsRef = FirebaseFirestore.instance
+      .collection('places')
+      .doc(service.placeId)
+      .collection('appointments')
+      .withConverter<DbAppointment>(
+        fromFirestore: (snapshot, _) =>
+            DbAppointment.fromJson(snapshot.data()!),
+        toFirestore: (appt, _) => appt.toJson(),
+      );
+  return apptsRef.add(DbAppointment(
+    accountId: accountId,
+    placeId: service.placeId,
+    placeName: service.placeName,
+    serviceId: serviceId,
+    serviceName: service.serviceName,
+    address: service.address,
+    userProfile: userProfile,
+    visitReason: visitReason,
+    status: ApptStatus.confirmed,
+    createdAt: Timestamp.now(),
+    effectiveAt: Timestamp.fromDate(date.add(Duration(seconds: timeInSecs))),
+  ));
 }

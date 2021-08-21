@@ -58,7 +58,10 @@ class Body extends StatelessWidget {
                       onTap: () => Navigator.pushNamed(
                         context,
                         ScheduleBookingScreen.routeName,
-                        arguments: {'service': service},
+                        arguments: {
+                          'serviceId': nearbyServices[index].id,
+                          'service': service,
+                        },
                       ),
                       child: ListTile(
                         leading: Column(
