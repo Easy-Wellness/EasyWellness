@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'gmp_geometry.model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GoogleMapsGeometry {
   GoogleMapsGeometry({
     required this.location,
@@ -24,7 +24,7 @@ class GoogleMapsGeometry {
   Map<String, dynamic> toJson() => _$GoogleMapsGeometryToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class Bounds {
   Bounds({
     required this.northeast,
@@ -39,7 +39,7 @@ class Bounds {
   Map<String, dynamic> toJson() => _$BoundsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GoogleMapsLocation {
   GoogleMapsLocation({
     required this.lat,

@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-
 import 'package:users/models/location/gmp_geometry.model.dart';
 
 part 'gmp_nearby_place.model.g.dart';
 
 /// Nearby Search response: https://developers.google.com/maps/documentation/places/web-service/search#nearby-search-and-text-search-responses
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GoogleMapsNearbyPlace {
   GoogleMapsNearbyPlace({
     required this.businessStatus,
@@ -41,7 +40,7 @@ class GoogleMapsNearbyPlace {
   Map<String, dynamic> toJson() => _$GoogleMapsNearbyPlaceToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class PlusCode {
   PlusCode({
     required this.compoundCode,
@@ -57,5 +56,5 @@ class PlusCode {
   factory PlusCode.fromJson(Map<String, dynamic> json) =>
       _$PlusCodeFromJson(json);
 
-  Map<String, dynamic> toJson() =>_$PlusCodeToJson(this);
+  Map<String, dynamic> toJson() => _$PlusCodeToJson(this);
 }

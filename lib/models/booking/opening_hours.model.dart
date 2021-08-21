@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'opening_hours.model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class OpeningHours {
   OpeningHours({
     required this.hours,
@@ -23,7 +23,7 @@ class OpeningHours {
 /// In each weekday (e.g. mon, tue, wed, etc.), different open-close periods
 /// represent different parts of the day (early morning, morning,
 /// afternoon, and evening)
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class Hours {
   Hours({
     required this.monday,
@@ -49,7 +49,7 @@ class Hours {
 }
 
 /// Both [open] and [close] are the number of seconds from midnight 12:00 AM
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class OpenCloseTimesInSecs {
   OpenCloseTimesInSecs({
     required this.open,

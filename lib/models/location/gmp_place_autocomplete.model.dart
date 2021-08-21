@@ -8,7 +8,7 @@ part 'gmp_place_autocomplete.model.g.dart';
 /// These models are only used to read JSON from the API, not used to send
 /// JSON over the internet. However, toJson() methods are added to
 /// turn off the linter warnings.
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GoogleMapsPlaceAutocomplete {
   @JsonKey(name: 'place_id')
   final String placeId;
@@ -30,7 +30,7 @@ class GoogleMapsPlaceAutocomplete {
   Map<String, dynamic> toJson() => _$GoogleMapsPlaceAutocompleteToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class StructuredFormatting {
   @JsonKey(name: 'main_text')
   final String mainText;

@@ -6,41 +6,42 @@ part of 'gmp_geometry.model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GoogleMapsGeometry _$GoogleMapsGeometryFromJson(Map<String, dynamic> json) {
+GoogleMapsGeometry _$GoogleMapsGeometryFromJson(Map json) {
   return GoogleMapsGeometry(
-    location:
-        GoogleMapsLocation.fromJson(json['location'] as Map<String, dynamic>),
-    viewport: Bounds.fromJson(json['viewport'] as Map<String, dynamic>),
+    location: GoogleMapsLocation.fromJson(
+        Map<String, dynamic>.from(json['location'] as Map)),
+    viewport:
+        Bounds.fromJson(Map<String, dynamic>.from(json['viewport'] as Map)),
     locationType: json['location_type'] as String?,
     bounds: json['bounds'] == null
         ? null
-        : Bounds.fromJson(json['bounds'] as Map<String, dynamic>),
+        : Bounds.fromJson(Map<String, dynamic>.from(json['bounds'] as Map)),
   );
 }
 
 Map<String, dynamic> _$GoogleMapsGeometryToJson(GoogleMapsGeometry instance) =>
     <String, dynamic>{
-      'location': instance.location,
-      'viewport': instance.viewport,
-      'bounds': instance.bounds,
+      'location': instance.location.toJson(),
+      'viewport': instance.viewport.toJson(),
+      'bounds': instance.bounds?.toJson(),
       'location_type': instance.locationType,
     };
 
-Bounds _$BoundsFromJson(Map<String, dynamic> json) {
+Bounds _$BoundsFromJson(Map json) {
   return Bounds(
-    northeast:
-        GoogleMapsLocation.fromJson(json['northeast'] as Map<String, dynamic>),
-    southwest:
-        GoogleMapsLocation.fromJson(json['southwest'] as Map<String, dynamic>),
+    northeast: GoogleMapsLocation.fromJson(
+        Map<String, dynamic>.from(json['northeast'] as Map)),
+    southwest: GoogleMapsLocation.fromJson(
+        Map<String, dynamic>.from(json['southwest'] as Map)),
   );
 }
 
 Map<String, dynamic> _$BoundsToJson(Bounds instance) => <String, dynamic>{
-      'northeast': instance.northeast,
-      'southwest': instance.southwest,
+      'northeast': instance.northeast.toJson(),
+      'southwest': instance.southwest.toJson(),
     };
 
-GoogleMapsLocation _$GoogleMapsLocationFromJson(Map<String, dynamic> json) {
+GoogleMapsLocation _$GoogleMapsLocationFromJson(Map json) {
   return GoogleMapsLocation(
     lat: (json['lat'] as num).toDouble(),
     lng: (json['lng'] as num).toDouble(),

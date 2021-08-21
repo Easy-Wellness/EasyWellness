@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'db_nearby_service.model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class DbNearbyService {
   DbNearbyService({
     required this.rating,
@@ -43,7 +43,7 @@ class DbNearbyService {
 }
 
 /// From the package:geoflutterfire
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GeoPosition {
   GeoPosition({
     required this.geohash,

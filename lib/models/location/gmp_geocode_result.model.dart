@@ -4,7 +4,7 @@ import 'gmp_geometry.model.dart';
 
 part 'gmp_geocode_result.model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true, explicitToJson: true)
 class GoogleMapsGeocodeResult {
   GoogleMapsGeocodeResult({
     required this.formattedAddress,

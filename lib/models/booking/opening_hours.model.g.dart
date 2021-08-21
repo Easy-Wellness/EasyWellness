@@ -6,56 +6,63 @@ part of 'opening_hours.model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpeningHours _$OpeningHoursFromJson(Map<String, dynamic> json) {
+OpeningHours _$OpeningHoursFromJson(Map json) {
   return OpeningHours(
-    hours: Hours.fromJson(json['hours'] as Map<String, dynamic>),
+    hours: Hours.fromJson(Map<String, dynamic>.from(json['hours'] as Map)),
     hoursType: json['hoursType'] as String,
   );
 }
 
 Map<String, dynamic> _$OpeningHoursToJson(OpeningHours instance) =>
     <String, dynamic>{
-      'hours': instance.hours,
+      'hours': instance.hours.toJson(),
       'hoursType': instance.hoursType,
     };
 
-Hours _$HoursFromJson(Map<String, dynamic> json) {
+Hours _$HoursFromJson(Map json) {
   return Hours(
     monday: (json['monday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     tuesday: (json['tuesday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     wednesday: (json['wednesday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     thursday: (json['thursday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     friday: (json['friday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     saturday: (json['saturday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     sunday: (json['sunday'] as List<dynamic>)
-        .map((e) => OpenCloseTimesInSecs.fromJson(e as Map<String, dynamic>))
+        .map((e) =>
+            OpenCloseTimesInSecs.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
   );
 }
 
 Map<String, dynamic> _$HoursToJson(Hours instance) => <String, dynamic>{
-      'monday': instance.monday,
-      'tuesday': instance.tuesday,
-      'wednesday': instance.wednesday,
-      'thursday': instance.thursday,
-      'friday': instance.friday,
-      'saturday': instance.saturday,
-      'sunday': instance.sunday,
+      'monday': instance.monday.map((e) => e.toJson()).toList(),
+      'tuesday': instance.tuesday.map((e) => e.toJson()).toList(),
+      'wednesday': instance.wednesday.map((e) => e.toJson()).toList(),
+      'thursday': instance.thursday.map((e) => e.toJson()).toList(),
+      'friday': instance.friday.map((e) => e.toJson()).toList(),
+      'saturday': instance.saturday.map((e) => e.toJson()).toList(),
+      'sunday': instance.sunday.map((e) => e.toJson()).toList(),
     };
 
-OpenCloseTimesInSecs _$OpenCloseTimesInSecsFromJson(Map<String, dynamic> json) {
+OpenCloseTimesInSecs _$OpenCloseTimesInSecsFromJson(Map json) {
   return OpenCloseTimesInSecs(
     open: json['open'] as int,
     close: json['close'] as int,
