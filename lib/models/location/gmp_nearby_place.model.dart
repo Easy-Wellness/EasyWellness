@@ -11,7 +11,7 @@ class GoogleMapsNearbyPlace {
     required this.geometry,
     required this.name,
     required this.placeId,
-    required this.plusCode,
+    this.plusCode,
     required this.rating,
     required this.userRatingsTotal,
     required this.vicinity,
@@ -32,7 +32,7 @@ class GoogleMapsNearbyPlace {
   final int userRatingsTotal;
 
   @JsonKey(name: 'plus_code')
-  final PlusCode plusCode;
+  final PlusCode? plusCode;
 
   factory GoogleMapsNearbyPlace.fromJson(Map<String, dynamic> json) =>
       _$GoogleMapsNearbyPlaceFromJson(json);

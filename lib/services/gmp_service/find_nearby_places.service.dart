@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:users/constants/env.dart';
 import 'package:users/models/location/gmp_nearby_place.model.dart';
+import 'package:users/utils/print_object.dart';
 
 /// Each search can return as many as 60 results, split across three pages.
 /// [radius] defines the distance (in meters) within which to return place results
@@ -34,10 +35,14 @@ Future<List<GoogleMapsNearbyPlace>> findNearbyPlaces({
     final jsonMap = jsonDecode(response.body);
     final nextPageToken = jsonMap['next_page_token'] as String?;
     final parsed = (jsonMap['results'] as List).cast<Map<String, dynamic>>();
-    final currentPage = parsed
-        .map<GoogleMapsNearbyPlace>(
-            (json) => GoogleMapsNearbyPlace.fromJson(json))
-        .toList();
+    final currentPage = parsed.map<GoogleMapsNearbyPlace>((json) {
+      final doc = GoogleMapsNearbyPlace.fromJson(json);
+      if (doc.plusCode == null) {
+        print('Nearby place from Google Maps with no plus code: ');
+        printObject(doc);
+      }
+      return doc;
+    }).toList();
     if (nextPageToken != null) {
       /// There is a delay between when a [next_page_token] is issued, and
       /// when it will become valid

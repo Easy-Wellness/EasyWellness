@@ -13,8 +13,10 @@ GoogleMapsNearbyPlace _$GoogleMapsNearbyPlaceFromJson(Map json) {
         Map<String, dynamic>.from(json['geometry'] as Map)),
     name: json['name'] as String,
     placeId: json['place_id'] as String,
-    plusCode:
-        PlusCode.fromJson(Map<String, dynamic>.from(json['plus_code'] as Map)),
+    plusCode: json['plus_code'] == null
+        ? null
+        : PlusCode.fromJson(
+            Map<String, dynamic>.from(json['plus_code'] as Map)),
     rating: (json['rating'] as num).toDouble(),
     userRatingsTotal: json['user_ratings_total'] as int,
     vicinity: json['vicinity'] as String,
@@ -31,7 +33,7 @@ Map<String, dynamic> _$GoogleMapsNearbyPlaceToJson(
       'place_id': instance.placeId,
       'business_status': instance.businessStatus,
       'user_ratings_total': instance.userRatingsTotal,
-      'plus_code': instance.plusCode.toJson(),
+      'plus_code': instance.plusCode?.toJson(),
     };
 
 PlusCode _$PlusCodeFromJson(Map json) {

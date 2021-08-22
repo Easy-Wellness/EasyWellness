@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:http/http.dart' as http;
 import 'package:users/constants/specialties.dart';
+import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/services/gmp_service/find_nearby_places.service.dart';
 
 seedPlacesAndServices() async {
@@ -19,27 +20,36 @@ seedPlacesAndServices() async {
       longitude: place.geometry.location.lng,
     );
     final placeRef = db.collection('places').doc(place.placeId);
-    final servicesRef = placeRef.collection('services');
+    final servicesRef =
+        placeRef.collection('services').withConverter<DbNearbyService>(
+              fromFirestore: (snapshot, _) =>
+                  DbNearbyService.fromJson(snapshot.data()!),
+              toFirestore: (service, _) => service.toJson(),
+            );
+    final address =
+        '${place.vicinity}, ${place.plusCode?.compoundCode.substring(8) ?? ''}';
+    final geoPos = GeoPosition(
+      geohash: location.data['geohash'],
+      geopoint: location.data['geopoint'],
+    );
     await placeRef.set({
       'name': clinicName,
       'geo_position': location.data,
-      'address':
-          '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',
+      'address': address,
       'status': place.businessStatus,
     });
     await Future.wait(
       specialties.map(
-        (specialty) => servicesRef.add({
-          'rating': place.rating,
-          'ratings_total': place.userRatingsTotal,
-          'specialty': specialty,
-          'service_name': specialty,
-          'place_name': clinicName,
-          'place_id': place.placeId,
-          'address':
-              '${place.vicinity}, ${place.plusCode.compoundCode.substring(8)}',
-          'geo_position': location.data,
-        }),
+        (specialty) => servicesRef.add(DbNearbyService(
+          rating: place.rating,
+          ratingsTotal: place.userRatingsTotal,
+          specialty: specialty,
+          serviceName: specialty,
+          placeName: clinicName,
+          placeId: place.placeId,
+          address: address,
+          geoPosition: geoPos,
+        )),
       ),
     );
   }));
