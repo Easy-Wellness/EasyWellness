@@ -15,7 +15,7 @@ OpeningHours _$OpeningHoursFromJson(Map json) {
 
 Map<String, dynamic> _$OpeningHoursToJson(OpeningHours instance) =>
     <String, dynamic>{
-      'hours': instance.hours.toJson(),
+      'hours': instance.hours,
       'hoursType': instance.hoursType,
     };
 
@@ -53,13 +53,13 @@ Hours _$HoursFromJson(Map json) {
 }
 
 Map<String, dynamic> _$HoursToJson(Hours instance) => <String, dynamic>{
-      'monday': instance.monday.map((e) => e.toJson()).toList(),
-      'tuesday': instance.tuesday.map((e) => e.toJson()).toList(),
-      'wednesday': instance.wednesday.map((e) => e.toJson()).toList(),
-      'thursday': instance.thursday.map((e) => e.toJson()).toList(),
-      'friday': instance.friday.map((e) => e.toJson()).toList(),
-      'saturday': instance.saturday.map((e) => e.toJson()).toList(),
-      'sunday': instance.sunday.map((e) => e.toJson()).toList(),
+      'monday': instance.monday,
+      'tuesday': instance.tuesday,
+      'wednesday': instance.wednesday,
+      'thursday': instance.thursday,
+      'friday': instance.friday,
+      'saturday': instance.saturday,
+      'sunday': instance.sunday,
     };
 
 OpenCloseTimesInSecs _$OpenCloseTimesInSecsFromJson(Map json) {
