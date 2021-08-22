@@ -7,7 +7,7 @@ void printObject(Object object) {
   Map jsonMapped = json.decode(json.encode(object));
 
   // Using JsonEncoder for spacing
-  JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+  JsonEncoder encoder = JsonEncoder.withIndent('  ');
 
   // encode it to string
   String prettyPrint = encoder.convert(jsonMapped);
