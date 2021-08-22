@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:users/models/booking/opening_hours.model.dart';
+import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
 import 'package:users/utils/seconds_to_time.dart';
