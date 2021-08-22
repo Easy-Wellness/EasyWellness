@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:users/screens/booking_list/booking_list_screen.dart';
+import 'package:users/screens/appointment_list/appointment_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
 
@@ -15,7 +15,7 @@ import 'screens/me/edit_profile_screen.dart';
 
 enum RootScreen {
   exploreScreen,
-  bookingListScreen,
+  AppointmentListScreen,
   chatListScreen,
   meScreen,
 }
@@ -33,7 +33,7 @@ final Map<String, WidgetBuilder> routes = {
   CreateBookingScreen.routeName: (_) => CreateBookingScreen(),
 
   /// Sub-screens of the root Booking List Screen
-  BookingListScreen.routeName: (_) => BookingListScreen(),
+  AppointmentListScreen.routeName: (_) => AppointmentListScreen(),
 
   /// Sub-screens of the root Chat List Screen
   ChatListScreen.routeName: (_) => ChatListScreen(),

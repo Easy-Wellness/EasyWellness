@@ -162,8 +162,8 @@ class _BodyState extends State<Body> {
                                 visitReason: visitReason,
                                 userProfile: userProfile,
                               );
-                              navigateToRootScreen(
-                                  context, RootScreen.bookingListScreen.index);
+                              navigateToRootScreen(context,
+                                  RootScreen.AppointmentListScreen.index);
                             } else
                               formValidationManager
                                   .erroredFields.first.focusNode

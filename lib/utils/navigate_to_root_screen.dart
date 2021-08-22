@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:users/screens/booking_list/booking_list_screen.dart';
+import 'package:users/screens/appointment_list/appointment_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/explore/explore_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
 
 final List<Widget> _rootScreens = [
   ExploreScreen(),
-  BookingListScreen(),
+  AppointmentListScreen(),
   ChatListScreen(),
   MeScreen(),
 ];

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:users/components/custom_bottom_nav_bar.dart';
 
-class BookingListScreen extends StatelessWidget {
+class AppointmentListScreen extends StatelessWidget {
   static const String routeName = '/booking_list';
 
   @override
