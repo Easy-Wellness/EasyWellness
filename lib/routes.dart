@@ -15,7 +15,7 @@ import 'screens/me/edit_profile_screen.dart';
 
 enum RootScreen {
   exploreScreen,
-  AppointmentListScreen,
+  appointmentListScreen,
   chatListScreen,
   meScreen,
 }
@@ -32,7 +32,7 @@ final Map<String, WidgetBuilder> routes = {
   ScheduleBookingScreen.routeName: (_) => ScheduleBookingScreen(),
   CreateBookingScreen.routeName: (_) => CreateBookingScreen(),
 
-  /// Sub-screens of the root Booking List Screen
+  /// Sub-screens of the root Appointment List Screen
   AppointmentListScreen.routeName: (_) => AppointmentListScreen(),
 
   /// Sub-screens of the root Chat List Screen

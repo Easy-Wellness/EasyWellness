@@ -10,10 +10,7 @@ class MeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Container(),
-        title: Text('Manage account'),
-      ),
+      appBar: AppBar(title: Text('Manage account')),
       body: Body(),
       bottomNavigationBar: CustomBottomNavBar(),
     );

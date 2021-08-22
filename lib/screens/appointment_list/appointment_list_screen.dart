@@ -7,10 +7,7 @@ class AppointmentListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Container(),
-        title: Text('Your bookings'),
-      ),
+      appBar: AppBar(title: Text('Your bookings')),
       body: Body(),
       bottomNavigationBar: CustomBottomNavBar(),
     );

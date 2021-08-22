@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:users/routes.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -6,8 +7,9 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initialIndex = ModalRoute.of(context)!.settings.arguments as int?;
-    final currentIndex = initialIndex ?? 0;
+    final args =
+        (ModalRoute.of(context)!.settings.arguments) as Map<String, dynamic>?;
+    final currentIndex = (args?['rootScreenIndex'] ?? 0) as int;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -19,7 +21,8 @@ class CustomBottomNavBar extends StatelessWidget {
         showUnselectedLabels: true,
         unselectedItemColor: Colors.grey[750],
         selectedItemColor: Theme.of(context).accentColor,
-        onTap: (index) => navigateToRootScreen(context, index),
+        onTap: (index) =>
+            navigateToRootScreen(context, RootScreen.values[index]),
         items: const [
           BottomNavigationBarItem(
             label: 'Explore',

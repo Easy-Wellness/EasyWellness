@@ -11,10 +11,7 @@ class ExploreScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: AppBar(
-          leading: Container(),
-          title: Text('Explore'),
-        ),
+        appBar: AppBar(title: Text('Explore')),
         body: Body(),
         bottomNavigationBar: CustomBottomNavBar(),
       ),

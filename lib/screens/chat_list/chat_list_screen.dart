@@ -7,10 +7,7 @@ class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Container(),
-        title: Text('Your chats'),
-      ),
+      appBar: AppBar(title: Text('Your chats')),
       body: Body(),
       bottomNavigationBar: CustomBottomNavBar(),
     );
