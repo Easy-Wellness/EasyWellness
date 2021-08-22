@@ -32,7 +32,7 @@ class DbAppointment {
   @JsonKey(name: 'place_id')
   final String placeId;
 
-  @JsonKey(name: 'placeName')
+  @JsonKey(name: 'place_name')
   final String placeName;
 
   @JsonKey(name: 'service_id')

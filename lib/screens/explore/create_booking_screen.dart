@@ -4,13 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:users/components/basic_user_info_form_fields.dart';
-import 'package:users/models/booking/db_appointment.model.dart';
+import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
 import 'package:users/routes.dart';
 import 'package:users/screens/explore/booking_summary.dart';
 import 'package:users/utils/form_validation_manager.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
+
+final _profileRef = FirebaseFirestore.instance
+    .collection('user_profiles')
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .withConverter<DbUserProfile>(
+      fromFirestore: (snapshot, _) => DbUserProfile.fromJson(snapshot.data()!),
+      toFirestore: (profile, _) => profile.toJson(),
+    );
 
 class CreateBookingScreen extends StatelessWidget {
   static const String routeName = '/create_booking';
@@ -40,15 +48,7 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   final formKey = GlobalKey<FormState>();
   final formValidationManager = FormValidationManager();
-  final profileSnapshot = FirebaseFirestore.instance
-      .collection('user_profiles')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .withConverter<DbUserProfile>(
-        fromFirestore: (snapshot, _) =>
-            DbUserProfile.fromJson(snapshot.data()!),
-        toFirestore: (profile, _) => profile.toJson(),
-      )
-      .get();
+  final profileSnapshot = _profileRef.get();
   String fullname = '';
   String gender = '';
   DateTime birthDate = DateTime.now();
@@ -92,6 +92,11 @@ class _BodyState extends State<Body> {
                       ),
                       Text('Contact Info',
                           style: Theme.of(context).textTheme.headline6),
+                      const SizedBox(height: 8),
+                      Text(
+                        'The form below is prefilled with the info from your previous booking',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
                       const SizedBox(height: 24),
                       BasicUserInfoFormFields(
                         formValidationManager: formValidationManager,
@@ -152,7 +157,7 @@ class _BodyState extends State<Body> {
                                 birthDate: Timestamp.fromDate(birthDate),
                                 phoneNumber: phoneNumb,
                               );
-                              await _createAppointment(
+                              final FutureOr future1 = _createAppointment(
                                 accountId:
                                     FirebaseAuth.instance.currentUser!.uid,
                                 serviceId: serviceId,
@@ -162,6 +167,17 @@ class _BodyState extends State<Body> {
                                 visitReason: visitReason,
                                 userProfile: userProfile,
                               );
+                              final FutureOr future2 = _profileRef.set(
+                                DbUserProfile(
+                                  fullname: fullname,
+                                  gender: gender,
+                                  birthDate: Timestamp.fromDate(birthDate),
+                                  phoneNumber: phoneNumb,
+                                ),
+                                SetOptions(merge: true),
+                              );
+                              await future1;
+                              await future2;
                               navigateToRootScreen(
                                   context, RootScreen.appointmentListScreen);
                             } else

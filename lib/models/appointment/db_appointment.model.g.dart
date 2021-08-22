@@ -10,7 +10,7 @@ DbAppointment _$DbAppointmentFromJson(Map json) {
   return DbAppointment(
     accountId: json['account_id'] as String,
     placeId: json['place_id'] as String,
-    placeName: json['placeName'] as String,
+    placeName: json['place_name'] as String,
     serviceId: json['service_id'] as String,
     serviceName: json['service_name'] as String,
     address: json['address'] as String,
@@ -29,7 +29,7 @@ Map<String, dynamic> _$DbAppointmentToJson(DbAppointment instance) =>
     <String, dynamic>{
       'account_id': instance.accountId,
       'place_id': instance.placeId,
-      'placeName': instance.placeName,
+      'place_name': instance.placeName,
       'service_id': instance.serviceId,
       'service_name': instance.serviceName,
       'address': instance.address,
