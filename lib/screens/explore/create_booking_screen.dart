@@ -62,7 +62,7 @@ class _BodyState extends State<Body> {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final bookedService = args['bookedService'] as DbNearbyService;
     final serviceId = args['serviceId'] as String;
-    final selectedDate = args['selecteDateTime'] as DateTime;
+    final selectedDate = args['selectedDate'] as DateTime;
     final timeInSecs = args['timeInSecs'] as int;
 
     return FutureBuilder(
@@ -82,8 +82,8 @@ class _BodyState extends State<Body> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BookingSummary(
-                        selectedDateTime: selectedDate,
                         bookedService: bookedService,
+                        date: selectedDate,
                         timeInSecs: timeInSecs,
                       ),
                       Container(

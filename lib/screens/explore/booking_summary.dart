@@ -6,20 +6,20 @@ import 'package:users/utils/seconds_to_time.dart';
 class BookingSummary extends StatelessWidget {
   const BookingSummary({
     Key? key,
-    required this.selectedDateTime,
     required this.bookedService,
+    required this.date,
     required this.timeInSecs,
   }) : super(key: key);
 
   final DbNearbyService bookedService;
-  final DateTime selectedDateTime;
+  final DateTime date;
   final int timeInSecs;
 
   @override
   Widget build(BuildContext context) {
     final friendlyDayTimeBuilder = StringBuffer();
     friendlyDayTimeBuilder.writeAll([
-      DateFormat.yMMMMEEEEd().format(selectedDateTime).substring(0, 3),
+      DateFormat.yMMMMEEEEd().format(date).substring(0, 3),
       secondsToTime(timeInSecs),
     ], ' ');
     return Row(
@@ -27,11 +27,11 @@ class BookingSummary extends StatelessWidget {
         Column(
           children: [
             Text(
-              '${selectedDateTime.day}',
+              '${date.day}',
               style: Theme.of(context).textTheme.headline6,
             ),
             Text(
-              DateFormat.yMMMMd().format(selectedDateTime).substring(0, 3),
+              DateFormat.yMMMMd().format(date).substring(0, 3),
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ],

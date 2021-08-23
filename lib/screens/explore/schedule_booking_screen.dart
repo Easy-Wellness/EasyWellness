@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:users/constants/misc.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
@@ -51,7 +54,7 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
       setState(() => selectedDate = date);
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     /// The returned DateTime contains only the date part, the time part is
     /// ignored and always set to midnight T00:00:00.000
     final DateTime? picked = await showDatePicker(
@@ -77,7 +80,7 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
             elevation: 8,
             borderRadius: BorderRadius.circular(8),
             child: TextButton.icon(
-              onPressed: () => _selectDate(context),
+              onPressed: () => selectDate(context),
               icon: const Icon(Icons.today),
               label: Text(DateFormat.yMMMMEEEEd().format(selectedDate)),
             ),
@@ -161,6 +164,9 @@ List<ExpansionPanelRadio> buildDayPartPanels(
 
   openingHoursInSecs.forEach((rangeInSecs) {
     final currentDateTime = DateTime.now();
+
+    /// Get a list of times based on an interval of 30 minutes to build
+    /// the time slots for this part of the day (mapped to [DayPartPanel])
     final timesInSecs =
         getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
     if (selectedDate
@@ -194,19 +200,27 @@ List<ExpansionPanelRadio> buildDayPartPanels(
         mainAxisSpacing: 15,
         children: [
           for (int timeInSecs in timesInSecs)
+
+            /// Minimum lead time is 40 mins
             if (currentDateTime.add(const Duration(minutes: 40)).compareTo(
                     selectedDate.add(Duration(seconds: timeInSecs))) <=
                 0)
               OutlinedButton(
-                onPressed: () => Navigator.pushNamed(
-                    context, CreateBookingScreen.routeName,
+                onPressed: () async {
+                  final bookedDateTime =
+                      selectedDate.add(Duration(seconds: timeInSecs));
+                  if (!await _isBookable(bookedDateTime)) return;
+                  Navigator.pushNamed(
+                    context,
+                    CreateBookingScreen.routeName,
                     arguments: {
                       'serviceId': serviceId,
                       'bookedService': service,
-                      'selecteDateTime':
-                          selectedDate.add(Duration(seconds: timeInSecs)),
+                      'selectedDate': selectedDate,
                       'timeInSecs': timeInSecs,
-                    }),
+                    },
+                  );
+                },
                 child: Text(secondsToTime(timeInSecs)),
               )
         ],
@@ -216,27 +230,27 @@ List<ExpansionPanelRadio> buildDayPartPanels(
   return panelRadios;
 }
 
-const apptTimesInSecs = {
-  'hours': {
-    'monday': [
-      {'open': 0, 'close': 20700},
-      {'open': 21600, 'close': 42300},
-      {'open': 43200, 'close': 63900},
-      {'open': 64800, 'close': 85500}
-    ],
-    'tuesday': [],
-    'wednesday': [],
-    'thursday': [],
-    'friday': [
-      {'open': 50400, 'close': 63000}
-    ],
-    'saturday': [
-      {'open': 0, 'close': 19800},
-      {'open': 27000, 'close': 39600},
-      {'open': 43200, 'close': 61200},
-      {'open': 64800, 'close': 85500}
-    ],
-    'sunday': []
-  },
-  'hoursType': 'WEEKLY'
-};
+/// Allows only one appointment every 6 hours
+Future<bool> _isBookable(DateTime bookedDateTime) async {
+  final blockedDuration = const Duration(hours: 6);
+  final lowerBound = bookedDateTime.subtract(blockedDuration);
+  final upperBound = bookedDateTime.add(blockedDuration);
+  final apptsRef = FirebaseFirestore.instance.collectionGroup('appointments');
+  final firstBlockedAppt = await apptsRef
+      .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('effective_at',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(lowerBound))
+      .where('effective_at',
+          isLessThanOrEqualTo: Timestamp.fromDate(upperBound))
+      .limit(1)
+      .get();
+  if (firstBlockedAppt.docs.isNotEmpty) {
+    final effectiveDateTime =
+        (firstBlockedAppt.docs[0].data()['effective_at'] as Timestamp).toDate();
+    print(effectiveDateTime);
+    print(
+        'Unbookable from ${effectiveDateTime.subtract(blockedDuration)} to ${effectiveDateTime.add(blockedDuration)}}');
+    return false;
+  }
+  return true;
+}
