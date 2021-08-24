@@ -5,7 +5,7 @@ import 'package:users/models/user_profile/db_user_profile.model.dart';
 part 'db_appointment.model.g.dart';
 
 enum ApptStatus {
-  pending,
+  waiting,
   confirmed,
   canceled,
 }

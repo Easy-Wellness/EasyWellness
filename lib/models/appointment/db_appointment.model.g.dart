@@ -67,7 +67,7 @@ K _$enumDecode<K, V>(
 }
 
 const _$ApptStatusEnumMap = {
-  ApptStatus.pending: 'pending',
+  ApptStatus.waiting: 'waiting',
   ApptStatus.confirmed: 'confirmed',
   ApptStatus.canceled: 'canceled',
 };
