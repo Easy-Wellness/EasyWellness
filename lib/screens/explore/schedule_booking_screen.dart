@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/constants/misc.dart';
+import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
@@ -209,7 +210,8 @@ List<ExpansionPanelRadio> buildDayPartPanels(
                 onPressed: () async {
                   final bookedDateTime =
                       selectedDate.add(Duration(seconds: timeInSecs));
-                  if (!await _isBookable(bookedDateTime)) return;
+                  final intervals = await _getBlockedIntervals(bookedDateTime);
+                  if (intervals.isNotEmpty) return;
                   Navigator.pushNamed(
                     context,
                     CreateBookingScreen.routeName,
@@ -230,27 +232,36 @@ List<ExpansionPanelRadio> buildDayPartPanels(
   return panelRadios;
 }
 
-/// Allows only one appointment every 6 hours
-Future<bool> _isBookable(DateTime bookedDateTime) async {
+/// Get the unbookable time intervals (based on appointments' effective_at)
+/// that contains the [bookedDateTime]
+Future<List<Map<String, DateTime>>> _getBlockedIntervals(
+    DateTime bookedDateTime) async {
   final blockedDuration = const Duration(hours: 6);
-  final lowerBound = bookedDateTime.subtract(blockedDuration);
-  final upperBound = bookedDateTime.add(blockedDuration);
   final apptsRef = FirebaseFirestore.instance.collectionGroup('appointments');
-  final firstBlockedAppt = await apptsRef
+
+  /// Return appointments whose effective_at meets the following condition:
+  /// effective_at - 6h < [bookedDateTime] < effective_at + 6h (blocked time
+  /// interval). This helps to ensure the time interval between two nearest
+  /// appointments is always 6 hours
+  final apptList = await apptsRef
       .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .where('effective_at',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(lowerBound))
+          isGreaterThan:
+              Timestamp.fromDate(bookedDateTime.subtract(blockedDuration)))
       .where('effective_at',
-          isLessThanOrEqualTo: Timestamp.fromDate(upperBound))
-      .limit(1)
+          isLessThan: Timestamp.fromDate(bookedDateTime.add(blockedDuration)))
+      .withConverter<DbAppointment>(
+        fromFirestore: (snapshot, _) =>
+            DbAppointment.fromJson(snapshot.data()!),
+        toFirestore: (appt, _) => appt.toJson(),
+      )
       .get();
-  if (firstBlockedAppt.docs.isNotEmpty) {
-    final effectiveDateTime =
-        (firstBlockedAppt.docs[0].data()['effective_at'] as Timestamp).toDate();
-    print(effectiveDateTime);
-    print(
-        'Unbookable from ${effectiveDateTime.subtract(blockedDuration)} to ${effectiveDateTime.add(blockedDuration)}}');
-    return false;
-  }
-  return true;
+  return apptList.docs.map((appt) {
+    final effectiveAt = appt.data().effectiveAt.toDate();
+    final lowerBound = effectiveAt.subtract(blockedDuration);
+    final upperBound = effectiveAt.add(blockedDuration);
+    print('👉 Appointment is scheduled on $effectiveAt:');
+    print('👆 Unbookable from $lowerBound to $upperBound');
+    return {'lower': lowerBound, 'upper': upperBound};
+  }).toList();
 }
