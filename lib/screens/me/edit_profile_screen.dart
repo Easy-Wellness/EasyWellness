@@ -70,35 +70,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         body: SafeArea(
           child: Container(
             padding: const EdgeInsets.all(16),
-            child: FutureBuilder(
-              future: docSnapshot,
-              builder:
-                  (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
-                if (snapshot.hasError) return Text('Unable to show your info');
-                if (snapshot.connectionState == ConnectionState.done) {
-                  final data = snapshot.data!.data();
-                  return Form(
-                    key: formKey,
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        child: BasicUserInfoFormFields(
-                          formValidationManager: FormValidationManager(),
-                          initialName: data?.fullname,
-                          initialGender: data?.gender,
-                          initialBirthDate: data?.birthDate.toDate(),
-                          initialPhoneNumb: data?.phoneNumber,
-                          onNameSaved: (value) => fullname = value!.trim(),
-                          onGenderSaved: (value) => gender = value,
-                          onBirthDateSaved: (value) => birthDate = value,
-                          onPhoneNumbSaved: (value) => phoneNumb = value,
+            child: Center(
+              child: FutureBuilder(
+                future: docSnapshot,
+                builder: (_,
+                    AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
+                  if (snapshot.hasError)
+                    return Text('Unable to show your info');
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    final data = snapshot.data!.data();
+                    return Form(
+                      key: formKey,
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          child: BasicUserInfoFormFields(
+                            formValidationManager: FormValidationManager(),
+                            initialName: data?.fullname,
+                            initialGender: data?.gender,
+                            initialBirthDate: data?.birthDate.toDate(),
+                            initialPhoneNumb: data?.phoneNumber,
+                            onNameSaved: (value) => fullname = value!.trim(),
+                            onGenderSaved: (value) => gender = value,
+                            onBirthDateSaved: (value) => birthDate = value,
+                            onPhoneNumbSaved: (value) => phoneNumb = value,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
-              },
+                    );
+                  }
+                  return const CircularProgressIndicator.adaptive();
+                },
+              ),
             ),
           ),
         ),

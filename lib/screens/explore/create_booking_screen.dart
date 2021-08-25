@@ -65,138 +65,140 @@ class _BodyState extends State<Body> {
     final selectedDate = args['selectedDate'] as DateTime;
     final timeInSecs = args['timeInSecs'] as int;
 
-    return FutureBuilder(
-      future: profileSnapshot,
-      builder: (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
-        if (snapshot.hasError) return Text('Unable to show your info');
-        if (snapshot.connectionState == ConnectionState.done) {
-          final data = snapshot.data!.data();
-          return Form(
-            key: formKey,
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BookingSummary(
-                        bookedService: bookedService,
-                        date: selectedDate,
-                        timeInSecs: timeInSecs,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 16, bottom: 8),
-                        child: Divider(thickness: 2),
-                      ),
-                      Text('Contact Info',
-                          style: Theme.of(context).textTheme.headline6),
-                      const SizedBox(height: 8),
-                      Text(
-                        'The form below is prefilled with the info from your previous booking',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      const SizedBox(height: 24),
-                      BasicUserInfoFormFields(
-                        formValidationManager: formValidationManager,
-                        spacing: 16,
-                        border: const OutlineInputBorder(),
-                        initialName: data?.fullname,
-                        initialGender: data?.gender,
-                        initialBirthDate: data?.birthDate.toDate(),
-                        initialPhoneNumb: data?.phoneNumber,
-                        onNameSaved: (value) => fullname = value!.trim(),
-                        onGenderSaved: (value) => gender = value!,
-                        onBirthDateSaved: (value) => birthDate = value!,
-                        onPhoneNumbSaved: (value) => phoneNumb = value!,
-                      ),
-                      const SizedBox(height: 4),
-                      AbsorbPointer(
-                        child: TextField(
-                          keyboardType: TextInputType.emailAddress,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              labelText: 'Email',
-                              hintText:
-                                  FirebaseAuth.instance.currentUser!.email,
-                              helperText:
-                                  'This is the current email associated with your account'),
+    return Center(
+      child: FutureBuilder(
+        future: profileSnapshot,
+        builder: (_, AsyncSnapshot<DocumentSnapshot<DbUserProfile>> snapshot) {
+          if (snapshot.hasError) return Text('Unable to show your info');
+          if (snapshot.connectionState == ConnectionState.done) {
+            final data = snapshot.data!.data();
+            return Form(
+              key: formKey,
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BookingSummary(
+                          bookedService: bookedService,
+                          date: selectedDate,
+                          timeInSecs: timeInSecs,
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      TextFormField(
-                        textInputAction: TextInputAction.newline,
-                        keyboardType: TextInputType.multiline,
-                        onSaved: (value) => visitReason = value?.trim(),
-                        decoration: const InputDecoration(
+                        Container(
+                          margin: const EdgeInsets.only(top: 16, bottom: 8),
+                          child: Divider(thickness: 2),
+                        ),
+                        Text('Contact Info',
+                            style: Theme.of(context).textTheme.headline6),
+                        const SizedBox(height: 8),
+                        Text(
+                          'The form below is prefilled with the info from your previous booking',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        const SizedBox(height: 24),
+                        BasicUserInfoFormFields(
+                          formValidationManager: formValidationManager,
+                          spacing: 16,
                           border: const OutlineInputBorder(),
-                          labelText: 'Reason for visit',
-                          alignLabelWithHint: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: 'Describe your symptoms (optional)',
-                          helperText: '',
+                          initialName: data?.fullname,
+                          initialGender: data?.gender,
+                          initialBirthDate: data?.birthDate.toDate(),
+                          initialPhoneNumb: data?.phoneNumber,
+                          onNameSaved: (value) => fullname = value!.trim(),
+                          onGenderSaved: (value) => gender = value!,
+                          onBirthDateSaved: (value) => birthDate = value!,
+                          onPhoneNumbSaved: (value) => phoneNumb = value!,
                         ),
-                        minLines: 5,
-                        maxLines: 5,
-                        maxLength: 300,
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              final userProfile = DbUserProfile(
-                                fullname: fullname,
-                                gender: gender,
-                                birthDate: Timestamp.fromDate(birthDate),
-                                phoneNumber: phoneNumb,
-                              );
-                              final FutureOr future1 = _createAppointment(
-                                accountId:
-                                    FirebaseAuth.instance.currentUser!.uid,
-                                serviceId: serviceId,
-                                service: bookedService,
-                                date: selectedDate,
-                                timeInSecs: timeInSecs,
-                                visitReason: visitReason,
-                                userProfile: userProfile,
-                              );
-                              final FutureOr future2 = _profileRef.set(
-                                DbUserProfile(
+                        const SizedBox(height: 4),
+                        AbsorbPointer(
+                          child: TextField(
+                            keyboardType: TextInputType.emailAddress,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                labelText: 'Email',
+                                hintText:
+                                    FirebaseAuth.instance.currentUser!.email,
+                                helperText:
+                                    'This is the current email associated with your account'),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          textInputAction: TextInputAction.newline,
+                          keyboardType: TextInputType.multiline,
+                          onSaved: (value) => visitReason = value?.trim(),
+                          decoration: const InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Reason for visit',
+                            alignLabelWithHint: true,
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: 'Describe your symptoms (optional)',
+                            helperText: '',
+                          ),
+                          minLines: 5,
+                          maxLines: 5,
+                          maxLength: 300,
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                final userProfile = DbUserProfile(
                                   fullname: fullname,
                                   gender: gender,
                                   birthDate: Timestamp.fromDate(birthDate),
                                   phoneNumber: phoneNumb,
-                                ),
-                                SetOptions(merge: true),
-                              );
-                              await future1;
-                              await future2;
-                              navigateToRootScreen(
-                                  context, RootScreen.appointmentListScreen);
-                            } else
-                              formValidationManager
-                                  .erroredFields.first.focusNode
-                                  .requestFocus();
-                          },
-                          child: Text('Reserve'),
-                        ),
-                      )
-                    ],
+                                );
+                                final FutureOr future1 = _createAppointment(
+                                  accountId:
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                  serviceId: serviceId,
+                                  service: bookedService,
+                                  date: selectedDate,
+                                  timeInSecs: timeInSecs,
+                                  visitReason: visitReason,
+                                  userProfile: userProfile,
+                                );
+                                final FutureOr future2 = _profileRef.set(
+                                  DbUserProfile(
+                                    fullname: fullname,
+                                    gender: gender,
+                                    birthDate: Timestamp.fromDate(birthDate),
+                                    phoneNumber: phoneNumb,
+                                  ),
+                                  SetOptions(merge: true),
+                                );
+                                await future1;
+                                await future2;
+                                navigateToRootScreen(
+                                    context, RootScreen.appointmentListScreen);
+                              } else
+                                formValidationManager
+                                    .erroredFields.first.focusNode
+                                    .requestFocus();
+                            },
+                            child: Text('Reserve'),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }
-        return const Center(child: CircularProgressIndicator.adaptive());
-      },
+            );
+          }
+          return const CircularProgressIndicator.adaptive();
+        },
+      ),
     );
   }
 
