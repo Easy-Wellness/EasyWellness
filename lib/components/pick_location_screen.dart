@@ -4,6 +4,8 @@ import 'package:users/models/location/gmp_place_autocomplete.model.dart';
 import 'package:users/services/gmp_service/geo_location_from_place_id.service.dart';
 import 'package:users/services/gmp_service/predict_similar_places.service.dart';
 
+/// Return a geographic location picked by the user from a list of autocomplete
+/// suggestions for location
 class PickLocationScreen extends StatelessWidget {
   static const String routeName = '/pick_location';
 
@@ -25,9 +27,9 @@ class LocationSearchBar extends StatefulWidget {
 }
 
 class _LocationSearchBarState extends State<LocationSearchBar> {
-  final _controller = FloatingSearchBarController();
-  bool _isLoading = false;
-  List<GoogleMapsPlaceAutocomplete> _placePredictions = [];
+  final controller = FloatingSearchBarController();
+  bool isLoading = false;
+  List<GoogleMapsPlaceAutocomplete> placePredictions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +43,8 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
     /// Read 'Usage with Scrollables' in the doc
 
     return FloatingSearchBar(
-      controller: _controller,
-
-      progress: _isLoading,
+      controller: controller,
+      progress: isLoading,
       hint: 'Find your location here...',
 
       /// [bottom] of [scrollPadding] is the distance from the top of
@@ -55,16 +56,15 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
       transition: CircularFloatingSearchBarTransition(),
       transitionDuration: const Duration(milliseconds: 800),
       transitionCurve: Curves.easeInOutCubic,
-
       physics: const BouncingScrollPhysics(),
       debounceDelay: const Duration(milliseconds: 800),
       clearQueryOnClose: true,
       onQueryChanged: (input) async {
-        setState(() => _isLoading = true);
+        setState(() => isLoading = true);
         final predictions = await predictSimilarPlaces(input);
         setState(() {
-          _isLoading = false;
-          _placePredictions = predictions;
+          isLoading = false;
+          placePredictions = predictions;
         });
       },
       actions: [
@@ -72,7 +72,7 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
           showIfOpened: false,
           child: CircularButton(
             icon: const Icon(Icons.place),
-            onPressed: () => _controller.open(),
+            onPressed: () => controller.open(),
           ),
         ),
         FloatingSearchBarAction.searchToClear(
@@ -88,19 +88,19 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
         borderRadius: BorderRadius.circular(8),
         child: ListView.separated(
           shrinkWrap: true,
-          padding: EdgeInsets.symmetric(vertical: 8),
-          itemCount: _placePredictions.length,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: placePredictions.length,
           itemBuilder: (context, index) => InkWell(
             onTap: () async {
-              final location = await geoLocationFromPlaceId(
-                  _placePredictions[index].placeId);
+              final location =
+                  await geoLocationFromPlaceId(placePredictions[index].placeId);
               Navigator.pop(context, location);
             },
             child: ListTile(
               title:
-                  Text(_placePredictions[index].structuredFormatting.mainText),
+                  Text(placePredictions[index].structuredFormatting.mainText),
               subtitle: Text(
-                  _placePredictions[index].structuredFormatting.secondaryText),
+                  placePredictions[index].structuredFormatting.secondaryText),
               leading: Icon(Icons.place),
             ),
           ),
@@ -112,7 +112,7 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 }

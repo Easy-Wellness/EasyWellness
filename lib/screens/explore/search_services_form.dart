@@ -6,7 +6,7 @@ import 'package:users/constants/specialties.dart';
 import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/services/location_service/identify_device_current_location.service.dart';
 
-import 'pick_location_screen.dart';
+import 'package:users/components/pick_location_screen.dart';
 import 'search_services_screen.dart';
 
 class SearchServicesForm extends StatefulWidget {

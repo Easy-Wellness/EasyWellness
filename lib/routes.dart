@@ -3,10 +3,10 @@ import 'package:users/screens/appointment_list/appointment_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
 
+import 'components/pick_location_screen.dart';
 import 'screens/error/error_screen.dart';
 import 'screens/explore/create_booking_screen.dart';
 import 'screens/explore/explore_screen.dart';
-import 'screens/explore/pick_location_screen.dart';
 import 'screens/explore/service_drilldown_screen.dart';
 import 'screens/explore/search_services_screen.dart';
 import 'screens/loading/loading_screen.dart';
