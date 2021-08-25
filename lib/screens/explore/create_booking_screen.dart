@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
 import 'package:users/routes.dart';
-import 'package:users/components/booking_summary.dart';
 import 'package:users/utils/form_validation_manager.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
+import 'package:users/widgets/basic_user_info_form_fields.dart';
+import 'package:users/widgets/booking_summary.dart';
 
 final _profileRef = FirebaseFirestore.instance
     .collection('user_profiles')

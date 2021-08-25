@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:users/components/basic_user_info_form_fields.dart';
 import 'package:users/models/user_profile/db_user_profile.model.dart';
 import 'package:users/utils/form_validation_manager.dart';
+import 'package:users/widgets/basic_user_info_form_fields.dart';
 
 final _profileRef = FirebaseFirestore.instance
     .collection('user_profiles')

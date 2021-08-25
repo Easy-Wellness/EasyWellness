@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:recase/recase.dart';
-import 'package:users/components/clearable_text_form_field.dart';
-import 'package:users/components/custom_date_picker_form_field.dart';
-import 'package:users/components/custom_picker_form_field.dart';
 import 'package:users/formatters/phone_input_formatter.dart';
 import 'package:users/utils/form_validation_manager.dart';
+import 'package:users/widgets/clearable_text_form_field.dart';
+import 'package:users/widgets/custom_date_picker_form_field.dart';
+import 'package:users/widgets/custom_picker_form_field.dart';
 
 final _fullnameRegex = RegExp(
   r"^[a-z àáâãèéêếìíòóôõùúăđĩũơưăạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ,.'-]+$",

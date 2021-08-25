@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:users/components/custom_bottom_nav_bar.dart';
+import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
 import 'edit_profile_screen.dart';
 
