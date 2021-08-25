@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/utils/seconds_to_time.dart';
 
 class BookingSummary extends StatelessWidget {
   const BookingSummary({
     Key? key,
-    required this.bookedService,
-    required this.date,
-    required this.timeInSecs,
+    required this.serviceName,
+    required this.placeName,
+    required this.address,
+    required this.dateTime,
   }) : super(key: key);
 
-  final DbNearbyService bookedService;
-  final DateTime date;
-  final int timeInSecs;
+  final String serviceName;
+  final String placeName;
+  final String address;
+  final DateTime dateTime;
 
   @override
   Widget build(BuildContext context) {
+    final month = DateFormat.yMMMMd().format(dateTime).substring(0, 3);
+    final timeInSecs = (dateTime.millisecondsSinceEpoch -
+            DateUtils.dateOnly(dateTime).millisecondsSinceEpoch) ~/
+        1000;
     final friendlyDayTimeBuilder = StringBuffer();
     friendlyDayTimeBuilder.writeAll([
-      DateFormat.yMMMMEEEEd().format(date).substring(0, 3),
+      DateFormat.yMMMMEEEEd().format(dateTime).substring(0, 3),
       secondsToTime(timeInSecs),
     ], ' ');
     return Row(
@@ -27,13 +32,10 @@ class BookingSummary extends StatelessWidget {
         Column(
           children: [
             Text(
-              '${date.day}',
+              '${dateTime.day}',
               style: Theme.of(context).textTheme.headline6,
             ),
-            Text(
-              DateFormat.yMMMMd().format(date).substring(0, 3),
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
+            Text(month, style: Theme.of(context).textTheme.subtitle1),
           ],
         ),
         const SizedBox(width: 16),
@@ -52,7 +54,7 @@ class BookingSummary extends StatelessWidget {
                           child: Icon(Icons.home_repair_service_outlined),
                         ),
                       ),
-                      TextSpan(text: bookedService.serviceName),
+                      TextSpan(text: serviceName),
                     ],
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -68,7 +70,7 @@ class BookingSummary extends StatelessWidget {
                           child: Icon(Icons.place),
                         ),
                       ),
-                      TextSpan(text: bookedService.placeName),
+                      TextSpan(text: placeName),
                     ],
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -84,7 +86,7 @@ class BookingSummary extends StatelessWidget {
                           child: Icon(Icons.map_outlined),
                         ),
                       ),
-                      TextSpan(text: bookedService.address),
+                      TextSpan(text: address),
                     ],
                   ),
                 ),

@@ -83,9 +83,11 @@ class _BodyState extends State<Body> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BookingSummary(
-                          bookedService: bookedService,
-                          date: selectedDate,
-                          timeInSecs: timeInSecs,
+                          serviceName: bookedService.serviceName,
+                          placeName: bookedService.placeName,
+                          address: bookedService.address,
+                          dateTime:
+                              selectedDate.add(Duration(seconds: timeInSecs)),
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16, bottom: 8),
