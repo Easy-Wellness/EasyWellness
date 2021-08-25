@@ -40,7 +40,7 @@ class Body extends StatelessWidget {
               final nearbyServices = snapshot.data ?? [];
               return Scrollbar(
                 child: ListView.separated(
-                  padding: EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 8),
                   itemCount: nearbyServices.length,
                   separatorBuilder: (_, __) => Divider(thickness: 1),
                   itemBuilder: (context, index) {
