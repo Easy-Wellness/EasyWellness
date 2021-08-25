@@ -5,8 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
-
-import 'schedule_booking_screen.dart';
+import 'package:users/screens/explore/service_drilldown_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static const String routeName = '/search_services';
@@ -57,7 +56,7 @@ class Body extends StatelessWidget {
                     return InkWell(
                       onTap: () => Navigator.pushNamed(
                         context,
-                        ScheduleBookingScreen.routeName,
+                        ServiceDrilldownScreen.routeName,
                         arguments: {
                           'serviceId': nearbyServices[index].id,
                           'service': service,

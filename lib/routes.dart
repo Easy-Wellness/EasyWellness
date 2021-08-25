@@ -7,7 +7,7 @@ import 'screens/error/error_screen.dart';
 import 'screens/explore/create_booking_screen.dart';
 import 'screens/explore/explore_screen.dart';
 import 'screens/explore/pick_location_screen.dart';
-import 'screens/explore/schedule_booking_screen.dart';
+import 'screens/explore/service_drilldown_screen.dart';
 import 'screens/explore/search_services_screen.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
@@ -29,7 +29,7 @@ final Map<String, WidgetBuilder> routes = {
   ExploreScreen.routeName: (_) => ExploreScreen(),
   PickLocationScreen.routeName: (_) => PickLocationScreen(),
   SearchServicesScreen.routeName: (_) => SearchServicesScreen(),
-  ScheduleBookingScreen.routeName: (_) => ScheduleBookingScreen(),
+  ServiceDrilldownScreen.routeName: (_) => ServiceDrilldownScreen(),
   CreateBookingScreen.routeName: (_) => CreateBookingScreen(),
 
   /// Sub-screens of the root Appointment List Screen
