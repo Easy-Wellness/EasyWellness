@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/constants/misc.dart';
+import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
@@ -248,6 +250,7 @@ Future<bool> _timeSlotIsBooked(DateTime bookedDateTime) async {
   // Check if this account already has an appointment at this time
   final apptList = await apptsRef
       .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
       .where('effective_at', isEqualTo: Timestamp.fromDate(bookedDateTime))
       .get();
   return apptList.docs.isNotEmpty;
