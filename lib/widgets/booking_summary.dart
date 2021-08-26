@@ -89,6 +89,8 @@ class BookingSummary extends StatelessWidget {
                       TextSpan(text: address),
                     ],
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
                 RichText(
                   text: TextSpan(
