@@ -6,6 +6,14 @@ import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/widgets/booking_summary.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
+final _apptsRef = FirebaseFirestore.instance
+    .collectionGroup('appointments')
+    .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+    .withConverter<DbAppointment>(
+      fromFirestore: (snapshot, _) => DbAppointment.fromJson(snapshot.data()!),
+      toFirestore: (appt, _) => appt.toJson(),
+    );
+
 class AppointmentListScreen extends StatelessWidget {
   static const String routeName = '/appointment_list';
 
@@ -45,9 +53,93 @@ class AppointmentListScreen extends StatelessWidget {
             ),
           ),
         ),
-        body:
-            TabBarView(children: [UpcomingTabView(), Container(), Container()]),
+        body: TabBarView(
+            children: [UpcomingTabView(), PastTabView(), CanceledTabView()]),
         bottomNavigationBar: CustomBottomNavBar(),
+      ),
+    );
+  }
+}
+
+class CanceledTabView extends StatefulWidget {
+  const CanceledTabView({Key? key}) : super(key: key);
+
+  @override
+  _CanceledTabViewState createState() => _CanceledTabViewState();
+}
+
+class _CanceledTabViewState extends State<CanceledTabView> {
+  final querySnapshot = _apptsRef
+      .where('status', isEqualTo: describeEnum(ApptStatus.canceled))
+      .orderBy('effective_at', descending: true)
+      .get();
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FutureBuilder(
+        future: querySnapshot,
+        builder: (_, AsyncSnapshot<QuerySnapshot<DbAppointment>> snapshot) {
+          if (snapshot.hasError)
+            return Text('Unable to show your appointments');
+          if (snapshot.connectionState == ConnectionState.done) {
+            final apptList = snapshot.data?.docs ?? [];
+            if (apptList.isEmpty)
+              return Text('You have no canceled appointments');
+            return _ApptListView(
+              apptList: apptList,
+              primaryBtnBuilder: (_, index) => ElevatedButton(
+                child: const Text('Book again'),
+                onPressed: () {},
+              ),
+            );
+          }
+          return const CircularProgressIndicator.adaptive();
+        },
+      ),
+    );
+  }
+}
+
+class PastTabView extends StatefulWidget {
+  const PastTabView({Key? key}) : super(key: key);
+
+  @override
+  _PastTabViewState createState() => _PastTabViewState();
+}
+
+class _PastTabViewState extends State<PastTabView> {
+  final querySnapshot = _apptsRef
+      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
+      .where('effective_at',
+          isLessThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
+      .orderBy('effective_at', descending: true)
+      .get();
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FutureBuilder(
+        future: querySnapshot,
+        builder: (_, AsyncSnapshot<QuerySnapshot<DbAppointment>> snapshot) {
+          if (snapshot.hasError)
+            return Text('Unable to show your appointments');
+          if (snapshot.connectionState == ConnectionState.done) {
+            final apptList = snapshot.data?.docs ?? [];
+            if (apptList.isEmpty) return Text('No results found');
+            return _ApptListView(
+              apptList: apptList,
+              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
+                icon: const Icon(Icons.reviews_outlined),
+                label: const Text('Rate'),
+                onPressed: () {},
+              ),
+              secondaryBtnBuilder: (_, idx) => OutlinedButton(
+                child: const Text('Book again'),
+                onPressed: () {},
+              ),
+            );
+          }
+          return const CircularProgressIndicator.adaptive();
+        },
       ),
     );
   }
@@ -61,17 +153,10 @@ class UpcomingTabView extends StatefulWidget {
 }
 
 class _UpcomingTabViewState extends State<UpcomingTabView> {
-  final querySnapshot = FirebaseFirestore.instance
-      .collectionGroup('appointments')
-      .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+  final querySnapshot = _apptsRef
       .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
       .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
       .orderBy('effective_at')
-      .withConverter<DbAppointment>(
-        fromFirestore: (snapshot, _) =>
-            DbAppointment.fromJson(snapshot.data()!),
-        toFirestore: (appt, _) => appt.toJson(),
-      )
       .get();
   @override
   Widget build(BuildContext context) {
@@ -83,7 +168,20 @@ class _UpcomingTabViewState extends State<UpcomingTabView> {
             return Text('Unable to show your appointments');
           if (snapshot.connectionState == ConnectionState.done) {
             final apptList = snapshot.data?.docs ?? [];
-            return ApptListView(apptList: apptList);
+            if (apptList.isEmpty)
+              return Text('You have no upcoming appointments');
+            return _ApptListView(
+              apptList: apptList,
+              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text('Chat'),
+                onPressed: () {},
+              ),
+              secondaryBtnBuilder: (_, idx) => OutlinedButton(
+                child: const Text('Cancel or reschedule'),
+                onPressed: () {},
+              ),
+            );
           }
           return const CircularProgressIndicator.adaptive();
         },
@@ -92,13 +190,17 @@ class _UpcomingTabViewState extends State<UpcomingTabView> {
   }
 }
 
-class ApptListView extends StatelessWidget {
-  const ApptListView({
+class _ApptListView extends StatelessWidget {
+  const _ApptListView({
     Key? key,
     required this.apptList,
+    required this.primaryBtnBuilder,
+    this.secondaryBtnBuilder,
   }) : super(key: key);
 
   final List<QueryDocumentSnapshot<DbAppointment>> apptList;
+  final ElevatedButton Function(BuildContext, int) primaryBtnBuilder;
+  final OutlinedButton Function(BuildContext, int)? secondaryBtnBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -129,16 +231,10 @@ class ApptListView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      OutlinedButton(
-                        child: const Text('Cancel'),
-                        onPressed: () {},
-                      ),
+                      if (secondaryBtnBuilder != null)
+                        secondaryBtnBuilder!(context, idx),
                       const SizedBox(width: 8),
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        label: const Text('Chat with business'),
-                      ),
+                      primaryBtnBuilder(context, idx),
                       const SizedBox(width: 8),
                     ],
                   )
