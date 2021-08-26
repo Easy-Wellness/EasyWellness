@@ -12,7 +12,7 @@ import 'package:users/utils/seconds_to_time.dart';
 
 import 'create_booking_screen.dart';
 
-class ServiceDrilldownScreen extends StatelessWidget {
+class ServiceDetailsScreen extends StatelessWidget {
   static const String routeName = '/schedule_booking';
 
   @override
