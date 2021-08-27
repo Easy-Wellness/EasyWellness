@@ -21,6 +21,7 @@ class DbAppointment {
     required this.address,
     required this.userProfile,
     this.visitReason,
+    this.isReviewed = false,
     required this.status,
     required this.createdAt,
     required this.effectiveAt,
@@ -28,6 +29,10 @@ class DbAppointment {
 
   @JsonKey(name: 'account_id')
   final String accountId;
+
+  /// Check if the account has submitted rating and review for this appointment
+  @JsonKey(name: 'is_reviewed', defaultValue: false)
+  final bool isReviewed;
 
   @JsonKey(name: 'place_id')
   final String placeId;

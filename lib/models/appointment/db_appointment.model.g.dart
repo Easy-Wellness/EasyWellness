@@ -17,6 +17,7 @@ DbAppointment _$DbAppointmentFromJson(Map json) {
     userProfile: DbUserProfile.fromJson(
         Map<String, dynamic>.from(json['user_profile'] as Map)),
     visitReason: json['visit_reason'] as String?,
+    isReviewed: json['is_reviewed'] as bool? ?? false,
     status: _$enumDecode(_$ApptStatusEnumMap, json['status']),
     createdAt:
         DbAppointment._fromJsonTimestamp(json['created_at'] as Timestamp),
@@ -28,6 +29,7 @@ DbAppointment _$DbAppointmentFromJson(Map json) {
 Map<String, dynamic> _$DbAppointmentToJson(DbAppointment instance) =>
     <String, dynamic>{
       'account_id': instance.accountId,
+      'is_reviewed': instance.isReviewed,
       'place_id': instance.placeId,
       'place_name': instance.placeName,
       'service_id': instance.serviceId,
