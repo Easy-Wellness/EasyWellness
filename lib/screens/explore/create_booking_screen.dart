@@ -54,7 +54,6 @@ class _BodyState extends State<Body> {
   DateTime birthDate = DateTime.now();
   String phoneNumb = '';
   String? visitReason;
-  bool isPrimaryProfile = false;
 
   @override
   Widget build(BuildContext context) {
