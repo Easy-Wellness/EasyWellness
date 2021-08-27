@@ -13,7 +13,7 @@ class ApptListView extends StatelessWidget {
   }) : super(key: key);
 
   final List<QueryDocumentSnapshot<DbAppointment>> apptList;
-  final ElevatedButton Function(BuildContext, int) primaryBtnBuilder;
+  final Widget Function(BuildContext, int) primaryBtnBuilder;
   final OutlinedButton Function(BuildContext, int)? secondaryBtnBuilder;
 
   @override
