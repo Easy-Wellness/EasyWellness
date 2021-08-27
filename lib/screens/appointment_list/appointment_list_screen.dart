@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:users/screens/appointment_list/appt_list_view.dart';
-import 'package:users/widgets/custom_bottom_nav_bar.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
+import 'package:users/screens/appointment_list/appt_list_view.dart';
+import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
+import 'package:users/widgets/custom_bottom_nav_bar.dart';
+import 'package:users/widgets/widget_with_toggleable_child.dart';
 
 final _apptsRef = FirebaseFirestore.instance
     .collectionGroup('appointments')
@@ -61,17 +63,18 @@ class AppointmentListScreen extends StatelessWidget {
   }
 }
 
-class CanceledTabView extends StatefulWidget {
-  const CanceledTabView({Key? key}) : super(key: key);
+class UpcomingTabView extends StatefulWidget {
+  const UpcomingTabView({Key? key}) : super(key: key);
 
   @override
-  _CanceledTabViewState createState() => _CanceledTabViewState();
+  _UpcomingTabViewState createState() => _UpcomingTabViewState();
 }
 
-class _CanceledTabViewState extends State<CanceledTabView> {
+class _UpcomingTabViewState extends State<UpcomingTabView> {
   final querySnapshot = _apptsRef
-      .where('status', isEqualTo: describeEnum(ApptStatus.canceled))
-      .orderBy('effective_at', descending: true)
+      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
+      .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+      .orderBy('effective_at')
       .get();
   @override
   Widget build(BuildContext context) {
@@ -84,11 +87,16 @@ class _CanceledTabViewState extends State<CanceledTabView> {
           if (snapshot.connectionState == ConnectionState.done) {
             final apptList = snapshot.data?.docs ?? [];
             if (apptList.isEmpty)
-              return Text('You have no canceled appointments');
+              return Text('You have no upcoming appointments');
             return ApptListView(
               apptList: apptList,
-              primaryBtnBuilder: (_, index) => ElevatedButton(
-                child: const Text('Book again'),
+              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text('Chat'),
+                onPressed: () {},
+              ),
+              secondaryBtnBuilder: (_, idx) => OutlinedButton(
+                child: const Text('Cancel or reschedule'),
                 onPressed: () {},
               ),
             );
@@ -127,11 +135,34 @@ class _PastTabViewState extends State<PastTabView> {
             if (apptList.isEmpty) return Text('No results found');
             return ApptListView(
               apptList: apptList,
-              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
-                icon: const Icon(Icons.reviews_outlined),
-                label: const Text('Rate'),
-                onPressed: () {},
-              ),
+              primaryBtnBuilder: (_, index) {
+                final appt = apptList[index].data();
+                if (!appt.isReviewed)
+                  return WidgetWithToggleableChild(
+                    builder: (widgetState) => ElevatedButton.icon(
+                      icon: const Icon(Icons.reviews_outlined),
+                      label: const Text('Rate'),
+                      onPressed: () async {
+                        /// If result is [true], it means the rating and
+                        /// review is submitted
+                        final result = await Navigator.pushNamed(
+                          context,
+                          CollectReviewAndRatingScreen.routeName,
+                          arguments: {
+                            'apptId': apptList[index].id,
+                            'serviceId': appt.serviceId,
+                            'serviceName': appt.serviceName,
+                            'placeId': appt.placeId,
+                            'placeName': appt.placeName,
+                          },
+                        );
+                        if (result == true)
+                          return widgetState.toggleShow(false);
+                      },
+                    ),
+                  );
+                return Container();
+              },
               secondaryBtnBuilder: (_, idx) => OutlinedButton(
                 child: const Text('Book again'),
                 onPressed: () {},
@@ -145,18 +176,17 @@ class _PastTabViewState extends State<PastTabView> {
   }
 }
 
-class UpcomingTabView extends StatefulWidget {
-  const UpcomingTabView({Key? key}) : super(key: key);
+class CanceledTabView extends StatefulWidget {
+  const CanceledTabView({Key? key}) : super(key: key);
 
   @override
-  _UpcomingTabViewState createState() => _UpcomingTabViewState();
+  _CanceledTabViewState createState() => _CanceledTabViewState();
 }
 
-class _UpcomingTabViewState extends State<UpcomingTabView> {
+class _CanceledTabViewState extends State<CanceledTabView> {
   final querySnapshot = _apptsRef
-      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
-      .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
-      .orderBy('effective_at')
+      .where('status', isEqualTo: describeEnum(ApptStatus.canceled))
+      .orderBy('effective_at', descending: true)
       .get();
   @override
   Widget build(BuildContext context) {
@@ -169,16 +199,11 @@ class _UpcomingTabViewState extends State<UpcomingTabView> {
           if (snapshot.connectionState == ConnectionState.done) {
             final apptList = snapshot.data?.docs ?? [];
             if (apptList.isEmpty)
-              return Text('You have no upcoming appointments');
+              return Text('You have no canceled appointments');
             return ApptListView(
               apptList: apptList,
-              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
-                icon: const Icon(Icons.chat_bubble_outline),
-                label: const Text('Chat'),
-                onPressed: () {},
-              ),
-              secondaryBtnBuilder: (_, idx) => OutlinedButton(
-                child: const Text('Cancel or reschedule'),
+              primaryBtnBuilder: (_, index) => ElevatedButton(
+                child: const Text('Book again'),
                 onPressed: () {},
               ),
             );
