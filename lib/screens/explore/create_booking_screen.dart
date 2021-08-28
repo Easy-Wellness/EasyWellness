@@ -61,8 +61,7 @@ class _BodyState extends State<Body> {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final bookedService = args['bookedService'] as DbNearbyService;
     final serviceId = args['serviceId'] as String;
-    final selectedDate = args['selectedDate'] as DateTime;
-    final timeInSecs = args['timeInSecs'] as int;
+    final selectedDateTime = args['selectedDateTime'] as DateTime;
 
     return Center(
       child: FutureBuilder(
@@ -85,8 +84,7 @@ class _BodyState extends State<Body> {
                           serviceName: bookedService.serviceName,
                           placeName: bookedService.placeName,
                           address: bookedService.address,
-                          dateTime:
-                              selectedDate.add(Duration(seconds: timeInSecs)),
+                          dateTime: selectedDateTime,
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16, bottom: 8),
@@ -164,8 +162,7 @@ class _BodyState extends State<Body> {
                                       FirebaseAuth.instance.currentUser!.uid,
                                   serviceId: serviceId,
                                   service: bookedService,
-                                  date: selectedDate,
-                                  timeInSecs: timeInSecs,
+                                  dateTime: selectedDateTime,
                                   visitReason: visitReason,
                                   userProfile: userProfile,
                                 );
@@ -214,8 +211,7 @@ FutureOr<DocumentReference<DbAppointment>> _createAppointment({
   required String accountId,
   required String serviceId,
   required DbNearbyService service,
-  required DateTime date,
-  required int timeInSecs,
+  required DateTime dateTime,
   required DbUserProfile userProfile,
   required String? visitReason,
 }) {
@@ -239,6 +235,6 @@ FutureOr<DocumentReference<DbAppointment>> _createAppointment({
     visitReason: visitReason,
     status: ApptStatus.confirmed,
     createdAt: Timestamp.now(),
-    effectiveAt: Timestamp.fromDate(date.add(Duration(seconds: timeInSecs))),
+    effectiveAt: Timestamp.fromDate(dateTime),
   ));
 }
