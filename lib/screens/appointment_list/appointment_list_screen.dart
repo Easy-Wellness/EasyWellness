@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/screens/appointment_list/appt_list_view.dart';
+import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
 import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 import 'package:users/widgets/widget_with_toggleable_child.dart';
@@ -71,37 +72,44 @@ class UpcomingTabView extends StatefulWidget {
 }
 
 class _UpcomingTabViewState extends State<UpcomingTabView> {
-  final querySnapshot = _apptsRef
+  final queryStream = _apptsRef
       .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
       .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
       .orderBy('effective_at')
-      .get();
+      .snapshots();
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FutureBuilder(
-        future: querySnapshot,
-        builder: (_, AsyncSnapshot<QuerySnapshot<DbAppointment>> snapshot) {
-          if (snapshot.hasError)
-            return Text('Unable to show your appointments');
-          if (snapshot.connectionState == ConnectionState.done) {
-            final apptList = snapshot.data?.docs ?? [];
-            if (apptList.isEmpty)
-              return Text('You have no upcoming appointments');
-            return ApptListView(
-              apptList: apptList,
-              primaryBtnBuilder: (_, index) => ElevatedButton.icon(
-                icon: const Icon(Icons.chat_bubble_outline),
-                label: const Text('Chat'),
-                onPressed: () {},
+      child: StreamBuilder<QuerySnapshot<DbAppointment>>(
+        stream: queryStream,
+        builder: (_, snapshot) {
+          if (snapshot.hasError) return const Text('Something went wrong');
+
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return const CircularProgressIndicator.adaptive();
+
+          final apptList = snapshot.data?.docs ?? [];
+          if (apptList.isEmpty)
+            return Text('You have no upcoming appointments');
+          return ApptListView(
+            apptList: apptList,
+            primaryBtnBuilder: (_, index) => ElevatedButton.icon(
+              icon: const Icon(Icons.chat_bubble_outline),
+              label: const Text('Chat'),
+              onPressed: () {},
+            ),
+            secondaryBtnBuilder: (_, idx) => OutlinedButton(
+              child: const Text('Cancel or reschedule'),
+              onPressed: () => Navigator.pushNamed(
+                context,
+                CancelOrRescheduleScreen.routeName,
+                arguments: {
+                  'apptId': apptList[idx].id,
+                  'appointment': apptList[idx].data(),
+                },
               ),
-              secondaryBtnBuilder: (_, idx) => OutlinedButton(
-                child: const Text('Cancel or reschedule'),
-                onPressed: () {},
-              ),
-            );
-          }
-          return const CircularProgressIndicator.adaptive();
+            ),
+          );
         },
       ),
     );
@@ -125,9 +133,9 @@ class _PastTabViewState extends State<PastTabView> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FutureBuilder(
+      child: FutureBuilder<QuerySnapshot<DbAppointment>>(
         future: querySnapshot,
-        builder: (_, AsyncSnapshot<QuerySnapshot<DbAppointment>> snapshot) {
+        builder: (_, snapshot) {
           if (snapshot.hasError)
             return Text('Unable to show your appointments');
           if (snapshot.connectionState == ConnectionState.done) {
@@ -191,9 +199,9 @@ class _CanceledTabViewState extends State<CanceledTabView> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FutureBuilder(
+      child: FutureBuilder<QuerySnapshot<DbAppointment>>(
         future: querySnapshot,
-        builder: (_, AsyncSnapshot<QuerySnapshot<DbAppointment>> snapshot) {
+        builder: (_, snapshot) {
           if (snapshot.hasError)
             return Text('Unable to show your appointments');
           if (snapshot.connectionState == ConnectionState.done) {

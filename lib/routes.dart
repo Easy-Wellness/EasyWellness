@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/appointment_list/appointment_list_screen.dart';
+import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
 import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
@@ -36,6 +37,7 @@ final Map<String, WidgetBuilder> routes = {
   /// Sub-screens of the root Appointment List Screen
   AppointmentListScreen.routeName: (_) => AppointmentListScreen(),
   CollectReviewAndRatingScreen.routeName: (_) => CollectReviewAndRatingScreen(),
+  CancelOrRescheduleScreen.routeName: (_) => CancelOrRescheduleScreen(),
 
   /// Sub-screens of the root Chat List Screen
   ChatListScreen.routeName: (_) => ChatListScreen(),

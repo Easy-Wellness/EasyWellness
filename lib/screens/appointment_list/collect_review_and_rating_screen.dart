@@ -140,7 +140,7 @@ class _BodyState extends State<Body> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                                'Your rating and review is submitted successfully'),
+                                'Your rating and review is successfully submitted'),
                             duration: const Duration(seconds: 4),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
