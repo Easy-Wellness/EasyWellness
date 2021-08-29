@@ -26,88 +26,88 @@ class Body extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final center = args['center'] as GeoLocation;
     final specialty = args['specialty'] as String;
-    return Material(
-      child: StreamBuilder<DocSnapshotList>(
+    return Center(
+      child: Material(
+        child: StreamBuilder<DocSnapshotList>(
           stream: _servicesAroundLocationStream(center, specialty),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.none ||
-                snapshot.connectionState == ConnectionState.waiting)
-              return const Center(child: CircularProgressIndicator.adaptive());
+            if (snapshot.hasError) return const Text('Something went wrong');
 
-            if (snapshot.hasError) print(snapshot.error);
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return const CircularProgressIndicator.adaptive();
 
-            if (snapshot.hasData) {
-              final nearbyServices = snapshot.data ?? [];
-              return Scrollbar(
-                child: ListView.separated(
-                  padding: const EdgeInsets.only(top: 8),
-                  itemCount: nearbyServices.length,
-                  separatorBuilder: (_, __) => Divider(thickness: 1),
-                  itemBuilder: (context, index) {
-                    final data = nearbyServices[index].data()!;
-                    final service = DbNearbyService.fromJson(data);
-                    final distance = Geolocator.distanceBetween(
-                          center.latitule,
-                          center.longitude,
-                          service.geoPosition.geopoint.latitude,
-                          service.geoPosition.geopoint.longitude,
-                        ) /
-                        1000;
-                    return InkWell(
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        ServiceDetailsScreen.routeName,
-                        arguments: {
-                          'serviceId': nearbyServices[index].id,
-                          'service': service,
-                        },
+            final nearbyServices = snapshot.data ?? [];
+            if (nearbyServices.isEmpty)
+              return const Text('No nearby service is found');
+            return Scrollbar(
+              child: ListView.separated(
+                padding: const EdgeInsets.only(top: 8),
+                itemCount: nearbyServices.length,
+                separatorBuilder: (_, __) => Divider(thickness: 1),
+                itemBuilder: (context, index) {
+                  final data = nearbyServices[index].data()!;
+                  final service = DbNearbyService.fromJson(data);
+                  final distance = Geolocator.distanceBetween(
+                        center.latitule,
+                        center.longitude,
+                        service.geoPosition.geopoint.latitude,
+                        service.geoPosition.geopoint.longitude,
+                      ) /
+                      1000;
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      ServiceDetailsScreen.routeName,
+                      arguments: {
+                        'serviceId': nearbyServices[index].id,
+                        'service': service,
+                      },
+                    ),
+                    child: ListTile(
+                      leading: Column(
+                        children: [
+                          RatingBarIndicator(
+                            rating: service.rating,
+                            itemCount: 5,
+                            itemSize: 10,
+                            itemBuilder: (_, index) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text('${service.rating}'),
+                        ],
                       ),
-                      child: ListTile(
-                        leading: Column(
+                      title: Text(service.serviceName),
+                      subtitle: Text(
+                        '${service.address} (${service.placeName})',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                      trailing: RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.bodyText2,
                           children: [
-                            RatingBarIndicator(
-                              rating: service.rating,
-                              itemCount: 5,
-                              itemSize: 10,
-                              itemBuilder: (_, index) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
+                            TextSpan(text: '${distance.toStringAsFixed(2)} km'),
+                            WidgetSpan(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 2, bottom: 2),
+                                child: Icon(Icons.near_me, size: 14),
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Text('${service.rating}'),
                           ],
                         ),
-                        title: Text(service.serviceName),
-                        subtitle: Text(
-                          '${service.address} (${service.placeName})',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),
-                        trailing: RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.bodyText2,
-                            children: [
-                              TextSpan(
-                                  text: '${distance.toStringAsFixed(2)} km'),
-                              WidgetSpan(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 2, bottom: 2),
-                                  child: Icon(Icons.near_me, size: 14),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
-                    );
-                  },
-                ),
-              );
-            }
-            return Center(child: Text('No nearby service is found'));
-          }),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
