@@ -49,15 +49,18 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
     final service = args['service'] as DbNearbyService;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: AppointmentScheduler(
-        onTimeSlotSelect: (selectedDateTime) => Navigator.pushNamed(
-          context,
-          CreateBookingScreen.routeName,
-          arguments: {
-            'serviceId': serviceId,
-            'bookedService': service,
-            'selectedDateTime': selectedDateTime,
-          },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: AppointmentScheduler(
+          onTimeSlotSelect: (selectedDateTime) => Navigator.pushNamed(
+            context,
+            CreateBookingScreen.routeName,
+            arguments: {
+              'serviceId': serviceId,
+              'bookedService': service,
+              'selectedDateTime': selectedDateTime,
+            },
+          ),
         ),
       ),
     );

@@ -12,7 +12,7 @@ class CancelOrRescheduleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Cancel or reschedule')),
-      body: Body(),
+      body: SafeArea(child: Body()),
     );
   }
 }
@@ -30,6 +30,15 @@ class Body extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            ListTile(
+              title: Text(
+                appt.serviceName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              subtitle: Text(appt.placeName),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
             OutlinedButton.icon(
               icon: Icon(Icons.cancel_outlined),
               label: Text('Cancel the appointment'),

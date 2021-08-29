@@ -48,7 +48,6 @@ class _AppointmentSchedulerState extends State<AppointmentScheduler> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 16),
         Material(
           elevation: 8,
           borderRadius: BorderRadius.circular(8),
@@ -101,28 +100,26 @@ class DayPartPanelList extends StatelessWidget {
       onTimeSlotSelect,
     );
     return dayPartPanels.length == 0
-        ? Expanded(
-            child: Column(
-              children: [
-                Text(
-                  'Oops, there are no hours available for this day',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Please select another day',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText2,
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => onAnotherDateSelect(
-                      selectedDate.add(const Duration(days: 1))),
-                  child: Text('Select another day'),
-                ),
-              ],
-            ),
+        ? Column(
+            children: [
+              Text(
+                'Oops, there are no hours available for this day',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please select another day',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () => onAnotherDateSelect(
+                    selectedDate.add(const Duration(days: 1))),
+                child: Text('Select another day'),
+              ),
+            ],
           )
         : ExpansionPanelList.radio(
             animationDuration: const Duration(milliseconds: 800),
