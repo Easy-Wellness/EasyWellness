@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/widgets/appointment_scheduler.dart';
 import 'package:users/widgets/or_divider.dart';
+import 'package:users/widgets/show_custom_snack_bar.dart';
 
 class CancelOrRescheduleScreen extends StatelessWidget {
   static const String routeName = '/cancel_and_reschedule_screen';
@@ -24,6 +26,14 @@ class Body extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final apptId = args['apptId'] as String;
     final appt = args['appointment'] as DbAppointment;
+    final effectiveAt = appt.effectiveAt.toDate();
+    final friendlyDate = DateFormat.yMMMMEEEEd().format(effectiveAt);
+    final friendlyTime = DateFormat.jm().format(effectiveAt);
+    final apptRef = FirebaseFirestore.instance
+        .collection('places')
+        .doc(appt.placeId)
+        .collection('appointments')
+        .doc(apptId);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -39,6 +49,23 @@ class Body extends StatelessWidget {
               subtitle: Text(appt.placeName),
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             ),
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyText2,
+                children: [
+                  WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4, right: 4),
+                      child: Icon(Icons.event_outlined),
+                    ),
+                  ),
+                  TextSpan(text: '$friendlyDate ($friendlyTime)'),
+                ],
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            const SizedBox(height: 8),
             OutlinedButton.icon(
               icon: Icon(Icons.cancel_outlined),
               label: Text('Cancel the appointment'),
@@ -55,26 +82,12 @@ class Body extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        await FirebaseFirestore.instance
-                            .collection('places')
-                            .doc(appt.placeId)
-                            .collection('appointments')
-                            .doc(apptId)
-                            .update(
-                                {'status': describeEnum(ApptStatus.canceled)});
+                        await apptRef.update(
+                            {'status': describeEnum(ApptStatus.canceled)});
                         Navigator.pop(context);
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Your appointment is successfully canceled'),
-                            duration: const Duration(seconds: 4),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        );
+                        showCustomSnackBar(context,
+                            'Your appointment is successfully canceled');
                       },
                       child: Text('Yes'),
                     ),
@@ -83,7 +96,13 @@ class Body extends StatelessWidget {
               ),
             ),
             const OrDivider(text: 'Or reschedule below'),
-            AppointmentScheduler(onTimeSlotSelect: (selectedDateTime) {}),
+            AppointmentScheduler(onTimeSlotSelect: (selectedDateTime) async {
+              await apptRef.update(
+                  {'effective_at': Timestamp.fromDate(selectedDateTime)});
+              Navigator.pop(context);
+              showCustomSnackBar(
+                  context, 'Your appointment is successfully rescheduled');
+            }),
           ],
         ),
       ),
