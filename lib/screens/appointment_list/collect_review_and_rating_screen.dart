@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:users/models/review/db_review.model.dart';
-import 'package:users/widgets/show_custom_snack_bar.dart';
+import 'package:users/utils/show_custom_snack_bar.dart';
 
 class CollectReviewAndRatingScreen extends StatelessWidget {
   static const String routeName = '/collect_review_and_rating';
