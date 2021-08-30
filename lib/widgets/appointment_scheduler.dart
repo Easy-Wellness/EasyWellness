@@ -1,22 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/constants/misc.dart';
-import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
 import 'package:users/utils/seconds_to_time.dart';
 import 'package:users/widgets/show_custom_snack_bar.dart';
 
+/// Validate if the DateTime is bookable, the client might need to send an
+/// HTTP request to ask the server for this information
+typedef AppointmentTimeValidator = Future<String?> Function(DateTime);
+
 class AppointmentScheduler extends StatefulWidget {
   const AppointmentScheduler({
     Key? key,
+    required this.validator,
     required this.onTimeSlotSelect,
   }) : super(key: key);
 
-  final void Function(DateTime date) onTimeSlotSelect;
+  /// A method that validates the DateTime selected by the user. Returns an
+  /// error string to display if the DateTime is unbookable, or null otherwise.
+  final AppointmentTimeValidator validator;
+  final ValueSetter<DateTime> onTimeSlotSelect;
 
   @override
   _AppointmentSchedulerState createState() => _AppointmentSchedulerState();
@@ -66,6 +71,7 @@ class _AppointmentSchedulerState extends State<AppointmentScheduler> {
           key: UniqueKey(),
           selectedDate: selectedDate,
           onAnotherDateSelect: setSelectedDate,
+          validator: widget.validator,
           onTimeSlotSelect: widget.onTimeSlotSelect,
         ),
       ],
@@ -78,12 +84,14 @@ class DayPartPanelList extends StatelessWidget {
     Key? key,
     required this.selectedDate,
     required this.onAnotherDateSelect,
+    required this.validator,
     required this.onTimeSlotSelect,
   }) : super(key: key);
 
   final DateTime selectedDate;
   final void Function(DateTime? date) onAnotherDateSelect;
-  final void Function(DateTime date) onTimeSlotSelect;
+  final AppointmentTimeValidator validator;
+  final ValueSetter<DateTime> onTimeSlotSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +103,11 @@ class DayPartPanelList extends StatelessWidget {
         .hours
         .toJson()[dayOfWeek] as List<OpenCloseTimesInSecs>;
     final dayPartPanels = _buildDayPartPanels(
-      context,
-      selectedDate,
-      openingHoursForSelectedDate,
-      onTimeSlotSelect,
+      context: context,
+      selectedDate: selectedDate,
+      openingHoursInSecs: openingHoursForSelectedDate,
+      validator: validator,
+      onTimeSlotSelect: onTimeSlotSelect,
     );
     return dayPartPanels.length == 0
         ? Column(
@@ -129,12 +138,13 @@ class DayPartPanelList extends StatelessWidget {
   }
 }
 
-List<ExpansionPanelRadio> _buildDayPartPanels(
-  BuildContext context,
-  DateTime selectedDate,
-  List<OpenCloseTimesInSecs> openingHoursInSecs,
-  void Function(DateTime date) onTimeSlotSelect,
-) {
+List<ExpansionPanelRadio> _buildDayPartPanels({
+  required BuildContext context,
+  required DateTime selectedDate,
+  required List<OpenCloseTimesInSecs> openingHoursInSecs,
+  required AppointmentTimeValidator validator,
+  required ValueSetter<DateTime> onTimeSlotSelect,
+}) {
   final List<ExpansionPanelRadio> panelRadios = [];
 
   openingHoursInSecs.forEach((rangeInSecs) {
@@ -185,9 +195,10 @@ List<ExpansionPanelRadio> _buildDayPartPanels(
                 onPressed: () async {
                   final bookedDateTime =
                       selectedDate.add(Duration(seconds: timeInSecs));
-                  if (await _timeSlotIsBooked(bookedDateTime)) {
-                    showCustomSnackBar(context,
-                        'You already have an appointment at this time');
+                  final errorMsg = await validator(bookedDateTime);
+                  if (errorMsg != null) {
+                    showCustomSnackBar(context, errorMsg);
+                    // Don't invoke the [onTimeSlotSelect] method
                     return;
                   }
                   onTimeSlotSelect(bookedDateTime);
@@ -199,15 +210,4 @@ List<ExpansionPanelRadio> _buildDayPartPanels(
     ));
   });
   return panelRadios;
-}
-
-Future<bool> _timeSlotIsBooked(DateTime bookedDateTime) async {
-  final apptsRef = FirebaseFirestore.instance.collectionGroup('appointments');
-  // Check if this account already has an appointment at this time
-  final apptList = await apptsRef
-      .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
-      .where('effective_at', isEqualTo: Timestamp.fromDate(bookedDateTime))
-      .get();
-  return apptList.docs.isNotEmpty;
 }

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
+import 'package:users/utils/time_slot_is_booked.dart';
 import 'package:users/widgets/appointment_scheduler.dart';
 import 'package:users/widgets/or_divider.dart';
 import 'package:users/widgets/show_custom_snack_bar.dart';
@@ -96,13 +97,19 @@ class Body extends StatelessWidget {
               ),
             ),
             const OrDivider(text: 'Or reschedule below'),
-            AppointmentScheduler(onTimeSlotSelect: (selectedDateTime) async {
-              await apptRef.update(
-                  {'effective_at': Timestamp.fromDate(selectedDateTime)});
-              Navigator.pop(context);
-              showCustomSnackBar(
-                  context, 'Your appointment is successfully rescheduled');
-            }),
+            AppointmentScheduler(
+              validator: (value) async {
+                if (await timeSlotIsBooked(value))
+                  return 'You already have an appointment at this time';
+              },
+              onTimeSlotSelect: (selectedDateTime) async {
+                await apptRef.update(
+                    {'effective_at': Timestamp.fromDate(selectedDateTime)});
+                Navigator.pop(context);
+                showCustomSnackBar(
+                    context, 'Your appointment is successfully rescheduled');
+              },
+            ),
           ],
         ),
       ),

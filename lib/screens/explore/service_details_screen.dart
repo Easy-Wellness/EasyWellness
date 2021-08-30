@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
+import 'package:users/utils/time_slot_is_booked.dart';
 import 'package:users/widgets/appointment_scheduler.dart';
 
 import 'create_booking_screen.dart';
@@ -47,19 +48,25 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
         (ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
     final serviceId = args['serviceId'] as String;
     final service = args['service'] as DbNearbyService;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: AppointmentScheduler(
-          onTimeSlotSelect: (selectedDateTime) => Navigator.pushNamed(
-            context,
-            CreateBookingScreen.routeName,
-            arguments: {
-              'serviceId': serviceId,
-              'bookedService': service,
-              'selectedDateTime': selectedDateTime,
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: AppointmentScheduler(
+            validator: (value) async {
+              if (await timeSlotIsBooked(value))
+                return 'You already have an appointment at this time';
             },
+            onTimeSlotSelect: (selectedDateTime) => Navigator.pushNamed(
+              context,
+              CreateBookingScreen.routeName,
+              arguments: {
+                'serviceId': serviceId,
+                'bookedService': service,
+                'selectedDateTime': selectedDateTime,
+              },
+            ),
           ),
         ),
       ),
