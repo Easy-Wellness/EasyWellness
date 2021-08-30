@@ -8,6 +8,7 @@ import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
 import 'package:users/utils/seconds_to_time.dart';
+import 'package:users/widgets/show_custom_snack_bar.dart';
 
 class AppointmentScheduler extends StatefulWidget {
   const AppointmentScheduler({
@@ -185,17 +186,8 @@ List<ExpansionPanelRadio> _buildDayPartPanels(
                   final bookedDateTime =
                       selectedDate.add(Duration(seconds: timeInSecs));
                   if (await _timeSlotIsBooked(bookedDateTime)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'You already have an appointment at this time'),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                    );
+                    showCustomSnackBar(context,
+                        'You already have an appointment at this time');
                     return;
                   }
                   onTimeSlotSelect(bookedDateTime);

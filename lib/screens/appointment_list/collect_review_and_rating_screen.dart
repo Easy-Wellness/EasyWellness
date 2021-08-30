@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:users/models/review/db_review.model.dart';
+import 'package:users/widgets/show_custom_snack_bar.dart';
 
 class CollectReviewAndRatingScreen extends StatelessWidget {
   static const String routeName = '/collect_review_and_rating';
@@ -137,17 +138,8 @@ class _BodyState extends State<Body> {
                             .doc(apptId)
                             .update({'is_reviewed': true}).catchError(print);
                         Navigator.pop(context, true);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Your rating and review is successfully submitted'),
-                            duration: const Duration(seconds: 4),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        );
+                        showCustomSnackBar(context,
+                            'Your rating and review is successfully submitted');
                       }
                     },
                     child: Text('Submit'),
