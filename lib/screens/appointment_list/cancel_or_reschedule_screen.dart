@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
+import 'package:users/utils/show_custom_snack_bar.dart';
 import 'package:users/utils/time_slot_is_booked.dart';
 import 'package:users/widgets/appointment_scheduler.dart';
 import 'package:users/widgets/or_divider.dart';
-import 'package:users/widgets/show_custom_snack_bar.dart';
 
 class CancelOrRescheduleScreen extends StatelessWidget {
   static const String routeName = '/cancel_and_reschedule_screen';
@@ -83,9 +83,15 @@ class Body extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        final cancellationPolicyIsFollowed =
+                            DateTime.now().difference(effectiveAt).inHours >=
+                                24;
+                        Navigator.pop(context);
+                        if (!cancellationPolicyIsFollowed)
+                          return showCustomSnackBar(context,
+                              'You can only cancel your appointment 24 hours prior to your scheduled booking');
                         await apptRef.update(
                             {'status': describeEnum(ApptStatus.canceled)});
-                        Navigator.pop(context);
                         Navigator.pop(context);
                         showCustomSnackBar(context,
                             'Your appointment is successfully canceled');
@@ -103,6 +109,11 @@ class Body extends StatelessWidget {
                   return 'You already have an appointment at this time';
               },
               onTimeSlotSelect: (selectedDateTime) async {
+                final reschedulePolicyIsFollowed =
+                    DateTime.now().difference(effectiveAt).inHours >= 24;
+                if (!reschedulePolicyIsFollowed)
+                  return showCustomSnackBar(context,
+                      'You can only reschedule your appointment 24 hours prior to your scheduled booking');
                 await apptRef.update(
                     {'effective_at': Timestamp.fromDate(selectedDateTime)});
                 Navigator.pop(context);
