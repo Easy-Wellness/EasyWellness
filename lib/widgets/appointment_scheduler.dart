@@ -20,6 +20,8 @@ class AppointmentScheduler extends StatefulWidget {
 
   /// A method that validates the DateTime selected by the user. Returns an
   /// error string to display if the DateTime is unbookable, or null otherwise.
+  /// [onTimeSlotSelect] is invoked if and only if the selected date time
+  /// passes the [validator] check
   final AppointmentTimeValidator validator;
   final ValueSetter<DateTime> onTimeSlotSelect;
 

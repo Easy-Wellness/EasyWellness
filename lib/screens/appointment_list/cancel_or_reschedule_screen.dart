@@ -83,9 +83,11 @@ class Body extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        final cancellationPolicyIsFollowed =
-                            DateTime.now().difference(effectiveAt).inHours >=
-                                24;
+                        final cancellationPolicyIsFollowed = DateTime.now()
+                                .difference(effectiveAt)
+                                .inHours
+                                .abs() >=
+                            24;
                         Navigator.pop(context);
                         if (!cancellationPolicyIsFollowed)
                           return showCustomSnackBar(context,
@@ -105,15 +107,14 @@ class Body extends StatelessWidget {
             const OrDivider(text: 'Or reschedule below'),
             AppointmentScheduler(
               validator: (value) async {
+                final reschedulePolicyIsFollowed =
+                    DateTime.now().difference(effectiveAt).inHours.abs() >= 24;
+                if (!reschedulePolicyIsFollowed)
+                  return 'You can only reschedule your appointment 24 hours prior to your scheduled booking';
                 if (await timeSlotIsBooked(value))
                   return 'You already have an appointment at this time';
               },
               onTimeSlotSelect: (selectedDateTime) async {
-                final reschedulePolicyIsFollowed =
-                    DateTime.now().difference(effectiveAt).inHours >= 24;
-                if (!reschedulePolicyIsFollowed)
-                  return showCustomSnackBar(context,
-                      'You can only reschedule your appointment 24 hours prior to your scheduled booking');
                 await apptRef.update(
                     {'effective_at': Timestamp.fromDate(selectedDateTime)});
                 Navigator.pop(context);
