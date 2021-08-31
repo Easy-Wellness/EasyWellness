@@ -9,6 +9,7 @@ import 'package:users/models/user_profile/db_user_profile.model.dart';
 import 'package:users/routes.dart';
 import 'package:users/utils/form_validation_manager.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
+import 'package:users/utils/show_custom_snack_bar.dart';
 import 'package:users/widgets/basic_user_info_form_fields.dart';
 import 'package:users/widgets/booking_summary.dart';
 
@@ -177,6 +178,8 @@ class _BodyState extends State<Body> {
                                 );
                                 await future1;
                                 await future2;
+                                showCustomSnackBar(context,
+                                    'Your appointment is successfully scheduled');
                                 navigateToRootScreen(
                                     context, RootScreen.appointmentListScreen);
                               } else

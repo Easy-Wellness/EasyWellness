@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
+import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/appointment_list/appt_list_view.dart';
 import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
 import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
+import 'package:users/screens/service_details/service_details_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 import 'package:users/widgets/widget_with_toggleable_child.dart';
 
@@ -173,7 +175,19 @@ class _PastTabViewState extends State<PastTabView> {
               },
               secondaryBtnBuilder: (_, idx) => OutlinedButton(
                 child: const Text('Book again'),
-                onPressed: () {},
+                onPressed: () async {
+                  final data = apptList[idx].data();
+                  final service =
+                      await _findServiceByIds(data.placeId, data.serviceId);
+                  Navigator.pushNamed(
+                    context,
+                    ServiceDetailsScreen.routeName,
+                    arguments: {
+                      'serviceId': data.serviceId,
+                      'service': service,
+                    },
+                  );
+                },
               ),
             );
           }
@@ -212,7 +226,19 @@ class _CanceledTabViewState extends State<CanceledTabView> {
               apptList: apptList,
               primaryBtnBuilder: (_, index) => ElevatedButton(
                 child: const Text('Book again'),
-                onPressed: () {},
+                onPressed: () async {
+                  final data = apptList[index].data();
+                  final service =
+                      await _findServiceByIds(data.placeId, data.serviceId);
+                  Navigator.pushNamed(
+                    context,
+                    ServiceDetailsScreen.routeName,
+                    arguments: {
+                      'serviceId': data.serviceId,
+                      'service': service,
+                    },
+                  );
+                },
               ),
             );
           }
@@ -221,4 +247,20 @@ class _CanceledTabViewState extends State<CanceledTabView> {
       ),
     );
   }
+}
+
+Future<DbNearbyService> _findServiceByIds(
+    String placeId, String serviceId) async {
+  final doc = await FirebaseFirestore.instance
+      .collection('places')
+      .doc(placeId)
+      .collection('services')
+      .doc(serviceId)
+      .withConverter<DbNearbyService>(
+        fromFirestore: (snapshot, _) =>
+            DbNearbyService.fromJson(snapshot.data()!),
+        toFirestore: (service, _) => service.toJson(),
+      )
+      .get();
+  return doc.data()!;
 }
