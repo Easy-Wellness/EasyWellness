@@ -5,7 +5,7 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
-import 'package:users/screens/explore/service_details_screen.dart';
+import 'package:users/screens/service_details/service_details_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static const String routeName = '/search_services';
