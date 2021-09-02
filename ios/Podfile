@@ -30,7 +30,7 @@ flutter_ios_podfile_setup
 # Read here for the latest pre-compiled C++ version associated with the lastest Firestore iOS SDK for Flutter:
 # https://firebase.flutter.dev/docs/overview#improve-ios-build-times
 target 'Runner' do
-  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.5.0'
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.6.0'
   use_frameworks!
   use_modular_headers!
 
