@@ -9,7 +9,7 @@ import 'package:users/models/location/gmp_geocode_result.model.dart';
 
 /// Find a place with a particular [placeId] on Google Maps and
 /// get its geographic coordinates and street address [GeoLocation]
-Future<GeoLocation> geoLocationFromPlaceId(String placeId) async {
+Future<GeoLocation> findGeoLocationByPlaceId(String placeId) async {
   final geocodingAPI = Uri.https(
     'maps.googleapis.com',
     '/maps/api/geocode/json',

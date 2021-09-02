@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:users/models/location/gmp_place_autocomplete.model.dart';
-import 'package:users/services/gmp_service/geo_location_from_place_id.service.dart';
+import 'package:users/services/gmp_service/find_geo_location_by_place_id.service.dart';
 import 'package:users/services/gmp_service/predict_similar_places.service.dart';
 
 /// Return a geographic location picked by the user from a list of autocomplete
@@ -92,8 +92,8 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
           itemCount: placePredictions.length,
           itemBuilder: (context, index) => InkWell(
             onTap: () async {
-              final location =
-                  await geoLocationFromPlaceId(placePredictions[index].placeId);
+              final location = await findGeoLocationByPlaceId(
+                  placePredictions[index].placeId);
               Navigator.pop(context, location);
             },
             child: ListTile(
