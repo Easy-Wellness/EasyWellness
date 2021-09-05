@@ -26,11 +26,13 @@ final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
   LoadingScreen.routeName: (_) => LoadingScreen(),
   ErrorScreen.routeName: (_) => ErrorScreen(),
+  PickLocationScreen.routeName: (_) => PickLocationScreen(),
 
   /// Sub-screens of the root Explore Screen
   ExploreScreen.routeName: (_) => ExploreScreen(),
-  PickLocationScreen.routeName: (_) => PickLocationScreen(),
   SearchServicesScreen.routeName: (_) => SearchServicesScreen(),
+
+  /// Sub-screens of the Service Details Screen
   ServiceDetailsScreen.routeName: (_) => ServiceDetailsScreen(),
   CreateBookingScreen.routeName: (_) => CreateBookingScreen(),
 
