@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/service_details/service_details_screen.dart';
+import 'package:users/widgets/pick_location_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
   static const String routeName = '/search_services';

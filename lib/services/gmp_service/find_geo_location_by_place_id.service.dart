@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import 'package:users/constants/env.dart';
-import 'package:users/models/location/geo_location.model.dart';
 import 'package:users/models/location/gmp_geocode_result.model.dart';
+import 'package:users/widgets/pick_location_screen.dart';
 
 /// Find a place with a particular [placeId] on Google Maps and
 /// get its geographic coordinates and street address [GeoLocation]
@@ -24,6 +24,7 @@ Future<GeoLocation> findGeoLocationByPlaceId(String placeId) async {
         jsonDecode(response.body)['results'][0]);
     final geoCoords = parsed.geometry.location;
     return GeoLocation(
+      placeId: parsed.placeId,
       latitule: geoCoords.lat,
       longitude: geoCoords.lng,
       address: parsed.formattedAddress,

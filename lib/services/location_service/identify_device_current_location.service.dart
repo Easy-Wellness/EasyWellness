@@ -1,7 +1,6 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-
-import 'package:users/models/location/geo_location.model.dart';
+import 'package:users/widgets/pick_location_screen.dart';
 
 Future<GeoLocation> identifyDeviceCurrentLocation() async {
   bool serviceEnabled;
@@ -41,6 +40,7 @@ Future<GeoLocation> identifyDeviceCurrentLocation() async {
   ], ', ');
 
   return GeoLocation(
+    placeId: '',
     latitule: geoPosition.latitude,
     longitude: geoPosition.longitude,
     address: addressBuilder.toString(),

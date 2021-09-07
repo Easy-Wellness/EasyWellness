@@ -87,6 +87,7 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
         elevation: 4.0,
         borderRadius: BorderRadius.circular(8),
         child: ListView.separated(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: placePredictions.length,
@@ -115,4 +116,21 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
     controller.dispose();
     super.dispose();
   }
+}
+
+/// A local geographic location that is constructed based on Google Maps
+/// Platform's response or the native Location API
+class GeoLocation {
+  const GeoLocation({
+    required this.placeId,
+    required this.latitule,
+    required this.longitude,
+    required this.address,
+  });
+
+  /// A textual identifier that uniquely identifies a place on Google Maps
+  final String placeId;
+  final double latitule;
+  final double longitude;
+  final String address;
 }
