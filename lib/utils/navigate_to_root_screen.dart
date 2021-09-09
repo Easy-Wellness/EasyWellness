@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:users/routes.dart';
 import 'package:users/screens/appointment_list/appointment_list_screen.dart';
 import 'package:users/screens/chat_list/chat_list_screen.dart';
 import 'package:users/screens/explore/explore_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
+
+enum RootScreen {
+  exploreScreen,
+  appointmentListScreen,
+  chatListScreen,
+  meScreen,
+}
 
 void navigateToRootScreen(BuildContext context, RootScreen screen) {
   /// Keep disposing screens until meeting the first screen

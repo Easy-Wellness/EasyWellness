@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:users/routes.dart';
 import 'package:users/utils/navigate_to_root_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {

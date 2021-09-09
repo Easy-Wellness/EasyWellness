@@ -15,13 +15,6 @@ import 'screens/login/login_screen.dart';
 import 'screens/me/edit_profile_screen.dart';
 import 'widgets/pick_location_screen.dart';
 
-enum RootScreen {
-  exploreScreen,
-  appointmentListScreen,
-  chatListScreen,
-  meScreen,
-}
-
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
   LoadingScreen.routeName: (_) => LoadingScreen(),
