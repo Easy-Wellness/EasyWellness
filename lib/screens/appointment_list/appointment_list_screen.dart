@@ -29,33 +29,29 @@ class AppointmentListScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Your bookings'),
-          bottom: PreferredSize(
-            preferredSize: const Size(double.infinity, 60),
-            child: TabBar(
-              unselectedLabelColor: Theme.of(context).hintColor,
-              labelColor: Theme.of(context).accentColor,
-              tabs: [
-                Column(
-                  children: [
-                    Icon(Icons.upcoming_outlined),
-                    Tab(text: 'Upcoming'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Icon(Icons.stars_outlined),
-                    Tab(text: 'To rate'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Icon(Icons.event_busy_outlined),
-                    Tab(text: 'Canceled'),
-                  ],
-                ),
-              ],
-            ),
+          bottom: TabBar(
+            unselectedLabelColor: Theme.of(context).hintColor,
+            labelColor: Theme.of(context).accentColor,
+            tabs: [
+              Column(
+                children: [
+                  Icon(Icons.upcoming_outlined),
+                  Tab(text: 'Upcoming'),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.stars_outlined),
+                  Tab(text: 'To rate'),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.event_busy_outlined),
+                  Tab(text: 'Canceled'),
+                ],
+              ),
+            ],
           ),
         ),
         body: TabBarView(
