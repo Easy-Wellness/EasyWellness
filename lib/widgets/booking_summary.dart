@@ -25,7 +25,7 @@ class BookingSummary extends StatelessWidget {
     final friendlyDayTimeBuilder = StringBuffer();
     friendlyDayTimeBuilder.writeAll([
       DateFormat.yMMMMEEEEd().format(dateTime).substring(0, 3),
-      secondsToTime(timeInSecs),
+      secondsToFriendlyTime(timeInSecs),
     ], ' ');
     return Row(
       children: [

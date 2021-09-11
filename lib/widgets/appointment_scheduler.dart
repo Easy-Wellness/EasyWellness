@@ -205,7 +205,7 @@ List<ExpansionPanelRadio> _buildDayPartPanels({
                   }
                   onTimeSlotSelect(bookedDateTime);
                 },
-                child: Text(secondsToTime(timeInSecs)),
+                child: Text(secondsToFriendlyTime(timeInSecs)),
               )
         ],
       ),
