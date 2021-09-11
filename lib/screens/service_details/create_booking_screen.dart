@@ -74,6 +74,8 @@ class _BodyState extends State<Body> {
               key: formKey,
               child: Scrollbar(
                 child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   physics: const ClampingScrollPhysics(),
                   child: Container(
                     padding: const EdgeInsets.all(16),

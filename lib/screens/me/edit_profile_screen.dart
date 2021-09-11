@@ -83,6 +83,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       key: formKey,
                       child: Scrollbar(
                         child: SingleChildScrollView(
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
                           child: BasicUserInfoFormFields(
                             formValidationManager: FormValidationManager(),
                             initialName: data?.fullname,
