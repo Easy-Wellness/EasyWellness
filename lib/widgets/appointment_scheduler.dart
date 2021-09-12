@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:users/constants/misc.dart';
 import 'package:users/models/appointment/opening_hours.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
-import 'package:users/utils/seconds_to_time.dart';
+import 'package:users/utils/seconds_to_friendly_time.dart';
 import 'package:users/utils/show_custom_snack_bar.dart';
 
 /// Validate if the DateTime is bookable, the client might need to send an

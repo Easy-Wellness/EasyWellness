@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:users/utils/seconds_to_time.dart';
+import 'package:users/utils/seconds_to_friendly_time.dart';
 
 class BookingSummary extends StatelessWidget {
   const BookingSummary({
