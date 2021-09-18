@@ -11,7 +11,6 @@ ThemeData theme() {
 
 AppBarTheme _appBarTheme() {
   return AppBarTheme(
-    backwardsCompatibility: false,
     color: Colors.white,
     iconTheme: IconThemeData(color: Colors.black),
     foregroundColor: Colors.black,

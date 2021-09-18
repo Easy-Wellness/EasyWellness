@@ -100,7 +100,9 @@ class CustomDatePickerFormField extends FormField<DateTime> {
                                 textTheme: CupertinoTextThemeData(
                                   dateTimePickerTextStyle: TextStyle(
                                     fontSize: 21,
-                                    color: Theme.of(field.context).accentColor,
+                                    color: Theme.of(field.context)
+                                        .colorScheme
+                                        .secondary,
                                   ),
                                 ),
                               ),

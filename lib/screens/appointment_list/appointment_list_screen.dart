@@ -31,7 +31,7 @@ class AppointmentListScreen extends StatelessWidget {
         appBar: AppBar(
           bottom: TabBar(
             unselectedLabelColor: Theme.of(context).hintColor,
-            labelColor: Theme.of(context).accentColor,
+            labelColor: Theme.of(context).colorScheme.secondary,
             tabs: [
               Column(
                 children: [

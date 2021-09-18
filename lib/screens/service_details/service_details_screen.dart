@@ -23,7 +23,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           ),
           bottom: TabBar(
             unselectedLabelColor: Theme.of(context).hintColor,
-            labelColor: Theme.of(context).accentColor,
+            labelColor: Theme.of(context).colorScheme.secondary,
             tabs: [
               Tab(text: 'schedule'.toUpperCase()),
               Tab(text: 'information'.toUpperCase()),

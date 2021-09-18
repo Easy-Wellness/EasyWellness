@@ -105,7 +105,9 @@ class CustomPickerFormField extends FormField<String> {
                                 child: Text(
                                   valueAsString(values[index]),
                                   style: TextStyle(
-                                    color: Theme.of(field.context).accentColor,
+                                    color: Theme.of(field.context)
+                                        .colorScheme
+                                        .secondary,
                                   ),
                                 ),
                               ),
