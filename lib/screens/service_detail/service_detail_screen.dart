@@ -5,8 +5,8 @@ import 'package:users/widgets/appointment_scheduler.dart';
 
 import 'create_booking_screen.dart';
 
-class ServiceDetailsScreen extends StatelessWidget {
-  static const String routeName = '/service_details';
+class ServiceDetailScreen extends StatelessWidget {
+  static const String routeName = '/service_detail';
 
   @override
   Widget build(BuildContext context) {

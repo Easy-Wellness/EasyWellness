@@ -4,7 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
-import 'package:users/screens/service_details/service_details_screen.dart';
+import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/pick_location_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
@@ -57,7 +57,7 @@ class Body extends StatelessWidget {
                   return InkWell(
                     onTap: () => Navigator.pushNamed(
                       context,
-                      ServiceDetailsScreen.routeName,
+                      ServiceDetailScreen.routeName,
                       arguments: {
                         'serviceId': nearbyServices[index].id,
                         'service': service,

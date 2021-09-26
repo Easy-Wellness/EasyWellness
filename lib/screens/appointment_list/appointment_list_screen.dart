@@ -7,7 +7,7 @@ import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/appointment_list/appt_list_view.dart';
 import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
 import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
-import 'package:users/screens/service_details/service_details_screen.dart';
+import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 import 'package:users/widgets/widget_with_toggleable_child.dart';
 
@@ -177,7 +177,7 @@ class _PastTabViewState extends State<PastTabView> {
                       await _findServiceByIds(data.placeId, data.serviceId);
                   Navigator.pushNamed(
                     context,
-                    ServiceDetailsScreen.routeName,
+                    ServiceDetailScreen.routeName,
                     arguments: {
                       'serviceId': data.serviceId,
                       'service': service,
@@ -228,7 +228,7 @@ class _CanceledTabViewState extends State<CanceledTabView> {
                       await _findServiceByIds(data.placeId, data.serviceId);
                   Navigator.pushNamed(
                     context,
-                    ServiceDetailsScreen.routeName,
+                    ServiceDetailScreen.routeName,
                     arguments: {
                       'serviceId': data.serviceId,
                       'service': service,
