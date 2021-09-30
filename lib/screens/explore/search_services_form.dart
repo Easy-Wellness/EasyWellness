@@ -42,48 +42,44 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          FormField<String>(
-            builder: (fieldState) => DropdownSearch<String>(
-              validator: (value) =>
-                  value == null ? 'Please select a specialty' : null,
-              onSaved: (value) => chosenSpecialty = value!,
-              mode: Mode.MENU,
-              showSelectedItem: true,
-              showClearButton: true,
-              items: specialties,
-              itemAsString: (value) => value.titleCase,
-              popupSafeArea: const PopupSafeArea(bottom: true),
-              scrollbarProps: ScrollbarProps(thickness: 0),
-              label: 'Specialty*',
-              dropdownSearchDecoration: const InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
-                border: OutlineInputBorder(),
-                helperText: '',
-              ),
-              onChanged: (value) => fieldState.didChange(value),
-              popupItemBuilder: (_, value, isSelected) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    leading: SizedBox(
-                      height: 32,
-                      width: 32,
-                      child: SvgPicture.asset(
-                        'assets/icons/specialty_${value.snakeCase}_icon.svg',
-                      ),
-                    ),
-                    title: Text(
-                      value.titleCase,
-                      style: isSelected
-                          ? TextStyle(
-                              color: Theme.of(context).colorScheme.primary)
-                          : null,
+          DropdownSearch<String>(
+            validator: (value) =>
+                value == null ? 'Please select a specialty' : null,
+            onSaved: (value) => chosenSpecialty = value!,
+            mode: Mode.MENU,
+            showSelectedItems: true,
+            showClearButton: true,
+            items: specialties,
+            itemAsString: (value) => value!.titleCase,
+            scrollbarProps: ScrollbarProps(interactive: true),
+            label: 'Specialty*',
+            dropdownSearchDecoration: const InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+              border: OutlineInputBorder(),
+              helperText: '',
+            ),
+            popupItemBuilder: (_, value, isSelected) {
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  leading: SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: SvgPicture.asset(
+                      'assets/icons/specialty_${value.snakeCase}_icon.svg',
                     ),
                   ),
-                );
-              },
-            ),
+                  title: Text(
+                    value.titleCase,
+                    style: isSelected
+                        ? TextStyle(
+                            color: Theme.of(context).colorScheme.primary)
+                        : null,
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(
             height: 8,
