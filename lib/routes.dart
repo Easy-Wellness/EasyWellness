@@ -4,22 +4,18 @@ import 'screens/appointment_list/appointment_list_screen.dart';
 import 'screens/chat_list/chat_list_screen.dart';
 import 'screens/error/error_screen.dart';
 import 'screens/explore/explore_screen.dart';
-import 'screens/explore/search_services_screen.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/me/edit_profile_screen.dart';
 import 'screens/me/me_screen.dart';
-import 'widgets/pick_location_screen.dart';
 
 final Map<String, WidgetBuilder> routes = {
   LoginScreen.routeName: (_) => LoginScreen(),
   LoadingScreen.routeName: (_) => LoadingScreen(),
   ErrorScreen.routeName: (_) => ErrorScreen(),
-  PickLocationScreen.routeName: (_) => PickLocationScreen(),
 
   /// Sub-screens of the root Explore Screen
   ExploreScreen.routeName: (_) => ExploreScreen(),
-  SearchServicesScreen.routeName: (_) => SearchServicesScreen(),
 
   /// Sub-screens of the root Appointment List Screen
   AppointmentListScreen.routeName: (_) => AppointmentListScreen(),

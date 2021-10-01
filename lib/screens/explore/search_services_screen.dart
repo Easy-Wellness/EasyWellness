@@ -8,105 +8,105 @@ import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/pick_location_screen.dart';
 
 class SearchServicesScreen extends StatelessWidget {
-  static const String routeName = '/search_services';
+  SearchServicesScreen({
+    Key? key,
+    required this.center,
+    required this.specialty,
+  }) : super(key: key);
+
+  final GeoLocation center;
+  final String specialty;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Nearby Services')),
-      body: SafeArea(child: Body()),
-    );
-  }
-}
+      body: SafeArea(
+        child: Center(
+          child: Material(
+            child: StreamBuilder<DocSnapshotList>(
+              stream: _servicesAroundLocationStream(center, specialty),
+              builder: (context, snapshot) {
+                if (snapshot.hasError)
+                  return const Text('Something went wrong');
 
-class Body extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    final center = args['center'] as GeoLocation;
-    final specialty = args['specialty'] as String;
-    return Center(
-      child: Material(
-        child: StreamBuilder<DocSnapshotList>(
-          stream: _servicesAroundLocationStream(center, specialty),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return const Text('Something went wrong');
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return const CircularProgressIndicator.adaptive();
 
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return const CircularProgressIndicator.adaptive();
-
-            final nearbyServices = snapshot.data ?? [];
-            if (nearbyServices.isEmpty)
-              return const Text('No nearby service is found');
-            return Scrollbar(
-              child: ListView.separated(
-                padding: const EdgeInsets.only(top: 8),
-                itemCount: nearbyServices.length,
-                separatorBuilder: (_, __) => Divider(thickness: 1),
-                itemBuilder: (context, index) {
-                  final data = nearbyServices[index].data()!;
-                  final service = DbNearbyService.fromJson(data);
-                  final distance = Geolocator.distanceBetween(
-                        center.latitule,
-                        center.longitude,
-                        service.geoPosition.geopoint.latitude,
-                        service.geoPosition.geopoint.longitude,
-                      ) /
-                      1000;
-                  return InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ServiceDetailScreen(
-                          serviceId: nearbyServices[index].id,
-                          service: service,
-                        ),
-                      ),
-                    ),
-                    child: ListTile(
-                      leading: Column(
-                        children: [
-                          RatingBarIndicator(
-                            rating: service.rating,
-                            itemCount: 5,
-                            itemSize: 10,
-                            itemBuilder: (_, index) => Icon(
-                              Icons.star,
-                              color: Colors.amber,
+                final nearbyServices = snapshot.data ?? [];
+                if (nearbyServices.isEmpty)
+                  return const Text('No nearby service is found');
+                return Scrollbar(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.only(top: 8),
+                    itemCount: nearbyServices.length,
+                    separatorBuilder: (_, __) => Divider(thickness: 1),
+                    itemBuilder: (context, index) {
+                      final data = nearbyServices[index].data()!;
+                      final service = DbNearbyService.fromJson(data);
+                      final distance = Geolocator.distanceBetween(
+                            center.latitule,
+                            center.longitude,
+                            service.geoPosition.geopoint.latitude,
+                            service.geoPosition.geopoint.longitude,
+                          ) /
+                          1000;
+                      return InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ServiceDetailScreen(
+                              serviceId: nearbyServices[index].id,
+                              service: service,
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Text('${service.rating}'),
-                        ],
-                      ),
-                      title: Text(service.serviceName),
-                      subtitle: Text(
-                        '${service.address} (${service.placeName})',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                      ),
-                      trailing: RichText(
-                        text: TextSpan(
-                          style: Theme.of(context).textTheme.bodyText2,
-                          children: [
-                            TextSpan(text: '${distance.toStringAsFixed(2)} km'),
-                            WidgetSpan(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 2, bottom: 2),
-                                child: Icon(Icons.near_me, size: 14),
-                              ),
-                            ),
-                          ],
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+                        child: ListTile(
+                          leading: Column(
+                            children: [
+                              RatingBarIndicator(
+                                rating: service.rating,
+                                itemCount: 5,
+                                itemSize: 10,
+                                itemBuilder: (_, index) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text('${service.rating}'),
+                            ],
+                          ),
+                          title: Text(service.serviceName),
+                          subtitle: Text(
+                            '${service.address} (${service.placeName})',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                          ),
+                          trailing: RichText(
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.bodyText2,
+                              children: [
+                                TextSpan(
+                                    text: '${distance.toStringAsFixed(2)} km'),
+                                WidgetSpan(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 2, bottom: 2),
+                                    child: Icon(Icons.near_me, size: 14),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

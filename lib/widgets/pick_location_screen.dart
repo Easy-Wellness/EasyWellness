@@ -7,7 +7,6 @@ import 'package:users/services/gmp_service/predict_similar_places.service.dart';
 /// Return a geographic location picked by the user from a list of autocomplete
 /// suggestions for location
 class PickLocationScreen extends StatelessWidget {
-  static const String routeName = '/pick_location';
 
   @override
   Widget build(BuildContext context) {

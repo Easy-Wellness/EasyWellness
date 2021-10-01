@@ -28,10 +28,11 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
   }
 
   _navigateToGetUserLocation(BuildContext context) async {
-    final location =
-        await Navigator.pushNamed(context, PickLocationScreen.routeName);
-    if (location != null && mounted)
-      setState(() => _pickedLocation = location as GeoLocation);
+    final location = await Navigator.push(
+      context,
+      MaterialPageRoute<GeoLocation>(builder: (_) => PickLocationScreen()),
+    );
+    if (location != null && mounted) setState(() => _pickedLocation = location);
   }
 
   @override
@@ -110,12 +111,15 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
                 ? () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      Navigator.pushNamed(
-                          context, SearchServicesScreen.routeName,
-                          arguments: {
-                            'center': _pickedLocation!,
-                            'specialty': chosenSpecialty,
-                          });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SearchServicesScreen(
+                            center: _pickedLocation!,
+                            specialty: chosenSpecialty,
+                          ),
+                        ),
+                      );
                     }
                   }
                 : null,
