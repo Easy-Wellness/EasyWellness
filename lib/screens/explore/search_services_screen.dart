@@ -55,13 +55,14 @@ class Body extends StatelessWidget {
                       ) /
                       1000;
                   return InkWell(
-                    onTap: () => Navigator.pushNamed(
+                    onTap: () => Navigator.push(
                       context,
-                      ServiceDetailScreen.routeName,
-                      arguments: {
-                        'serviceId': nearbyServices[index].id,
-                        'service': service,
-                      },
+                      MaterialPageRoute(
+                        builder: (_) => ServiceDetailScreen(
+                          serviceId: nearbyServices[index].id,
+                          service: service,
+                        ),
+                      ),
                     ),
                     child: ListTile(
                       leading: Column(

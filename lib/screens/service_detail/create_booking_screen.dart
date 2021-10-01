@@ -21,7 +21,16 @@ final _profileRef = FirebaseFirestore.instance
     );
 
 class CreateBookingScreen extends StatelessWidget {
-  static const String routeName = '/create_booking';
+  const CreateBookingScreen({
+    Key? key,
+    required this.serviceId,
+    required this.bookedService,
+    required this.selectedDateTime,
+  }) : super(key: key);
+
+  final String serviceId;
+  final DbNearbyService bookedService;
+  final DateTime selectedDateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +43,30 @@ class CreateBookingScreen extends StatelessWidget {
             style: const TextStyle(fontSize: 16),
           ),
         ),
-        body: SafeArea(child: Body()),
+        body: SafeArea(
+          child: Body(
+            serviceId: serviceId,
+            bookedService: bookedService,
+            selectedDateTime: selectedDateTime,
+          ),
+        ),
       ),
     );
   }
 }
 
 class Body extends StatefulWidget {
+  Body({
+    Key? key,
+    required this.serviceId,
+    required this.bookedService,
+    required this.selectedDateTime,
+  }) : super(key: key);
+
+  final String serviceId;
+  final DbNearbyService bookedService;
+  final DateTime selectedDateTime;
+
   @override
   _BodyState createState() => _BodyState();
 }
@@ -57,11 +83,9 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    final bookedService = args['bookedService'] as DbNearbyService;
-    final serviceId = args['serviceId'] as String;
-    final selectedDateTime = args['selectedDateTime'] as DateTime;
+    final bookedService = widget.bookedService;
+    final serviceId = widget.serviceId;
+    final selectedDateTime = widget.selectedDateTime;
 
     return Center(
       child: FutureBuilder(

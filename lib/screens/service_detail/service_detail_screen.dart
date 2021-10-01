@@ -6,12 +6,17 @@ import 'package:users/widgets/appointment_scheduler.dart';
 import 'create_booking_screen.dart';
 
 class ServiceDetailScreen extends StatelessWidget {
-  static const String routeName = '/service_detail';
+  ServiceDetailScreen({
+    Key? key,
+    required this.serviceId,
+    required this.service,
+  }) : super(key: key);
+
+  final String serviceId;
+  final DbNearbyService service;
 
   @override
   Widget build(BuildContext context) {
-    final service = (ModalRoute.of(context)!.settings.arguments
-        as Map<String, Object>)['service'] as DbNearbyService;
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -30,24 +35,32 @@ class ServiceDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(children: [ScheduleTabView(), Container()]),
+        body: TabBarView(
+          children: [
+            ScheduleTabView(
+              serviceId: serviceId,
+              service: service,
+            ),
+            Container()
+          ],
+        ),
       ),
     );
   }
 }
 
-class ScheduleTabView extends StatefulWidget {
-  @override
-  _ScheduleTabViewState createState() => _ScheduleTabViewState();
-}
+class ScheduleTabView extends StatelessWidget {
+  const ScheduleTabView({
+    Key? key,
+    required this.serviceId,
+    required this.service,
+  }) : super(key: key);
 
-class _ScheduleTabViewState extends State<ScheduleTabView> {
+  final String serviceId;
+  final DbNearbyService service;
+
   @override
   Widget build(BuildContext context) {
-    final args =
-        (ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
-    final serviceId = args['serviceId'] as String;
-    final service = args['service'] as DbNearbyService;
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -58,14 +71,15 @@ class _ScheduleTabViewState extends State<ScheduleTabView> {
               if (await timeSlotIsBooked(value))
                 return 'You already have an appointment at this time';
             },
-            onTimeSlotSelect: (selectedDateTime) => Navigator.pushNamed(
+            onTimeSlotSelect: (selectedDateTime) => Navigator.push(
               context,
-              CreateBookingScreen.routeName,
-              arguments: {
-                'serviceId': serviceId,
-                'bookedService': service,
-                'selectedDateTime': selectedDateTime,
-              },
+              MaterialPageRoute(
+                builder: (_) => CreateBookingScreen(
+                  serviceId: serviceId,
+                  bookedService: service,
+                  selectedDateTime: selectedDateTime,
+                ),
+              ),
             ),
           ),
         ),

@@ -97,13 +97,14 @@ class _UpcomingTabViewState extends State<UpcomingTabView> {
             ),
             secondaryBtnBuilder: (_, idx) => OutlinedButton(
               child: const Text('Cancel or reschedule'),
-              onPressed: () => Navigator.pushNamed(
+              onPressed: () => Navigator.push(
                 context,
-                CancelOrRescheduleScreen.routeName,
-                arguments: {
-                  'apptId': apptList[idx].id,
-                  'appointment': apptList[idx].data(),
-                },
+                MaterialPageRoute(
+                  builder: (_) => CancelOrRescheduleScreen(
+                    apptId: apptList[idx].id,
+                    appointment: apptList[idx].data(),
+                  ),
+                ),
               ),
             ),
           );
@@ -170,13 +171,14 @@ class _PastTabViewState extends State<PastTabView> {
                 final data = apptList[idx].data();
                 final service =
                     await _findServiceByIds(data.placeId, data.serviceId);
-                Navigator.pushNamed(
+                Navigator.push(
                   context,
-                  ServiceDetailScreen.routeName,
-                  arguments: {
-                    'serviceId': data.serviceId,
-                    'service': service,
-                  },
+                  MaterialPageRoute(
+                    builder: (_) => ServiceDetailScreen(
+                      serviceId: data.serviceId,
+                      service: service,
+                    ),
+                  ),
                 );
               },
             ),
@@ -219,13 +221,14 @@ class _CanceledTabViewState extends State<CanceledTabView> {
                   final data = apptList[index].data();
                   final service =
                       await _findServiceByIds(data.placeId, data.serviceId);
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    ServiceDetailScreen.routeName,
-                    arguments: {
-                      'serviceId': data.serviceId,
-                      'service': service,
-                    },
+                    MaterialPageRoute(
+                      builder: (_) => ServiceDetailScreen(
+                        serviceId: data.serviceId,
+                        service: service,
+                      ),
+                    ),
                   );
                 },
               ),
