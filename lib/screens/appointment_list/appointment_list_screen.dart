@@ -9,7 +9,6 @@ import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart'
 import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
 import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
-import 'package:users/widgets/widget_with_toggleable_child.dart';
 
 final _apptsRef = FirebaseFirestore.instance
     .collectionGroup('appointments')
@@ -122,72 +121,66 @@ class PastTabView extends StatefulWidget {
 }
 
 class _PastTabViewState extends State<PastTabView> {
-  final querySnapshot = _apptsRef
+  final queryStream = _apptsRef
       .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
       .where('effective_at',
           isLessThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
       .orderBy('effective_at', descending: true)
-      .get();
+      .snapshots();
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FutureBuilder<QuerySnapshot<DbAppointment>>(
-        future: querySnapshot,
+      child: StreamBuilder<QuerySnapshot<DbAppointment>>(
+        stream: queryStream,
         builder: (_, snapshot) {
           if (snapshot.hasError)
             return Text('Unable to show your appointments');
-          if (snapshot.connectionState == ConnectionState.done) {
-            final apptList = snapshot.data?.docs ?? [];
-            if (apptList.isEmpty) return Text('No results found');
-            return ApptListView(
-              apptList: apptList,
-              primaryBtnBuilder: (_, index) {
-                final appt = apptList[index].data();
-                if (!appt.isReviewed)
-                  return WidgetWithToggleableChild(
-                    builder: (widgetState) => ElevatedButton.icon(
-                      icon: const Icon(Icons.reviews_outlined),
-                      label: const Text('Rate'),
-                      onPressed: () async {
-                        /// If result is [true], it means the rating and
-                        /// review is submitted
-                        final result = await Navigator.pushNamed(
-                          context,
-                          CollectReviewAndRatingScreen.routeName,
-                          arguments: {
-                            'apptId': apptList[index].id,
-                            'serviceId': appt.serviceId,
-                            'serviceName': appt.serviceName,
-                            'placeId': appt.placeId,
-                            'placeName': appt.placeName,
-                          },
-                        );
-                        if (result == true)
-                          return widgetState.toggleShow(false);
-                      },
-                    ),
-                  );
-                return Container();
-              },
-              secondaryBtnBuilder: (_, idx) => OutlinedButton(
-                child: const Text('Book again'),
-                onPressed: () async {
-                  final data = apptList[idx].data();
-                  final service =
-                      await _findServiceByIds(data.placeId, data.serviceId);
-                  Navigator.pushNamed(
+
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return const CircularProgressIndicator.adaptive();
+
+          final apptList = snapshot.data?.docs ?? [];
+          if (apptList.isEmpty) return Text('No results found');
+          return ApptListView(
+            apptList: apptList,
+            primaryBtnBuilder: (_, index) {
+              final appt = apptList[index].data();
+              if (!appt.isReviewed)
+                return ElevatedButton.icon(
+                  icon: const Icon(Icons.reviews_outlined),
+                  label: const Text('Rate'),
+                  onPressed: () => Navigator.push(
                     context,
-                    ServiceDetailScreen.routeName,
-                    arguments: {
-                      'serviceId': data.serviceId,
-                      'service': service,
-                    },
-                  );
-                },
-              ),
-            );
-          }
-          return const CircularProgressIndicator.adaptive();
+                    MaterialPageRoute(
+                      builder: (_) => CollectReviewAndRatingScreen(
+                        apptId: apptList[index].id,
+                        serviceId: appt.serviceId,
+                        serviceName: appt.serviceName,
+                        placeId: appt.placeId,
+                        placeName: appt.placeName,
+                      ),
+                    ),
+                  ),
+                );
+              return Container();
+            },
+            secondaryBtnBuilder: (_, idx) => OutlinedButton(
+              child: const Text('Book again'),
+              onPressed: () async {
+                final data = apptList[idx].data();
+                final service =
+                    await _findServiceByIds(data.placeId, data.serviceId);
+                Navigator.pushNamed(
+                  context,
+                  ServiceDetailScreen.routeName,
+                  arguments: {
+                    'serviceId': data.serviceId,
+                    'service': service,
+                  },
+                );
+              },
+            ),
+          );
         },
       ),
     );

@@ -25,7 +25,7 @@ class ApptListView extends StatelessWidget {
         itemBuilder: (ctx, idx) {
           final appt = apptList[idx].data();
           return Card(
-            key: ValueKey<String>(apptList[idx].id),
+            key: ValueKey(apptList[idx].id),
             elevation: 2,
             shape: ContinuousRectangleBorder(
               side: BorderSide(color: Colors.grey.withOpacity(0.2)),
