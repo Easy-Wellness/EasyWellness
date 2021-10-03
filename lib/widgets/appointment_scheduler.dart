@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:users/constants/misc.dart';
-import 'package:users/models/appointment/opening_hours.model.dart';
+import 'package:users/models/place/weekly_schedule.model.dart';
 import 'package:users/utils/get_times_in_secs_from_range.dart';
 import 'package:users/utils/seconds_to_friendly_time.dart';
 import 'package:users/utils/show_custom_snack_bar.dart';
@@ -14,9 +13,18 @@ typedef AppointmentTimeValidator = Future<String?> Function(DateTime);
 class AppointmentScheduler extends StatefulWidget {
   const AppointmentScheduler({
     Key? key,
+    required this.weeklySchedule,
+    required this.minuteIncrements,
+    required this.minLeadHours,
+    required this.maxLeadDays,
     required this.validator,
     required this.onTimeSlotSelect,
   }) : super(key: key);
+
+  final WeeklySchedule weeklySchedule;
+  final int minuteIncrements;
+  final int minLeadHours;
+  final int maxLeadDays;
 
   /// A method that validates the DateTime selected by the user. Returns an
   /// error string to display if the DateTime is unbookable, or null otherwise.
@@ -47,13 +55,20 @@ class _AppointmentSchedulerState extends State<AppointmentScheduler> {
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 150)),
+      lastDate: DateTime.now().add(Duration(days: widget.maxLeadDays)),
     );
     setSelectedDate(picked);
   }
 
   @override
   Widget build(BuildContext context) {
+    final String dayOfWeek =
+        DateFormat('EEEE').format(selectedDate).toLowerCase();
+    final intervalListForSelectedDay =
+        (widget.weeklySchedule.toJson()[dayOfWeek] as List)
+            .map<TimeIntervalInSecs>(
+                (interval) => TimeIntervalInSecs.fromJson(interval))
+            .toList();
     return Column(
       children: [
         Material(
@@ -72,6 +87,9 @@ class _AppointmentSchedulerState extends State<AppointmentScheduler> {
         DayPartPanelList(
           key: UniqueKey(),
           selectedDate: selectedDate,
+          intervalList: intervalListForSelectedDay,
+          minuteIncrements: widget.minuteIncrements,
+          minLeadHours: widget.minLeadHours,
           onAnotherDateSelect: setSelectedDate,
           validator: widget.validator,
           onTimeSlotSelect: widget.onTimeSlotSelect,
@@ -85,33 +103,33 @@ class DayPartPanelList extends StatelessWidget {
   const DayPartPanelList({
     Key? key,
     required this.selectedDate,
+    required this.intervalList,
+    required this.minuteIncrements,
+    required this.minLeadHours,
     required this.onAnotherDateSelect,
     required this.validator,
     required this.onTimeSlotSelect,
   }) : super(key: key);
 
   final DateTime selectedDate;
+  final List<TimeIntervalInSecs> intervalList;
+  final int minuteIncrements;
+  final int minLeadHours;
   final void Function(DateTime? date) onAnotherDateSelect;
   final AppointmentTimeValidator validator;
   final ValueSetter<DateTime> onTimeSlotSelect;
 
   @override
   Widget build(BuildContext context) {
-    final dayOfWeek = DateFormat('EEEE').format(selectedDate).toLowerCase();
-
-    /// There are at most 4 different objects in the list below, each one is
-    /// mapped to a different part of the day
-    final openingHoursForSelectedDate = OpeningHours.fromJson(apptTimesInSecs)
-        .hours
-        .toJson()[dayOfWeek] as List<OpenCloseTimesInSecs>;
     final dayPartPanels = _buildDayPartPanels(
-      context: context,
       selectedDate: selectedDate,
-      openingHoursInSecs: openingHoursForSelectedDate,
+      intervalList: intervalList,
+      minuteIncrements: minuteIncrements,
+      minLeadHours: minLeadHours,
       validator: validator,
       onTimeSlotSelect: onTimeSlotSelect,
     );
-    return dayPartPanels.length == 0
+    return dayPartPanels.isEmpty
         ? Column(
             children: [
               Text(
@@ -141,75 +159,121 @@ class DayPartPanelList extends StatelessWidget {
 }
 
 List<ExpansionPanelRadio> _buildDayPartPanels({
-  required BuildContext context,
   required DateTime selectedDate,
-  required List<OpenCloseTimesInSecs> openingHoursInSecs,
+  required List<TimeIntervalInSecs> intervalList,
+  required int minuteIncrements,
+  required int minLeadHours,
   required AppointmentTimeValidator validator,
   required ValueSetter<DateTime> onTimeSlotSelect,
 }) {
-  final List<ExpansionPanelRadio> panelRadios = [];
-
-  openingHoursInSecs.forEach((rangeInSecs) {
-    final currentDateTime = DateTime.now();
-    // Get a list of times based on an interval of 30 minutes to build
-    // the time slots for this [DayPartPanel].
-    final timesInSecs =
-        getTimesInSecsFromRange(rangeInSecs.open, rangeInSecs.close);
-    const minLeadTime = Duration(minutes: 30);
-    // The time it takes the user to explore the service and
-    // then finally decide to book it.
-    const exploreTime = Duration(minutes: 10);
-    if (selectedDate
-        .add(Duration(seconds: timesInSecs[timesInSecs.length - 1]))
-        .isBefore(currentDateTime.add(minLeadTime + exploreTime))) return;
-    String header = '';
-    if (0 <= rangeInSecs.open && rangeInSecs.close <= 20700)
-      header = 'Early Morning (from Midnight to 5:45 AM)';
-    if (21600 <= rangeInSecs.open && rangeInSecs.close <= 42300)
-      header = 'Morning (from 6AM to 11:45 AM)';
-    if (43200 <= rangeInSecs.open && rangeInSecs.close <= 63900)
-      header = 'Afternoon (from 12PM to 5:45 PM)';
-    if (64800 <= rangeInSecs.open && rangeInSecs.close <= 85500)
-      header = 'Evening (from 6PM to 11:45 PM)';
-    panelRadios.add(ExpansionPanelRadio(
-      value: header,
-      canTapOnHeader: true,
-      headerBuilder: (context, isOpen) => ListTile(
-        title: Text(
-          header,
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-      ),
-      body: GridView.count(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        childAspectRatio: 3,
-        padding: const EdgeInsets.all(8),
-        crossAxisCount: 3,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
-        children: [
-          for (int timeInSecs in timesInSecs)
-            if (currentDateTime.add(exploreTime + minLeadTime).compareTo(
-                    selectedDate.add(Duration(seconds: timeInSecs))) <=
-                0)
-              OutlinedButton(
-                onPressed: () async {
-                  final bookedDateTime =
-                      selectedDate.add(Duration(seconds: timeInSecs));
-                  final errorMsg = await validator(bookedDateTime);
-                  if (errorMsg != null) {
-                    showCustomSnackBar(context, errorMsg);
-                    // Don't invoke the [onTimeSlotSelect] method
-                    return;
-                  }
-                  onTimeSlotSelect(bookedDateTime);
-                },
-                child: Text(secondsToFriendlyTime(timeInSecs)),
-              )
-        ],
-      ),
-    ));
+  final List<int> timesInAday = [];
+  final List<int> earlyMorningTimes = [];
+  final List<int> morningTimes = [];
+  final List<int> afternoonTimes = [];
+  final List<int> eveningTimes = [];
+  intervalList.forEach(
+    (interval) => timesInAday.addAll(getTimesInSecsFromRange(
+      interval.start,
+      interval.end,
+      minuteIncrements * 60,
+    )),
+  );
+  timesInAday.sort();
+  timesInAday.forEach((time) {
+    final timeIsBookable = DateTime.now()
+            .add(Duration(minutes: 10 + minLeadHours * 60))
+            .compareTo(selectedDate.add(Duration(seconds: time))) <=
+        0;
+    if (0 <= time && time <= 20700 && timeIsBookable)
+      return earlyMorningTimes.add(time);
+    if (21600 <= time && time <= 42300 && timeIsBookable)
+      return morningTimes.add(time);
+    if (43200 <= time && time <= 63900 && timeIsBookable)
+      return afternoonTimes.add(time);
+    if (64800 <= time && time <= 85500 && timeIsBookable)
+      return eveningTimes.add(time);
   });
-  return panelRadios;
+  return [
+    if (earlyMorningTimes.isNotEmpty)
+      _buildPanelForTimeSlots(
+        headerText: 'Early Morning (from Midnight to 5:45 AM)',
+        selectedDate: selectedDate,
+        times: earlyMorningTimes,
+        validator: validator,
+        onTimeSlotSelect: onTimeSlotSelect,
+      ),
+    if (morningTimes.isNotEmpty)
+      _buildPanelForTimeSlots(
+        headerText: 'Morning (from 6AM to 11:45 AM)',
+        selectedDate: selectedDate,
+        times: morningTimes,
+        validator: validator,
+        onTimeSlotSelect: onTimeSlotSelect,
+      ),
+    if (afternoonTimes.isNotEmpty)
+      _buildPanelForTimeSlots(
+        headerText: 'Afternoon (from 12PM to 5:45 PM)',
+        selectedDate: selectedDate,
+        times: afternoonTimes,
+        validator: validator,
+        onTimeSlotSelect: onTimeSlotSelect,
+      ),
+    if (eveningTimes.isNotEmpty)
+      _buildPanelForTimeSlots(
+        headerText: 'Evening (from 6PM to 11:45 PM)',
+        selectedDate: selectedDate,
+        times: eveningTimes,
+        validator: validator,
+        onTimeSlotSelect: onTimeSlotSelect,
+      )
+  ];
+}
+
+ExpansionPanelRadio _buildPanelForTimeSlots({
+  required String headerText,
+  required DateTime selectedDate,
+  required List<int> times,
+  required AppointmentTimeValidator validator,
+  required ValueSetter<DateTime> onTimeSlotSelect,
+}) {
+  if (times.isEmpty)
+    throw ArgumentError(
+        'Time must be provided to the panel that shows time(s) within a part of a day');
+  return ExpansionPanelRadio(
+    value: headerText,
+    canTapOnHeader: true,
+    headerBuilder: (context, isOpen) => ListTile(
+      title: Text(
+        headerText,
+        style: TextStyle(fontWeight: FontWeight.w500),
+      ),
+    ),
+    body: GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      childAspectRatio: 3,
+      padding: const EdgeInsets.all(8),
+      crossAxisCount: 3,
+      crossAxisSpacing: 15,
+      mainAxisSpacing: 15,
+      children: [
+        for (final time in times)
+          Builder(builder: (context) {
+            return OutlinedButton(
+              onPressed: () async {
+                final bookedDateTime =
+                    selectedDate.add(Duration(seconds: time));
+                final errorMsg = await validator(bookedDateTime);
+                if (errorMsg != null) {
+                  showCustomSnackBar(context, errorMsg);
+                  return;
+                }
+                onTimeSlotSelect(bookedDateTime);
+              },
+              child: Text(secondsToFriendlyTime(time)),
+            );
+          })
+      ],
+    ),
+  );
 }
