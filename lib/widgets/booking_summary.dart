@@ -70,7 +70,7 @@ class BookingSummary extends StatelessWidget {
                           child: Icon(Icons.place),
                         ),
                       ),
-                      TextSpan(text: placeName),
+                      TextSpan(text: 'At $placeName'),
                     ],
                   ),
                   overflow: TextOverflow.ellipsis,

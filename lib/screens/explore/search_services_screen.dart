@@ -57,7 +57,7 @@ class SearchServicesScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => ServiceDetailScreen(
                               serviceId: nearbyServices[index].id,
-                              service: service,
+                              placeId: service.placeId,
                             ),
                           ),
                         ),

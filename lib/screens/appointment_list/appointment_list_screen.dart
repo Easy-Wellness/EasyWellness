@@ -176,7 +176,7 @@ class _PastTabViewState extends State<PastTabView> {
                   MaterialPageRoute(
                     builder: (_) => ServiceDetailScreen(
                       serviceId: data.serviceId,
-                      service: service,
+                      placeId: service.placeId,
                     ),
                   ),
                 );
@@ -226,7 +226,7 @@ class _CanceledTabViewState extends State<CanceledTabView> {
                     MaterialPageRoute(
                       builder: (_) => ServiceDetailScreen(
                         serviceId: data.serviceId,
-                        service: service,
+                        placeId: service.placeId,
                       ),
                     ),
                   );
