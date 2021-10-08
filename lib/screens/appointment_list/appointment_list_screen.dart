@@ -3,23 +3,44 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
-import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/appointment_list/appt_list_view.dart';
 import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
-import 'package:users/screens/appointment_list/collect_review_and_rating_screen.dart';
 import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
-final _apptsRef = FirebaseFirestore.instance
-    .collectionGroup('appointments')
-    .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-    .withConverter<DbAppointment>(
-      fromFirestore: (snapshot, _) => DbAppointment.fromJson(snapshot.data()!),
-      toFirestore: (appt, _) => appt.toJson(),
-    );
+import 'collect_review_and_rating_screen.dart';
 
-class AppointmentListScreen extends StatelessWidget {
+class AppointmentListScreen extends StatefulWidget {
   static const String routeName = '/appointment_list';
+
+  @override
+  State<AppointmentListScreen> createState() => _AppointmentListScreenState();
+}
+
+class _AppointmentListScreenState extends State<AppointmentListScreen> {
+  final apptsRef = FirebaseFirestore.instance
+      .collectionGroup('appointments')
+      .where('account_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .withConverter<DbAppointment>(
+        fromFirestore: (snapshot, _) =>
+            DbAppointment.fromJson(snapshot.data()!),
+        toFirestore: (appt, _) => appt.toJson(),
+      );
+  late final Stream<QuerySnapshot<DbAppointment>> upcomingStream = apptsRef
+      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
+      .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+      .orderBy('effective_at')
+      .snapshots();
+  late final Stream<QuerySnapshot<DbAppointment>> pastStream = apptsRef
+      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
+      .where('effective_at',
+          isLessThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
+      .orderBy('effective_at', descending: true)
+      .snapshots();
+  late final Stream<QuerySnapshot<DbAppointment>> canceledStream = apptsRef
+      .where('status', isEqualTo: describeEnum(ApptStatus.canceled))
+      .orderBy('effective_at', descending: true)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -54,26 +75,100 @@ class AppointmentListScreen extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-            children: [UpcomingTabView(), PastTabView(), CanceledTabView()]),
+          children: [
+            AppointmentListTabView(
+              queryStream: upcomingStream,
+              secondaryBtnBuilder: (_, apptSnapshot) => OutlinedButton(
+                child: const Text('Cancel or reschedule'),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CancelOrRescheduleScreen(
+                      apptId: apptSnapshot.id,
+                      appointment: apptSnapshot.data(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            AppointmentListTabView(
+              queryStream: pastStream,
+              optionalBtnBuilder: (_, apptSnapshot) {
+                final apptData = apptSnapshot.data();
+                if (!apptData.isReviewed)
+                  return OutlinedButton.icon(
+                    icon: const Icon(Icons.reviews_outlined),
+                    label: const Text('Rate this service'),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CollectReviewAndRatingScreen(
+                          apptId: apptSnapshot.id,
+                          serviceId: apptData.serviceId,
+                          serviceName: apptData.serviceName,
+                          placeId: apptData.placeId,
+                          placeName: apptData.placeName,
+                        ),
+                      ),
+                    ),
+                  );
+              },
+              secondaryBtnBuilder: (_, apptSnapshot) => OutlinedButton(
+                child: const Text('Book again'),
+                onPressed: () {
+                  final apptData = apptSnapshot.data();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ServiceDetailScreen(
+                        serviceId: apptData.serviceId,
+                        placeId: apptData.placeId,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            AppointmentListTabView(
+              queryStream: canceledStream,
+              secondaryBtnBuilder: (_, apptSnapshot) => OutlinedButton(
+                child: const Text('Book again'),
+                onPressed: () {
+                  final apptData = apptSnapshot.data();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ServiceDetailScreen(
+                        serviceId: apptData.serviceId,
+                        placeId: apptData.placeId,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
         bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }
 }
 
-class UpcomingTabView extends StatefulWidget {
-  const UpcomingTabView({Key? key}) : super(key: key);
+class AppointmentListTabView extends StatelessWidget {
+  const AppointmentListTabView({
+    Key? key,
+    required this.queryStream,
+    this.optionalBtnBuilder,
+    required this.secondaryBtnBuilder,
+  }) : super(key: key);
 
-  @override
-  _UpcomingTabViewState createState() => _UpcomingTabViewState();
-}
+  final Stream<QuerySnapshot<DbAppointment>> queryStream;
+  final OutlinedButton? Function(
+      BuildContext, QueryDocumentSnapshot<DbAppointment>)? optionalBtnBuilder;
+  final OutlinedButton Function(
+      BuildContext, QueryDocumentSnapshot<DbAppointment>) secondaryBtnBuilder;
 
-class _UpcomingTabViewState extends State<UpcomingTabView> {
-  final queryStream = _apptsRef
-      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
-      .where('effective_at', isGreaterThan: Timestamp.fromDate(DateTime.now()))
-      .orderBy('effective_at')
-      .snapshots();
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -86,173 +181,19 @@ class _UpcomingTabViewState extends State<UpcomingTabView> {
             return const CircularProgressIndicator.adaptive();
 
           final apptList = snapshot.data?.docs ?? [];
-          if (apptList.isEmpty)
-            return Text('You have no upcoming appointments');
+          if (apptList.isEmpty) return Text('No appointments found');
           return ApptListView(
             apptList: apptList,
-            primaryBtnBuilder: (_, index) => ElevatedButton.icon(
+            optionalBtnBuilder: optionalBtnBuilder,
+            primaryBtnBuilder: (_, apptSnapshot) => ElevatedButton.icon(
               icon: const Icon(Icons.chat_bubble_outline),
               label: const Text('Chat'),
               onPressed: () {},
             ),
-            secondaryBtnBuilder: (_, idx) => OutlinedButton(
-              child: const Text('Cancel or reschedule'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CancelOrRescheduleScreen(
-                    apptId: apptList[idx].id,
-                    appointment: apptList[idx].data(),
-                  ),
-                ),
-              ),
-            ),
+            secondaryBtnBuilder: secondaryBtnBuilder,
           );
         },
       ),
     );
   }
-}
-
-class PastTabView extends StatefulWidget {
-  const PastTabView({Key? key}) : super(key: key);
-
-  @override
-  _PastTabViewState createState() => _PastTabViewState();
-}
-
-class _PastTabViewState extends State<PastTabView> {
-  final queryStream = _apptsRef
-      .where('status', isEqualTo: describeEnum(ApptStatus.confirmed))
-      .where('effective_at',
-          isLessThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
-      .orderBy('effective_at', descending: true)
-      .snapshots();
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: StreamBuilder<QuerySnapshot<DbAppointment>>(
-        stream: queryStream,
-        builder: (_, snapshot) {
-          if (snapshot.hasError)
-            return Text('Unable to show your appointments');
-
-          if (snapshot.connectionState == ConnectionState.waiting)
-            return const CircularProgressIndicator.adaptive();
-
-          final apptList = snapshot.data?.docs ?? [];
-          if (apptList.isEmpty) return Text('No results found');
-          return ApptListView(
-            apptList: apptList,
-            primaryBtnBuilder: (_, index) {
-              final appt = apptList[index].data();
-              if (!appt.isReviewed)
-                return ElevatedButton.icon(
-                  icon: const Icon(Icons.reviews_outlined),
-                  label: const Text('Rate'),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CollectReviewAndRatingScreen(
-                        apptId: apptList[index].id,
-                        serviceId: appt.serviceId,
-                        serviceName: appt.serviceName,
-                        placeId: appt.placeId,
-                        placeName: appt.placeName,
-                      ),
-                    ),
-                  ),
-                );
-              return Container();
-            },
-            secondaryBtnBuilder: (_, idx) => OutlinedButton(
-              child: const Text('Book again'),
-              onPressed: () async {
-                final data = apptList[idx].data();
-                final service =
-                    await _findServiceByIds(data.placeId, data.serviceId);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ServiceDetailScreen(
-                      serviceId: data.serviceId,
-                      placeId: service.placeId,
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class CanceledTabView extends StatefulWidget {
-  const CanceledTabView({Key? key}) : super(key: key);
-
-  @override
-  _CanceledTabViewState createState() => _CanceledTabViewState();
-}
-
-class _CanceledTabViewState extends State<CanceledTabView> {
-  final querySnapshot = _apptsRef
-      .where('status', isEqualTo: describeEnum(ApptStatus.canceled))
-      .orderBy('effective_at', descending: true)
-      .get();
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder<QuerySnapshot<DbAppointment>>(
-        future: querySnapshot,
-        builder: (_, snapshot) {
-          if (snapshot.hasError)
-            return Text('Unable to show your appointments');
-          if (snapshot.connectionState == ConnectionState.done) {
-            final apptList = snapshot.data?.docs ?? [];
-            if (apptList.isEmpty)
-              return Text('You have no canceled appointments');
-            return ApptListView(
-              apptList: apptList,
-              primaryBtnBuilder: (_, index) => ElevatedButton(
-                child: const Text('Book again'),
-                onPressed: () async {
-                  final data = apptList[index].data();
-                  final service =
-                      await _findServiceByIds(data.placeId, data.serviceId);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ServiceDetailScreen(
-                        serviceId: data.serviceId,
-                        placeId: service.placeId,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          }
-          return const CircularProgressIndicator.adaptive();
-        },
-      ),
-    );
-  }
-}
-
-Future<DbNearbyService> _findServiceByIds(
-    String placeId, String serviceId) async {
-  final doc = await FirebaseFirestore.instance
-      .collection('places')
-      .doc(placeId)
-      .collection('services')
-      .doc(serviceId)
-      .withConverter<DbNearbyService>(
-        fromFirestore: (snapshot, _) =>
-            DbNearbyService.fromJson(snapshot.data()!),
-        toFirestore: (service, _) => service.toJson(),
-      )
-      .get();
-  return doc.data()!;
 }

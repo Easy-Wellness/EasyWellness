@@ -49,7 +49,7 @@ class _CollectReviewAndRatingScreenState
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
-                subtitle: Text(widget.placeName),
+                subtitle: Text('At ${widget.placeName}'),
               ),
               Divider(thickness: 1),
               Form(

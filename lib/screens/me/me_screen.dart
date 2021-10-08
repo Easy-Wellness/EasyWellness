@@ -36,13 +36,13 @@ class Body extends StatelessWidget {
               onPressed: () =>
                   Navigator.pushNamed(context, EditProfileScreen.routeName),
               icon: Icon(Icons.edit_outlined),
-              label: Text('Edit Your Profile'),
+              label: Text('Edit Your Default Booking Profile'),
             ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.favorite_border),
-              label: Text('My Likes'),
-            ),
+            // TextButton.icon(
+            //   onPressed: () {},
+            //   icon: Icon(Icons.favorite_border),
+            //   label: Text('My Likes'),
+            // ),
             Divider(indent: 10, endIndent: 10, thickness: 1),
             TextButton.icon(
               onPressed: () => FirebaseAuth.instance.signOut(),
