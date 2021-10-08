@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:users/models/appointment/db_appointment.model.dart';
 import 'package:users/screens/appointment_list/appt_list_view.dart';
 import 'package:users/screens/appointment_list/cancel_or_reschedule_screen.dart';
+import 'package:users/screens/chat_room_list/chat_screen.dart';
 import 'package:users/screens/service_detail/service_detail_screen.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
@@ -181,14 +182,34 @@ class AppointmentListTabView extends StatelessWidget {
             return const CircularProgressIndicator.adaptive();
 
           final apptList = snapshot.data?.docs ?? [];
-          if (apptList.isEmpty) return Text('No appointments found');
+          if (apptList.isEmpty) return Text('No appointments found.');
           return ApptListView(
             apptList: apptList,
             optionalBtnBuilder: optionalBtnBuilder,
             primaryBtnBuilder: (_, apptSnapshot) => ElevatedButton.icon(
               icon: const Icon(Icons.chat_bubble_outline),
               label: const Text('Chat'),
-              onPressed: () {},
+              onPressed: () async {
+                final apptData = apptSnapshot.data();
+                final roomSnapshot = await _findChatRoomForBoth(
+                  placeId: apptData.placeId,
+                  customerId: apptData.accountId,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatScreen(
+                      chatRoomId: roomSnapshot.docs.isNotEmpty
+                          ? roomSnapshot.docs[0].id
+                          : null,
+                      placeId: apptData.placeId,
+                      placeName: apptData.placeName,
+                      customerId: apptData.accountId,
+                      customerName: apptData.userProfile.fullname,
+                    ),
+                  ),
+                );
+              },
             ),
             secondaryBtnBuilder: secondaryBtnBuilder,
           );
@@ -196,4 +217,15 @@ class AppointmentListTabView extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<QuerySnapshot<Map<String, dynamic>>> _findChatRoomForBoth({
+  required String placeId,
+  required String customerId,
+}) {
+  return FirebaseFirestore.instance
+      .collection('chat_rooms')
+      .where('place_id', isEqualTo: placeId)
+      .where('customer_id', isEqualTo: customerId)
+      .get();
 }

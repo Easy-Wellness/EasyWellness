@@ -61,7 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            '${widget.customerName}',
+            '${widget.placeName}',
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
