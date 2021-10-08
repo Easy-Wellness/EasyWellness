@@ -171,7 +171,7 @@ class _BodyState extends State<Body> {
                   onPressed: () => showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: const Text('Cancel appointment'),
+                      title: const Text('Cancel appointment?'),
                       content: const Text('This action cannot be undone'),
                       actions: [
                         TextButton(
@@ -216,17 +216,42 @@ class _BodyState extends State<Body> {
                     if (await timeSlotIsBooked(value))
                       return 'You already have an appointment at this time';
                   },
-                  onTimeSlotSelect: (selectedDateTime) async {
-                    await apptRef.update({
-                      'place_name': placeData.name,
-                      'service_name': serviceData.serviceName,
-                      'address': placeData.address,
-                      'effective_at': Timestamp.fromDate(selectedDateTime),
-                    });
-                    Navigator.pop(context);
-                    showCustomSnackBar(context,
-                        'Your appointment is successfully rescheduled');
-                  },
+                  onTimeSlotSelect: (selectedDateTime) => showDialog(
+                    context: context,
+                    builder: (_) {
+                      final friendlyNewDate =
+                          DateFormat.yMMMMEEEEd().format(selectedDateTime);
+                      final friendlyNewTime =
+                          DateFormat.jm().format(selectedDateTime);
+                      return AlertDialog(
+                        title: const Text('Reschedule appointment?'),
+                        content: Text(
+                            'If you click "yes", your appointment will be reschedule to "$friendlyNewDate ($friendlyNewTime)".'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('No'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await apptRef.update({
+                                'place_name': placeData.name,
+                                'service_name': serviceData.serviceName,
+                                'address': placeData.address,
+                                'effective_at':
+                                    Timestamp.fromDate(selectedDateTime),
+                              });
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              showCustomSnackBar(context,
+                                  'Your appointment is successfully rescheduled');
+                            },
+                            child: Text('Yes'),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                   minuteIncrements: serviceData.minuteIncrements!,
                   minLeadHours: serviceData.minLeadHours!,
                   maxLeadDays: serviceData.maxLeadDays!,
