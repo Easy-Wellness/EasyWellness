@@ -109,6 +109,8 @@ PODS:
   - package_info_plus (0.4.5):
     - Flutter
   - PromisesObjC (2.0.0)
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -121,6 +123,7 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
   trunk:
@@ -163,6 +166,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_sign_in/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 CHECKOUT OPTIONS:
   FirebaseFirestore:
@@ -196,6 +201,7 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  url_launcher: b6e016d912f04be9f5bf6e8e82dc599b7ba59649
 
 PODFILE CHECKSUM: 31e1d627b228dd34f4e0bbed6f4de6c46e2bb7ce
 

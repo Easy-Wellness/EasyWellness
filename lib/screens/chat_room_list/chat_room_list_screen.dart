@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatRoomListScreen extends StatelessWidget {
   static const String routeName = '/chat_list';
 
   @override

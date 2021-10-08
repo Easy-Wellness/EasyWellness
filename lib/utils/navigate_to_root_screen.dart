@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:users/screens/appointment_list/appointment_list_screen.dart';
-import 'package:users/screens/chat_list/chat_list_screen.dart';
+import 'package:users/screens/chat_room_list/chat_room_list_screen.dart';
 import 'package:users/screens/explore/explore_screen.dart';
 import 'package:users/screens/me/me_screen.dart';
 
 enum RootScreen {
   exploreScreen,
   appointmentListScreen,
-  chatListScreen,
+  chatRoomListScreen,
   meScreen,
 }
 
@@ -37,8 +37,8 @@ Widget _getRootScreenWidget(RootScreen rootScreen) {
       return ExploreScreen();
     case RootScreen.appointmentListScreen:
       return AppointmentListScreen();
-    case RootScreen.chatListScreen:
-      return ChatListScreen();
+    case RootScreen.chatRoomListScreen:
+      return ChatRoomListScreen();
     case RootScreen.meScreen:
       return MeScreen();
   }

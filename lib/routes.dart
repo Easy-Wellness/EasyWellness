@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/appointment_list/appointment_list_screen.dart';
-import 'screens/chat_list/chat_list_screen.dart';
+import 'screens/chat_room_list/chat_room_list_screen.dart';
 import 'screens/error/error_screen.dart';
 import 'screens/explore/explore_screen.dart';
 import 'screens/loading/loading_screen.dart';
@@ -21,7 +21,7 @@ final Map<String, WidgetBuilder> routes = {
   AppointmentListScreen.routeName: (_) => AppointmentListScreen(),
 
   /// Sub-screens of the root Chat List Screen
-  ChatListScreen.routeName: (_) => ChatListScreen(),
+  ChatRoomListScreen.routeName: (_) => ChatRoomListScreen(),
 
   /// Sub-screens of the root Me Screen
   MeScreen.routeName: (_) => MeScreen(),
