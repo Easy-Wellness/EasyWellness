@@ -145,7 +145,7 @@ class ServiceListView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text('${serviceData.rating}'),
+                      Text(serviceData.rating.toString()),
                       const SizedBox(width: 16),
                       RichText(
                         text: TextSpan(

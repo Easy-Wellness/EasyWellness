@@ -6,7 +6,6 @@ import 'package:users/widgets/appointment_scheduler.dart';
 
 import 'create_booking_screen.dart';
 
-
 class ScheduleTabView extends StatelessWidget {
   const ScheduleTabView({
     Key? key,
@@ -35,66 +34,63 @@ class ScheduleTabView extends StatelessWidget {
       interactive: true,
       child: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.home_repair_service_outlined),
-                        ),
-                      ),
-                      TextSpan(text: serviceData.serviceName),
-                    ],
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 8),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1,
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(Icons.policy_outlined),
-                        ),
-                      ),
-                      TextSpan(text: policyStringBuilder.toString()),
-                    ],
-                  ),
-                ),
-                const Divider(thickness: 1, height: 32),
-                AppointmentScheduler(
-                  validator: (value) async {
-                    if (await timeSlotIsBooked(value))
-                      return 'You already have an appointment at this time';
-                  },
-                  onTimeSlotSelect: (selectedDateTime) => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CreateBookingScreen(
-                        serviceId: serviceId,
-                        bookedService: serviceData,
-                        selectedDateTime: selectedDateTime,
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyText1,
+                  children: [
+                    WidgetSpan(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(Icons.home_repair_service_outlined),
                       ),
                     ),
-                  ),
-                  minuteIncrements: serviceData.minuteIncrements!,
-                  minLeadHours: serviceData.minLeadHours!,
-                  maxLeadDays: serviceData.maxLeadDays!,
-                  weeklySchedule: placeData.workingHours,
+                    TextSpan(text: serviceData.serviceName),
+                  ],
                 ),
-              ],
-            ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(height: 8),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyText1,
+                  children: [
+                    WidgetSpan(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(Icons.policy_outlined),
+                      ),
+                    ),
+                    TextSpan(text: policyStringBuilder.toString()),
+                  ],
+                ),
+              ),
+              const Divider(thickness: 1, height: 32),
+              AppointmentScheduler(
+                validator: (value) async {
+                  if (await timeSlotIsBooked(value))
+                    return 'You already have an appointment at this time';
+                },
+                onTimeSlotSelect: (selectedDateTime) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CreateBookingScreen(
+                      serviceId: serviceId,
+                      bookedService: serviceData,
+                      selectedDateTime: selectedDateTime,
+                    ),
+                  ),
+                ),
+                minuteIncrements: serviceData.minuteIncrements!,
+                minLeadHours: serviceData.minLeadHours!,
+                maxLeadDays: serviceData.maxLeadDays!,
+                weeklySchedule: placeData.workingHours,
+              ),
+            ],
           ),
         ),
       ),

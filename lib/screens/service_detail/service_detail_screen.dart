@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/place/db_place.model.dart';
+import 'package:users/screens/service_detail/information_tab_view.dart';
 
 import 'schedule_tab_view.dart';
 
@@ -93,7 +94,11 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             serviceId: widget.serviceId,
                             serviceData: serviceData,
                           ),
-                          Container()
+                          InformationTabView(
+                            serviceId: widget.serviceId,
+                            serviceData: serviceData,
+                            placeData: placeData,
+                          )
                         ],
                       );
                     });
