@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:recase/recase.dart';
 import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/screens/service_detail/service_detail_screen.dart';
+import 'package:users/utils/format_duration.dart';
 import 'package:users/widgets/pick_location_screen.dart';
 
 class SearchServicesScreen extends StatefulWidget {
@@ -172,7 +173,7 @@ class ServiceListView extends StatelessWidget {
                           alignment: PlaceholderAlignment.middle,
                           child: Icon(Icons.timer_outlined),
                         ),
-                        TextSpan(text: _formatDuration(serviceData.duration)),
+                        TextSpan(text: formatDuration(serviceData.duration)),
                       ],
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -237,15 +238,6 @@ class ServiceListView extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 8),
     );
   }
-}
-
-String _formatDuration(int minutes) {
-  final duration = Duration(minutes: minutes);
-  final nHours = duration.inHours;
-  final hoursText = nHours >= 1 ? '${nHours}h ' : '';
-  final remainingMins = duration.inMinutes.remainder(60);
-  final minutesText = remainingMins == 0 ? '' : '$remainingMins mins';
-  return hoursText + minutesText;
 }
 
 typedef DocSnapshotList = List<DocumentSnapshot<Map<String, dynamic>>>;
