@@ -30,7 +30,6 @@ class ScheduleTabView extends StatelessWidget {
           '${serviceData.minLeadHours} hour(s) prior to your scheduled time slot.');
 
     return Scrollbar(
-      isAlwaysShown: true,
       interactive: true,
       child: SingleChildScrollView(
         child: Container(

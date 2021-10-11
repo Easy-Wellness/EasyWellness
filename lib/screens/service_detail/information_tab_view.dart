@@ -33,7 +33,6 @@ class InformationTabView extends StatelessWidget {
       default:
     }
     return Scrollbar(
-      isAlwaysShown: true,
       interactive: true,
       child: SingleChildScrollView(
         child: Column(
@@ -66,7 +65,8 @@ class InformationTabView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(serviceData.rating.toString()),
+                        Text(
+                            '${serviceData.rating} (${serviceData.ratingsTotal})'),
                       ],
                     ),
                     trailing: RichText(
@@ -212,7 +212,7 @@ class InformationTabView extends StatelessWidget {
               elevation: 4,
               child: TextButton.icon(
                 onPressed: () {},
-                icon: Text('See more reviews'),
+                icon: Text('See reviews'),
                 label: Icon(Icons.arrow_right_alt_outlined),
               ),
             )
