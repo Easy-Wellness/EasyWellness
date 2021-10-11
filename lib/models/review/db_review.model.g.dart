@@ -8,20 +8,22 @@ part of 'db_review.model.dart';
 
 DbReview _$DbReviewFromJson(Map json) {
   return DbReview(
-    accountId: json['account_id'] as String,
+    creatorId: json['creator_id'] as String,
+    creatorName: json['creator_name'] as String,
     placeId: json['place_id'] as String,
     serviceId: json['service_id'] as String,
     rating: (json['rating'] as num).toDouble(),
-    review: json['review'] as String?,
+    text: json['text'] as String?,
     createdAt: DbReview._fromJsonTimestamp(json['created_at'] as Timestamp),
   );
 }
 
 Map<String, dynamic> _$DbReviewToJson(DbReview instance) => <String, dynamic>{
-      'account_id': instance.accountId,
+      'creator_id': instance.creatorId,
+      'creator_name': instance.creatorName,
       'place_id': instance.placeId,
       'service_id': instance.serviceId,
       'rating': instance.rating,
-      'review': instance.review,
+      'text': instance.text,
       'created_at': DbReview._toJsonTimestamp(instance.createdAt),
     };

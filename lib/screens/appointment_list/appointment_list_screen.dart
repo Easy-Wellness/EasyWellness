@@ -109,6 +109,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
                           serviceName: apptData.serviceName,
                           placeId: apptData.placeId,
                           placeName: apptData.placeName,
+                          creatorName: apptData.userProfile.fullname,
                         ),
                       ),
                     ),

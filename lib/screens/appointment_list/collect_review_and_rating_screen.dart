@@ -9,6 +9,7 @@ class CollectReviewAndRatingScreen extends StatefulWidget {
   CollectReviewAndRatingScreen({
     Key? key,
     required this.apptId,
+    required this.creatorName,
     required this.serviceId,
     required this.serviceName,
     required this.placeId,
@@ -16,6 +17,7 @@ class CollectReviewAndRatingScreen extends StatefulWidget {
   }) : super(key: key);
 
   final String apptId;
+  final String creatorName;
   final String serviceId;
   final String serviceName;
   final String placeId;
@@ -125,12 +127,13 @@ class _CollectReviewAndRatingScreenState
                                 )
                                 .add(
                                   DbReview(
-                                    accountId:
+                                    creatorId:
                                         FirebaseAuth.instance.currentUser!.uid,
+                                    creatorName: widget.creatorName,
                                     placeId: widget.placeId,
                                     serviceId: widget.serviceId,
                                     rating: rating,
-                                    review: review,
+                                    text: review,
                                     createdAt: Timestamp.now(),
                                   ),
                                 );

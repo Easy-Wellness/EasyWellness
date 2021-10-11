@@ -6,16 +6,20 @@ part 'db_review.model.g.dart';
 @JsonSerializable(anyMap: true, explicitToJson: true)
 class DbReview {
   DbReview({
-    required this.accountId,
+    required this.creatorId,
+    required this.creatorName,
     required this.placeId,
     required this.serviceId,
     required this.rating,
-    this.review,
+    this.text,
     required this.createdAt,
   });
 
-  @JsonKey(name: 'account_id')
-  final String accountId;
+  @JsonKey(name: 'creator_id')
+  final String creatorId;
+
+  @JsonKey(name: 'creator_name')
+  final String creatorName;
 
   @JsonKey(name: 'place_id')
   final String placeId;
@@ -24,7 +28,7 @@ class DbReview {
   final String serviceId;
 
   final double rating;
-  final String? review;
+  final String? text;
 
   @JsonKey(
     name: 'created_at',
