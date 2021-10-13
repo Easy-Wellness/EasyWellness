@@ -184,35 +184,37 @@ class AppointmentListTabView extends StatelessWidget {
 
           final apptList = snapshot.data?.docs ?? [];
           if (apptList.isEmpty) return Text('No appointments found.');
-          return ApptListView(
-            apptList: apptList,
-            optionalBtnBuilder: optionalBtnBuilder,
-            primaryBtnBuilder: (_, apptSnapshot) => ElevatedButton.icon(
-              icon: const Icon(Icons.chat_bubble_outline),
-              label: const Text('Chat'),
-              onPressed: () async {
-                final apptData = apptSnapshot.data();
-                final roomSnapshot = await _findChatRoomForBoth(
-                  placeId: apptData.placeId,
-                  customerId: apptData.accountId,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChatScreen(
-                      chatRoomId: roomSnapshot.docs.isNotEmpty
-                          ? roomSnapshot.docs[0].id
-                          : null,
-                      placeId: apptData.placeId,
-                      placeName: apptData.placeName,
-                      customerId: apptData.accountId,
-                      customerName: apptData.userProfile.fullname,
+          return Scrollbar(
+            child: ApptListView(
+              apptList: apptList,
+              optionalBtnBuilder: optionalBtnBuilder,
+              primaryBtnBuilder: (_, apptSnapshot) => ElevatedButton.icon(
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text('Chat'),
+                onPressed: () async {
+                  final apptData = apptSnapshot.data();
+                  final roomSnapshot = await _findChatRoomForBoth(
+                    placeId: apptData.placeId,
+                    customerId: apptData.accountId,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                        chatRoomId: roomSnapshot.docs.isNotEmpty
+                            ? roomSnapshot.docs[0].id
+                            : null,
+                        placeId: apptData.placeId,
+                        placeName: apptData.placeName,
+                        customerId: apptData.accountId,
+                        customerName: apptData.userProfile.fullname,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
+              secondaryBtnBuilder: secondaryBtnBuilder,
             ),
-            secondaryBtnBuilder: secondaryBtnBuilder,
           );
         },
       ),
