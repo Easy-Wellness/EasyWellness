@@ -106,7 +106,7 @@ class _CollectReviewAndRatingScreenState
                         ),
                         minLines: 6,
                         maxLines: 6,
-                        maxLength: 250,
+                        maxLength: 600,
                       ),
                       const SizedBox(height: 8),
                       ElevatedButton(

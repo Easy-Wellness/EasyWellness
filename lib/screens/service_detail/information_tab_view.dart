@@ -6,6 +6,8 @@ import 'package:users/models/nearby_service/db_nearby_service.model.dart';
 import 'package:users/models/place/db_place.model.dart';
 import 'package:users/utils/format_duration.dart';
 
+import 'review_list_screen.dart';
+
 class InformationTabView extends StatelessWidget {
   const InformationTabView({
     Key? key,
@@ -66,7 +68,8 @@ class InformationTabView extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                            '${serviceData.rating} (${serviceData.ratingsTotal})'),
+                          '${serviceData.rating} (${serviceData.ratingsTotal} Reviews)',
+                        ),
                       ],
                     ),
                     trailing: RichText(
@@ -211,8 +214,15 @@ class InformationTabView extends StatelessWidget {
             Material(
               elevation: 4,
               child: TextButton.icon(
-                onPressed: () {},
-                icon: Text('See reviews'),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ReviewListScreen(
+                        placeId: serviceData.placeId,
+                        serviceId: serviceId,
+                      ),
+                    )),
+                icon: Text('See All Service Ratings'),
                 label: Icon(Icons.arrow_right_alt_outlined),
               ),
             )
