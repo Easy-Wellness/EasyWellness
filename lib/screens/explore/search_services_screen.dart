@@ -43,7 +43,7 @@ class _SearchServicesScreenState extends State<SearchServicesScreen> {
           child: Material(
             child: StreamBuilder<DocSnapshotList>(
               stream: serviceListStream!,
-              builder: (context, snapshot) {
+              builder: (_, snapshot) {
                 if (snapshot.hasError)
                   return const Text('Something went wrong');
 
@@ -109,7 +109,7 @@ class ServiceListView extends StatelessWidget {
             1000;
         return Card(
           key: ValueKey(serviceList[index].id),
-          elevation: 2,
+          elevation: 4,
           shape: ContinuousRectangleBorder(
             side: BorderSide(color: Colors.grey.withOpacity(0.2)),
             borderRadius: BorderRadius.circular(8),
@@ -146,8 +146,13 @@ class ServiceListView extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                          '${serviceData.rating} (${serviceData.ratingsTotal})'),
-                      const SizedBox(width: 16),
+                        '${serviceData.rating} (${serviceData.ratingsTotal} Reviews)',
+                      ),
+                    ],
+                  ),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
                       RichText(
                         text: TextSpan(
                           style: TextStyle(color: Theme.of(context).hintColor),
@@ -164,21 +169,23 @@ class ServiceListView extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                  trailing: RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.bodyText2,
-                      children: [
-                        const WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: Icon(Icons.timer_outlined),
+                      const SizedBox(height: 8),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Theme.of(context).hintColor),
+                          children: [
+                            const WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: Icon(Icons.timer_outlined),
+                            ),
+                            TextSpan(
+                                text: formatDuration(serviceData.duration)),
+                          ],
                         ),
-                        TextSpan(text: formatDuration(serviceData.duration)),
-                      ],
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
                   ),
                 ),
                 RichText(
