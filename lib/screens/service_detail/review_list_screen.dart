@@ -57,7 +57,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                 final reviewList = snapshot.data?.docs ?? [];
                 if (reviewList.isEmpty)
                   return const Text('No reviews are found');
-                return Scrollbar(child: ReviewListView(reviewList: reviewList));
+                return Scrollbar(child: _ReviewListView(reviewList: reviewList));
               },
             ),
           ),
@@ -67,8 +67,8 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   }
 }
 
-class ReviewListView extends StatelessWidget {
-  const ReviewListView({
+class _ReviewListView extends StatelessWidget {
+  const _ReviewListView({
     Key? key,
     required this.reviewList,
   }) : super(key: key);
