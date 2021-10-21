@@ -46,6 +46,7 @@ dependencies:
   package_info_plus: ^1.0.4
   dropdown_search: ^1.0.0
   flutter_chat_ui: ^1.4.4
+  maps_launcher: ^2.0.1
 
 dev_dependencies:
   build_runner: ^2.0.4

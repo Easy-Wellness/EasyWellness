@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:users/utils/seconds_to_friendly_time.dart';
 
 class BookingSummary extends StatelessWidget {
@@ -49,8 +50,8 @@ class BookingSummary extends StatelessWidget {
                     style: Theme.of(context).textTheme.subtitle2,
                     children: [
                       WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 4),
                           child: Icon(Icons.home_repair_service_outlined),
                         ),
                       ),
@@ -65,8 +66,8 @@ class BookingSummary extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyText2,
                     children: [
                       WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 4),
                           child: Icon(Icons.place),
                         ),
                       ),
@@ -81,8 +82,8 @@ class BookingSummary extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyText2,
                     children: [
                       WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 4),
                           child: Icon(Icons.map_outlined),
                         ),
                       ),
@@ -97,14 +98,23 @@ class BookingSummary extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyText2,
                     children: [
                       WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4),
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 4),
                           child: Icon(Icons.schedule),
                         ),
                       ),
                       TextSpan(text: friendlyDayTimeBuilder.toString()),
                     ],
                   ),
+                ),
+                TextButton(
+                  onPressed: () => MapsLauncher.launchQuery(address),
+                  style: TextButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('View this place on Maps'),
                 ),
               ].expand((widget) => [widget, const SizedBox(height: 8)]),
             ],

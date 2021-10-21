@@ -9,7 +9,6 @@ import 'package:users/models/location/gmp_place_autocomplete.model.dart';
 /// Google Place Autocomplete API returns up to 5 results
 Future<List<GoogleMapsPlaceAutocomplete>> predictSimilarPlaces(
     String input) async {
-  // TODO cache predictions for each input to not make a request if the user enters the same input
   if (input.length <= 2) return [];
   final placeAutocompleteAPI = Uri.https(
     'maps.googleapis.com',

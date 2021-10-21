@@ -53,8 +53,8 @@ class _SearchServicesFormState extends State<SearchServicesForm> {
             items: specialties,
             itemAsString: (value) => value!.titleCase,
             scrollbarProps: ScrollbarProps(interactive: true),
-            label: 'Specialty*',
             dropdownSearchDecoration: const InputDecoration(
+              labelText: 'Specialty*',
               contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
               border: OutlineInputBorder(),
               helperText: '',
