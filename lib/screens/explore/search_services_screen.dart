@@ -144,9 +144,8 @@ class ServiceListView extends StatelessWidget {
                           color: Colors.amber,
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Text(
-                        '${serviceData.rating} (${serviceData.ratingsTotal} Reviews)',
+                        ' ${serviceData.rating == 0 ? 'No review' : '${serviceData.rating} (${serviceData.ratingsTotal} Reviews)'}',
                       ),
                     ],
                   ),
