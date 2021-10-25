@@ -16,11 +16,25 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Login'),
+      child: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: SvgPicture.asset("assets/icons/waves_bottom.svg"),
+            ),
+            Scaffold(
+              /// See the white container with waves at the bottom
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                title: Text('Login'),
+              ),
+              body: Body(),
+            ),
+          ],
         ),
-        body: Body(),
       ),
     );
   }
@@ -46,72 +60,80 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ThemeData()
-                  .colorScheme
-                  .copyWith(primary: Colors.blueGrey[700]!),
+    final size = MediaQuery.of(context).size;
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SvgPicture.asset(
+              "assets/icons/login.svg",
+              height: size.height * 0.2,
             ),
-            child: TextField(
-              controller: _emailInpController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Your email address',
-                prefixIcon: const Icon(Icons.email),
-                suffixIcon: _isEmpty
-                    ? null
-                    : IconButton(
-                        onPressed: () => _emailInpController.clear(),
-                        icon: const Icon(Icons.clear),
-                      ),
+            const SizedBox(height: 8),
+            Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ThemeData()
+                    .colorScheme
+                    .copyWith(primary: Colors.blueGrey[700]!),
+              ),
+              child: TextField(
+                controller: _emailInpController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'Your email address',
+                  prefixIcon: const Icon(Icons.email),
+                  suffixIcon: _isEmpty
+                      ? null
+                      : IconButton(
+                          onPressed: () => _emailInpController.clear(),
+                          icon: const Icon(Icons.clear),
+                        ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.blueGrey[700]!),
-            onPressed: _isEmpty
-                ? null
-                : () {
-                    final email = _emailInpController.text;
-                    final emailErr = checkIfEmailIsValid(email);
-                    if (emailErr != null)
-                      return showCustomSnackBar(context, emailErr);
-                    pushNewPage<void>(
-                        context, VerifyAuthLinkScreen(email: email));
-                  },
-            child: const Text('Next'),
-          ),
-          OrDivider(),
-          ElevatedButton.icon(
-            onPressed: () => loginWithGoogle(),
-            style: ElevatedButton.styleFrom(primary: Colors.white60),
-            icon: SvgPicture.asset(
-              'assets/icons/google_icon.svg',
-              height: 24,
+            const SizedBox(height: 8),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.blueGrey[700]!),
+              onPressed: _isEmpty
+                  ? null
+                  : () {
+                      final email = _emailInpController.text;
+                      final emailErr = checkIfEmailIsValid(email);
+                      if (emailErr != null)
+                        return showCustomSnackBar(context, emailErr);
+                      pushNewPage<void>(
+                          context, VerifyAuthLinkScreen(email: email));
+                    },
+              child: const Text('Next'),
             ),
-            label: Text(
-              'Continue with Google',
-              style: TextStyle(color: Colors.black),
+            OrDivider(),
+            ElevatedButton.icon(
+              onPressed: () => loginWithGoogle(),
+              style: ElevatedButton.styleFrom(primary: Colors.white60),
+              icon: SvgPicture.asset(
+                'assets/icons/google_icon.svg',
+                height: 24,
+              ),
+              label: Text(
+                'Continue with Google',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton.icon(
-            onPressed: () => loginWithFacebook(context),
-            style: ElevatedButton.styleFrom(primary: Colors.blue),
-            icon: SvgPicture.asset(
-              'assets/icons/facebook_icon.svg',
-              height: 24,
-              color: Colors.white,
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => loginWithFacebook(context),
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
+              icon: SvgPicture.asset(
+                'assets/icons/facebook_icon.svg',
+                height: 24,
+                color: Colors.white,
+              ),
+              label: Text('Continue with Facebook'),
             ),
-            label: Text('Continue with Facebook'),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
