@@ -38,6 +38,7 @@ class _AppState extends State<App> {
     /// This is only called once after the widget is mounted.
     WidgetsBinding.instance!.addPostFrameCallback(
       (_) => FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        navigatorKey.currentState!.popUntil((route) => route.isFirst);
         if (user == null)
           navigatorKey.currentState!
               .pushReplacementNamed(LoginScreen.routeName);
