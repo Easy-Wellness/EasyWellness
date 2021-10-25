@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:users/widgets/custom_bottom_nav_bar.dart';
 
 import 'edit_profile_screen.dart';
@@ -20,6 +21,7 @@ class MeScreen extends StatelessWidget {
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       width: double.maxFinite,
       child: TextButtonTheme(
@@ -50,6 +52,11 @@ class Body extends StatelessWidget {
               label: Text('Sign Out'),
               style:
                   TextButton.styleFrom(primary: Theme.of(context).errorColor),
+            ),
+            const SizedBox(height: 40),
+            SvgPicture.asset(
+              "assets/icons/user_profile.svg",
+              height: size.height * 0.4,
             ),
           ],
         ),
