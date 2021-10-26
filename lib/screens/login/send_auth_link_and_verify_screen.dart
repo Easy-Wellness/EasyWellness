@@ -3,22 +3,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:users/main.dart';
 import 'package:users/services/auth_service/send_sign_in_link_to_email.dart';
 import 'package:users/utils/show_custom_snack_bar.dart';
 
-class VerifyAuthLinkScreen extends StatefulWidget {
-  const VerifyAuthLinkScreen({
+class SendAuthLinkAndVerifyScreen extends StatefulWidget {
+  const SendAuthLinkAndVerifyScreen({
     Key? key,
     required this.email,
+    this.authCredentialToLink,
   }) : super(key: key);
 
   final String email;
+  final AuthCredential? authCredentialToLink;
 
   @override
-  State<VerifyAuthLinkScreen> createState() => _VerifyAuthLinkScreenState();
+  State<SendAuthLinkAndVerifyScreen> createState() =>
+      _SendAuthLinkAndVerifyScreenState();
 }
 
-class _VerifyAuthLinkScreenState extends State<VerifyAuthLinkScreen> {
+class _SendAuthLinkAndVerifyScreenState
+    extends State<SendAuthLinkAndVerifyScreen> {
   final _authLinkInpController = TextEditingController();
 
   bool _isEmpty = true;
@@ -165,18 +170,30 @@ class _VerifyAuthLinkScreenState extends State<VerifyAuthLinkScreen> {
 
     try {
       // The client SDK will parse the code from the link for you.
-      await auth.signInWithEmailLink(
-          email: emailToAuthViaLink, emailLink: authLinkSentToEmail);
+      final emailAuthLinkUserCredential = await auth.signInWithEmailLink(
+        email: emailToAuthViaLink,
+        emailLink: authLinkSentToEmail,
+      );
+      final authCredentialToLink = widget.authCredentialToLink;
+      if (authCredentialToLink != null)
+        await emailAuthLinkUserCredential.user!
+            .linkWithCredential(authCredentialToLink)
+            .then((_) => showCustomSnackBar(
+                NavigationService.navigatorKey.currentContext!,
+                'Your Facebook account is successfully linked to this email, you can now use it to login'));
       print('Successfully signed in with email link!');
     } catch (onError) {
-      String extraMsg = '';
-      final error = onError as FirebaseAuthException;
-      if (error.code == 'invalid-action-code')
-        extraMsg =
-            '. The link is incorrect, expired, or has already been used.';
-      _authLinkInpController.clear();
-      showCustomSnackBar(
-          context, 'Cannot sign in with this email link$extraMsg');
+      if (onError.runtimeType == FirebaseAuthException) {
+        String extraMsg = '';
+        final error = onError as FirebaseAuthException;
+        if (error.code == 'invalid-action-code')
+          extraMsg =
+              '. The link is incorrect, expired, or has already been used.';
+        _authLinkInpController.clear();
+        showCustomSnackBar(
+            context, 'Cannot sign in with this email link$extraMsg');
+      } else
+        print('Got error: $onError');
     }
   }
 

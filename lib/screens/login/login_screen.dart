@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:users/screens/login/verify_auth_link_screen.dart';
+import 'package:users/screens/login/send_auth_link_and_verify_screen.dart';
 import 'package:users/services/auth_service/login_with_facebook.service.dart';
 import 'package:users/services/auth_service/login_with_google.service.dart';
 import 'package:users/utils/check_if_email_is_valid.dart';
@@ -104,7 +104,7 @@ class _BodyState extends State<Body> {
                       if (emailErr != null)
                         return showCustomSnackBar(context, emailErr);
                       pushNewPage<void>(
-                          context, VerifyAuthLinkScreen(email: email));
+                          context, SendAuthLinkAndVerifyScreen(email: email));
                     },
               child: const Text('Next'),
             ),

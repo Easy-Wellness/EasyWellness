@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:users/screens/login/send_auth_link_and_verify_screen.dart';
+import 'package:users/utils/push_new_page.dart';
 
 Future<UserCredential?> loginWithFacebook(BuildContext context) async {
   // by default we request the email and the public profile...
@@ -17,20 +19,27 @@ Future<UserCredential?> loginWithFacebook(BuildContext context) async {
       .catchError((err) => authExceptionHandler(err, context));
 }
 
-void authExceptionHandler(FirebaseAuthException err, BuildContext context) {
-  if (err.code == 'account-exists-with-different-credential') {
-    /// [credential]:AuthCredential (AuthCredential(providerId: facebook.com,
-    /// signInMethod: facebook.com, token: 105553116412848))
+void authExceptionHandler(FirebaseAuthException authErr, BuildContext context) {
+  if (authErr.code == 'account-exists-with-different-credential') {
     showDialog(
       context: context,
       builder: (ctx) {
         return CupertinoAlertDialog(
           title: Text(
-              'The email address "${err.email}" associated with your Facebook account already exists'),
-          content: const Text('Please use another Facebook account.'),
+              'The email address "${authErr.email}" associated with your Facebook account has already been used by another account'),
+          content: const Text(
+              'We will send a link to this email address, which will allow you to login and link your Facebook account.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(context);
+                pushNewPage(
+                    context,
+                    SendAuthLinkAndVerifyScreen(
+                      email: authErr.email!,
+                      authCredentialToLink: authErr.credential,
+                    ));
+              },
               child: const Text('Okay', style: TextStyle(color: Colors.blue)),
             )
           ],
