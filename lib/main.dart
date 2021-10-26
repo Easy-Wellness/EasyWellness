@@ -31,19 +31,18 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final navigatorKey = GlobalKey<NavigatorState>();
-
   @override
   void initState() {
     /// This is only called once after the widget is mounted.
     WidgetsBinding.instance!.addPostFrameCallback(
       (_) => FirebaseAuth.instance.authStateChanges().listen((User? user) {
-        navigatorKey.currentState!.popUntil((route) => route.isFirst);
+        NavigationService.navigatorKey.currentState!
+            .popUntil((route) => route.isFirst);
         if (user == null)
-          navigatorKey.currentState!
+          NavigationService.navigatorKey.currentState!
               .pushReplacementNamed(LoginScreen.routeName);
         else
-          navigatorKey.currentState!
+          NavigationService.navigatorKey.currentState!
               .pushReplacementNamed(ExploreScreen.routeName);
       }),
     );
@@ -54,11 +53,19 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey,
+      navigatorKey: NavigationService.navigatorKey,
       title: 'Easy Wellness',
       theme: theme(),
       home: LoginScreen(),
       routes: routes,
     );
   }
+}
+
+/// A Global navigator key shared to all widgets below MaterialApp. This is
+/// extremely useful if u want to show a snackbar that does not depend on an
+/// ephemeral BuildContext, which might quickly get removed when
+/// Navigator.popUntil() is called.
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
